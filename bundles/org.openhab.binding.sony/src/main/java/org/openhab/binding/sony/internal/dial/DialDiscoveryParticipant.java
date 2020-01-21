@@ -114,10 +114,6 @@ public class DialDiscoveryParticipant extends AbstractDiscoveryParticipant imple
         }
 
         if (isSonyDevice(device)) {
-            // if (isScalarThingType(device)) {
-            // logger.debug("Found a SCALAR thing type for this DIAL thing - ignoring DIAL");
-            // return null;
-            // }
             final String modelName = getModelName(device);
             if (modelName == null || StringUtils.isEmpty(modelName)) {
                 logger.debug("Found Sony device but it has no model name - ignoring");

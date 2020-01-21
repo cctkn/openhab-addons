@@ -4,11 +4,16 @@ This binding is for Sony IP based product line including TVs, AVRs, Blurays, Sou
 
 ## Supported Things
 
-The following are the services that are available from different Sony devices. Please note they are not exclusive of each other (many services are offered on a single device and offer different capabilities). Feel free to mix and match as you see fit.
+The following are the services that are available from different Sony devices.
+Please note they are not exclusive of each other (many services are offered on a single device and offer different capabilities).
+Feel free to mix and match as you see fit.
 
 ### Scalar (also known as the REST API)
 
-The Scalar API is Sony's next generation API for discovery and control of the device. This service has been implemented in most of the Sony products and has the same (and more) capabilities of all the other services combined. If your device supports a Scalar thing, you should probably use it versus any of the other services. The only downside is that it's a bit 'heavier' (depending on the device - will likely issue more calls) and is a bit more complicated to use (many, many channels are produced).
+The Scalar API is Sony's next generation API for discovery and control of the device.
+This service has been implemented in most of the Sony products and has the same (and more) capabilities of all the other services combined.
+If your device supports a Scalar thing, you should probably use it versus any of the other services.
+The only downside is that it's a bit 'heavier' (depending on the device - will likely issue more calls) and is a bit more complicated to use (many, many channels are produced).
 
 This service dynamically generates the channels based on the device.
 
@@ -16,19 +21,26 @@ For specifics - see [Scalar](README-SCALAR.md)
 
 ### Simple IP
 
-The Simple IP protocol is a simplified version of IRCC and appears to be only supported on some models of Bravia TVs. You must enable "Simple IP Control" on the devices (generally under `Settings->Network->Home Network->IP Control->Simple IP Control`) but once enabled - does not need any authentication. The Simple IP control provides direct access to commonly used functions (channels, inputs, volume, etc) and provides full two-way communications (as things change on the device, openHAB will be notified immediately).
+The Simple IP protocol is a simplified version of IRCC and appears to be only supported on some models of Bravia TVs.
+You must enable "Simple IP Control" on the devices (generally under `Settings->Network->Home Network->IP Control->Simple IP Control`) but once enabled - does not need any authentication.
+The Simple IP control provides direct access to commonly used functions (channels, inputs, volume, etc) and provides full two-way communications (as things change on the device, openHAB will be notified immediately).
 
 For specifics - see [Simple IP](README-SimpleIp.md)
 
 ### IRCC
 
-Many Sony products (TVs, AV systems, disc players) provided an IRCC service that provides minimal control to the device and some minimal feedback (via polling) depending on the version. From my research, their appears to be 5 versions of this service:
+Many Sony products (TVs, AV systems, disc players) provided an IRCC service that provides minimal control to the device and some minimal feedback (via polling) depending on the version.
+From my research, their appears to be 5 versions of this service:
 
-1. Not Specified - implemented on TVs and provides ONLY a command interface (i.e. sending of commands). No feedback from the device is possible. No status is available.
+1. Not Specified - implemented on TVs and provides ONLY a command interface (i.e. sending of commands).
+No feedback from the device is possible.
+No status is available.
 2. 1.0 - ???
 3. 1.1 - ???
 4. 1.2 - ???
-5. 1.3 - implemented on blurays. Provides a command interface, text field entry and status feedback (including disc information). The status feedback is provided via polling of the device.
+5. 1.3 - implemented on blurays.
+Provides a command interface, text field entry and status feedback (including disc information).
+The status feedback is provided via polling of the device.
 
 Please note that the IRCC service is fully undocumented and much of the work that has gone into this service is based on observations.
 
@@ -40,29 +52,39 @@ For specifics - see [IRCC](README-IRCC.md)
 
 ### DIAL
 
-The DIAL (DIscovery And Launch) allows you to discover the various applications available on the device and manage those applications (mainly to start or stop them). This will apply to many of the smart tvs and bluray devices. Generally you need to authenticate with IRCC before being able to use DIAL. A channel will be created for each application (at startup only) and you can send ON to that channel to start the application and OFF to exit back to the main menu.
+The DIAL (DIscovery And Launch) allows you to discover the various applications available on the device and manage those applications (mainly to start or stop them).
+This will apply to many of the smart tvs and bluray devices.
+Generally you need to authenticate with IRCC before being able to use DIAL.
+A channel will be created for each application (at startup only) and you can send ON to that channel to start the application and OFF to exit back to the main menu.
 
 For specifics - see [DIAL](README-README-DIAL.md.md)
 
 ## Application status
 
-Sony has 'broken' the API that determines which application is currently running regardless if you use DIAL or Scalar services. The API that determines whether an application is currently running ALWAYS returns 'stopped' (regardless if it's running or not). Because of that - you cannnot rely on the application status and there is NO CURRENT WAY to determine if any application is running.
+Sony has 'broken' the API that determines which application is currently running regardless if you use DIAL or Scalar services.
+The API that determines whether an application is currently running ALWAYS returns 'stopped' (regardless if it's running or not).
+Because of that - you cannnot rely on the application status and there is NO CURRENT WAY to determine if any application is running.
 
 Both DIAL/Scalar will continue to check the status in case Sony fixes this in some later date - but as of this writing - there is NO WAY to determine application status.
 
 ## Device setup
 
-To enable automation of your device may require changes on the device. This section mainly applies to TVs as the other devices generally are setup correctly. Unfortunately the location of the settings generally depend on the device and the firmware that is installed. I'll mention the most common area for each below but do remember that it may differ on your device.
+To enable automation of your device may require changes on the device.
+This section mainly applies to TVs as the other devices generally are setup correctly.
+Unfortunately the location of the settings generally depend on the device and the firmware that is installed.
+I'll mention the most common area for each below but do remember that it may differ on your device.
 
 ### Wake on LAN
 
-To enable the device to wakeup based on network activity (WOL), go to `Settings->Network->Remote Start` and set to "ON". This setting will cause the device to use more power (as it has to keep the ethernet port on always) but will generally allow you to turn on the device at any time.
+To enable the device to wakeup based on network activity (WOL), go to `Settings->Network->Remote Start` and set to "ON".
+This setting will cause the device to use more power (as it has to keep the ethernet port on always) but will generally allow you to turn on the device at any time.
 
 Note: this will **likely** not work if your device is connected wirelessly and generally only affects physical ethernet ports.
 
 ### Enabling Remote Device Control
 
-To enable openHAB to control your device, you'll need to set the device to allow remote control. Go to `Settings->Network->Home network setup->Renderer->Render Function` and set it to "Enabled".
+To enable openHAB to control your device, you'll need to set the device to allow remote control.
+Go to `Settings->Network->Home network setup->Renderer->Render Function` and set it to "Enabled".
 
 ### Setting up the Authentication Mode
 
@@ -72,9 +94,11 @@ There are three major ways to authenticate to a Sony Device:
 2. Normal - when openHAB registers with a device, a code is displayed on the device that needs to be entered into openHAB
 3. Preshared - a predetermined key that is entered into openHAB
 
-You can select your authentication mode by going to `Settings->Network->Home network setup->IP Control->Authentication` and selecting your mode. I highly recommend the use of "Normal" mode.
+You can select your authentication mode by going to `Settings->Network->Home network setup->IP Control->Authentication` and selecting your mode.
+I highly recommend the use of "Normal" mode.
 
-Please note that their is a rare fourth option - some AVRs need to be put into a pairing mode prior to openHAB authentication. This pairing mode acts similar to the "Normal" mode in that a code will be displayed on the AVR screen to be entered into openHAB.
+Please note that their is a rare fourth option - some AVRs need to be put into a pairing mode prior to openHAB authentication.
+This pairing mode acts similar to the "Normal" mode in that a code will be displayed on the AVR screen to be entered into openHAB.
 
 Also note that generally AVRs/SoundBars/Wireless speakers need no authentication at all and will automatically come online.
 
@@ -82,11 +106,15 @@ See the authentication section below to understand how to use authenticate openH
 
 ## Discovery
 
-This binding does attempt to discover Sony devices via UPNP. Although this binding attempts to wake Sony devices (via wake on lan), some devices do not support WOL nor broadcast when they are turned off or sleeping. If your devices does not automatically discovered, please turn the device on first and try again. You may also need to turn on broadcasting via `Settings->Network->Remote Start` (on) - this setting has a side effect of turning on UPNP discovery.
+This binding does attempt to discover Sony devices via UPNP.
+Although this binding attempts to wake Sony devices (via wake on lan), some devices do not support WOL nor broadcast when they are turned off or sleeping.
+If your devices does not automatically discovered, please turn the device on first and try again.
+You may also need to turn on broadcasting via `Settings->Network->Remote Start` (on) - this setting has a side effect of turning on UPNP discovery.
 
 ### Enabling/Disabling services
 
-By default, only the scalar service is enabled for discovery. You can change the defaults by setting the following in the `conf/services/runtime.cfg` file:
+By default, only the scalar service is enabled for discovery.
+You can change the defaults by setting the following in the `conf/services/runtime.cfg` file:
 
 ```
 discovery.sony-simpleip:background=false
@@ -99,23 +127,29 @@ discovery.sony-scalar:background=true
 
 #### Normal Key
 
-A code request will request a code from the device and the device will respond by displaying new code on the screen. Write this number down and then update the binding configuration with this code (FYI - you only have a limited time to do this - usually 30 or 60 seconds before that code expires). Once you update the access code in the configuration, the binding will restart and a success message should appear on the device.
+A code request will request a code from the device and the device will respond by displaying new code on the screen.
+Write this number down and then update the binding configuration with this code (FYI - you only have a limited time to do this - usually 30 or 60 seconds before that code expires).
+Once you update the access code in the configuration, the binding will restart and a success message should appear on the device.
 
 Specifically you should:
 
-1. Update the "accessCode" configuration with the value "RQST". The binding will then reload and send a request to the device.
+1. Update the "accessCode" configuration with the value "RQST".
+The binding will then reload and send a request to the device.
 2. The device will display a new code on the screen (and a countdown to expiration).
-3. Update the "accessCode" configuration with the value shown on the screen. The binding will then reload and ask the device to authorize with that code.
+3. Update the "accessCode" configuration with the value shown on the screen.
+The binding will then reload and ask the device to authorize with that code.
 4. If successful, the device will show a success message and the binding should go online.
 5. If unsuccessful, the code may have expired - start back at step 1.
 
-If the device was auto-discovered, the "RQST" will automatically be entered once you approve the device (then you have 30-60 seconds to enter the code displayed on the screen in the PaperUI `Configuration->Things->the device->configuration->Access Code`). If the code expired before you had a chance, simply double click on the "RQST" and press the OK button - that will force the binding to request a new code (and alternative if that doesn't work is to switch it to "1111" and then back to "RQST").
+If the device was auto-discovered, the "RQST" will automatically be entered once you approve the device (then you have 30-60 seconds to enter the code displayed on the screen in the PaperUI `Configuration->Things->the device->configuration->Access Code`).
+If the code expired before you had a chance, simply double click on the "RQST" and press the OK button - that will force the binding to request a new code (and alternative if that doesn't work is to switch it to "1111" and then back to "RQST").
 
 If you are manually setting up the configuration, saving the file will trigger the above process.
 
 #### Pre Shared Key
 
-A pre-shared key is a key that you have set on the device prior to discovery (generally `Settings->Network Control->IP Control->Pre Shared Key`). If you have set this on the device and then set the appropriate accessCode in the configuration, no additional authentication is required and the binding should be able to connect to the device.
+A pre-shared key is a key that you have set on the device prior to discovery (generally `Settings->Network Control->IP Control->Pre Shared Key`).
+If you have set this on the device and then set the appropriate accessCode in the configuration, no additional authentication is required and the binding should be able to connect to the device.
 
 ## Deactivation
 
@@ -131,7 +165,8 @@ If you have used a preshared key - simply choose a new key (this may affect othe
 
 ### IP Address Configuration
 
-Any service can be setup by using just an IP address (or host name) - example: `192.168.1.104` in the deviceAddress field in configuration. However, doing this will make certain assumptions about the device (ie path to services, port numbers, etc) that may not be correct for your device (should work for about 95% of the devices however).
+Any service can be setup by using just an IP address (or host name) - example: `192.168.1.104` in the deviceAddress field in configuration.
+However, doing this will make certain assumptions about the device (ie path to services, port numbers, etc) that may not be correct for your device (should work for about 95% of the devices however).
 
 If you plan on setting your device up in a .things file, I recommend autodiscoverying it first and copy the URL to your things file.
 
@@ -151,7 +186,8 @@ The following is a list of common configuration options for all services
 
 1. See IP Address Configuration above
 2. Only specify if the device support wake on lan (WOL)
-3. Only specify if the device provides status information. Set to negative to disable (-1).
+3. Only specify if the device provides status information.
+Set to negative to disable (-1).
 
 ### Ignore these configuration options
 
@@ -169,7 +205,8 @@ The following information is for more advanced users...
 
 ### Low power devices (PIs, etc)
 
-This addon will try to only query information for the device to fulfill the information for channels you have linked. However, if you've linked a great deal of channels (causing alot of requests to the device) and are running openHAB on a low power device - the polling time should be adjusted upwards to reduce the load on the PI.
+This addon will try to only query information for the device to fulfill the information for channels you have linked.
+However, if you've linked a great deal of channels (causing alot of requests to the device) and are running openHAB on a low power device - the polling time should be adjusted upwards to reduce the load on the PI.
 
 ### Separating the sony logging into its own file
 

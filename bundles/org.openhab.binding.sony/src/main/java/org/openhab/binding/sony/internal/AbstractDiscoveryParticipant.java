@@ -102,7 +102,6 @@ public abstract class AbstractDiscoveryParticipant {
                 : details.getManufacturerDetails().getManufacturer();
         return details != null
                 && StringUtils.containsIgnoreCase(manufacturer, SonyBindingConstants.SONY_REMOTEDEVICE_ID);
-        // return false;
     }
 
     /**
@@ -278,6 +277,7 @@ public abstract class AbstractDiscoveryParticipant {
 
     /**
      * Helper method to determine if discovery is enabled via a configuration file
+     * 
      * @param componentContext a non-null component context
      */
     private void activateOrModifyService(ComponentContext componentContext) {

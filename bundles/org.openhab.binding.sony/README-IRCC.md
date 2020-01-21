@@ -2,15 +2,20 @@
 
 IRCC (otherwise know as IRCC-IP - InfraRed Compatible Control over Internet Protocol) will allow you to send IR commands to the device over IP.
 
-Many Sony products (TVs, AV systems, disc players) provided an IRCC service that provides minimal control to the device and some minimal feedback (via polling) depending on the version.  From my research, their appears to be 5 versions of this service:
+Many Sony products (TVs, AV systems, disc players) provided an IRCC service that provides minimal control to the device and some minimal feedback (via polling) depending on the version.
+From my research, their appears to be 5 versions of this service:
 
-1) Not Specified - implemented on TVs and provides ONLY a command interface (i.e. sending of commands).  No feedback from the device is possible.  No status is available.
+1) Not Specified - implemented on TVs and provides ONLY a command interface (i.e. sending of commands).
+No feedback from the device is possible.
+No status is available.
 2) 1.0 - ???
 3) 1.1 - ???
 4) 1.2 - ???
-5) 1.3 - implemented on blurays.  Provides a command interface, text field entry and status feedback (including disc information).  The status feedback is provided via polling of the device.
+5) 1.3 - implemented on blurays.
+Provides a command interface, text field entry and status feedback (including disc information).
+The status feedback is provided via polling of the device.
 
-Please note that the IRCC service is fully undocumented and much of the work that has gone into this service is based on observations.  
+Please note that the IRCC service is fully undocumented and much of the work that has gone into this service is based on observations.
 
 If you have a device that is reporting one of the "???" versions above, please post on the forum and I can give you directions on how we can document (and fix any issues) with those versions.
 
@@ -18,16 +23,28 @@ Please note that Sony has begun transitioning many of it's products over the the
 
 ### Power ON notes
 
-The biggest issue with IRCC devices is powering on.  Some devices support wake on lan (WOL) and this binding will attempt to wake the device.  Some devices support an IRCC power on command (rare) and this binding will attempt to use it.  However, some devices won't even send out a discovery packet nor respond to IRCC descriptor requests until the device is on.  If your device falls into that category, the device must be ON to auto-discover it and it must be ON when the binding starts up.  If it's not ON during discovery, the device simply won't be found.  If it's not ON during startup, the binding will remain OFFLINE and attempt to reconnect every few seconds (configuration option).  Likewise if it's turned OFF, the binding will go OFFLINE and will attempt retries until it's turned back on.
+The biggest issue with IRCC devices is powering on.
+Some devices support wake on lan (WOL) and this binding will attempt to wake the device.
+Some devices support an IRCC power on command (rare) and this binding will attempt to use it.
+However, some devices won't even send out a discovery packet nor respond to IRCC descriptor requests until the device is on.
+If your device falls into that category, the device must be ON to auto-discover it and it must be ON when the binding starts up.
+If it's not ON during discovery, the device simply won't be found.
+If it's not ON during startup, the binding will remain OFFLINE and attempt to reconnect every few seconds (configuration option).
+Likewise if it's turned OFF, the binding will go OFFLINE and will attempt retries until it's turned back on.
 
-Please note that if you device supports WOL, the device will be woken when the openHAB comes online since the binding will attempt to read the IRCC descriptor from it.  
+Please note that if you device supports WOL, the device will be woken when the openHAB comes online since the binding will attempt to read the IRCC descriptor from it.
 
 The "power" channel will:
 
-1) ON - attempt to wake the device via WOL (if support) or attempt to send the power ON IRCC command (if support).  If the device supports neither, then the "ON" side of the channel will not work and you'll need to rely on some other means to turn the device on
-2) OFF - will turn the device off via the power IRCC command.  The binding will attempt to use the discrete POWER OFF command first and if not supported, the POWER toggle command will be used instead (assuming the device is on).
+1) ON - attempt to wake the device via WOL (if support) or attempt to send the power ON IRCC command (if support).
+If the device supports neither, then the "ON" side of the channel will not work and you'll need to rely on some other means to turn the device on
+2) OFF - will turn the device off via the power IRCC command.
+The binding will attempt to use the discrete POWER OFF command first and if not supported, the POWER toggle command will be used instead (assuming the device is on).
 
-Please note that the initial/current status of the "power" channel is dependent on the IRCC version.  Version 1.3 will detected and generally be correct.  Version 1.0-1.2 is unknown.  Version "Not Specified" cannot determine the status.
+Please note that the initial/current status of the "power" channel is dependent on the IRCC version.
+Version 1.3 will detected and generally be correct.
+Version 1.0-1.2 is unknown.
+Version "Not Specified" cannot determine the status.
 
 ### Power OFF notes
 
@@ -41,26 +58,30 @@ IRCC can be authenticated via normal keys or preshared keys as documented in the
 
 The configuration for the IRCC thing (in addition to the common parameters)
 
-| Name             | Required | Default | Description                                                                   |
-|------------------| ---------|---------|-------------------------------------------------------------------------------|
-| accessCode       | No       | RQST    | The access code for the device                                                |
-| commandsMapFile  | No (1)   | None    | The commands map file that translates words to the underlying protocol string |
+| Name            | Required | Default | Description                                                                   |
+| --------------- | -------- | ------- | ----------------------------------------------------------------------------- |
+| accessCode      | No       | RQST    | The access code for the device                                                |
+| commandsMapFile | No (1)   | None    | The commands map file that translates words to the underlying protocol string |
 
 1. See transformations below
 
 
 ## Transformations
 
-These services use a commands map file that will convert a word (specified in the command channel) to the underlying command to send to the device.  This file will appear in your openHAB ```conf/transformation``` directory.
+These services use a commands map file that will convert a word (specified in the command channel) to the underlying command to send to the device.
+This file will appear in your openHAB ```conf/transformation``` directory.
 
-When the device is ONLINE, the commandsMapFile configuration property has been set and the resulting file doesn't exist, the binding will write out the commands supported by the device to that file.  If discovery of the commands is not possible, a default set of commands will be written out which may or may not be correct for the device.  I highly recommend having the binding do this rather than creating the file from scratch.
+When the device is ONLINE, the commandsMapFile configuration property has been set and the resulting file doesn't exist, the binding will write out the commands supported by the device to that file.
+If discovery of the commands is not possible, a default set of commands will be written out which may or may not be correct for the device.
+I highly recommend having the binding do this rather than creating the file from scratch.
 
-When the device is auto discovered, the commandsMapFile will be set to "ircc-{thingid}.map"  (example: "ircc-ace2a0229f7a.map").   You may want to change that in the things configuration, post-discovery, to something more reasonable.
+When the device is auto discovered, the commandsMapFile will be set to "ircc-{thingid}.map"  (example: "ircc-ace2a0229f7a.map").
+You may want to change that in the things configuration, post-discovery, to something more reasonable.
 
 The format of the file will be: ```{word}={protocol}:{cmd}```
 
 1. The word can be anything (in any language) and is the value send to the command channel.
-2. The protocol can either be "ircc" for an IRCC command or "url" for a web request command.  
+2. The protocol can either be "ircc" for an IRCC command or "url" for a web request command.
 3. The cmd is a URL Encoded value that will be sent to the device (or used as an HTTP GET if the "url" protocol).
 
 An example from a Sony BluRay player (that was discovered by the binding):
@@ -83,36 +104,36 @@ Please note that you can recreate the .map file by simply deleting it from ```co
 
 The channels supported depend on the version of the IRCC service.
 
-| Channel Group ID | Channel Type ID | Read/Write | Version |Item Type | Description                                             |
-| -----------------|-----------------|------------|---------|----------|---------------------------------------------------------|
-| primary          | power           | R          | any     | Switch   | Whether the device is powered on or not                 |
-| primary          | command         | W          | any     | String   | The IRCC command to execute (see transformations above) |
-| primary          | contenturl      | R          | 1.3     | String   | The URL displayed in the device's browser               |
-| primary          | textfield       | R          | 1.3     | String   | The contents of the text field                          |
-| primary          | intext          | R          | 1.3     | Switch   | Whether a text field has focus                          |
-| primary          | inbrowser       | R          | 1.3     | Switch   | Whether viewing the device's browser or not             |
-| primary          | isviewing       | R          | 1.3     | Switch   | Whether viewing content or not                          |
-| viewing          | id              | R          | 1.3     | String   | The identifier of what is being viewed                  |
-| viewing          | source          | R          | 1.3     | String   | The source being viewed                                 |
-| viewing          | zone2source     | R          | 1.3     | String   | The source being viewed in zone 2                       |
-| viewing          | title           | R          | 1.3     | String   | The title of the source being viewed                    |
-| viewing          | duration        | R          | 1.3     | Number   | The duration (in seconds) of what is being viewed       |
-| content          | id              | R          | 1.3     | String   | The identifier of the content                           |
-| content          | title           | R          | 1.3     | String   | The title of the content                                |
-| content          | class           | R          | 1.3     | String   | The class of the content (video, etc)                   |
-| content          | source          | R          | 1.3     | String   | The source of the content (DVD, etc)                    |
-| content          | mediatype       | R          | 1.3     | String   | The media type of the content (DVD, USB, etc)           |
-| content          | mediasource     | R          | 1.3     | String   | The media format of the content (VIDEO, etc)            |
-| content          | edition         | R          | 1.3     | String   | The edition of the content                              |
-| content          | description     | R          | 1.3     | String   | The description of the content                          |
-| content          | genre           | R          | 1.3     | String   | The genre of the content                                |
-| content          | duration        | R          | 1.3     | Number   | The duration (in seconds) of the content                |
-| content          | rating          | R          | 1.3     | String   | The rating of the content (R, PG, etc)                  |
-| content          | daterelease     | R          | 1.3     | DateTime | The release date of the content                         |
-| content          | director        | R          | 1.3     | String   | The director(s) of the content                          |
-| content          | producer        | R          | 1.3     | String   | The producer(s) of the content                          |
-| content          | screenwriter    | R          | 1.3     | String   | The screen writer(s) of the content                     |
-| content          | image           | R          | 1.3     | Image    | The content image                                       |
+| Channel Group ID | Channel Type ID | Read/Write | Version | Item Type | Description                                             |
+| ---------------- | --------------- | ---------- | ------- | --------- | ------------------------------------------------------- |
+| primary          | power           | R          | any     | Switch    | Whether the device is powered on or not                 |
+| primary          | command         | W          | any     | String    | The IRCC command to execute (see transformations above) |
+| primary          | contenturl      | R          | 1.3     | String    | The URL displayed in the device's browser               |
+| primary          | textfield       | R          | 1.3     | String    | The contents of the text field                          |
+| primary          | intext          | R          | 1.3     | Switch    | Whether a text field has focus                          |
+| primary          | inbrowser       | R          | 1.3     | Switch    | Whether viewing the device's browser or not             |
+| primary          | isviewing       | R          | 1.3     | Switch    | Whether viewing content or not                          |
+| viewing          | id              | R          | 1.3     | String    | The identifier of what is being viewed                  |
+| viewing          | source          | R          | 1.3     | String    | The source being viewed                                 |
+| viewing          | zone2source     | R          | 1.3     | String    | The source being viewed in zone 2                       |
+| viewing          | title           | R          | 1.3     | String    | The title of the source being viewed                    |
+| viewing          | duration        | R          | 1.3     | Number    | The duration (in seconds) of what is being viewed       |
+| content          | id              | R          | 1.3     | String    | The identifier of the content                           |
+| content          | title           | R          | 1.3     | String    | The title of the content                                |
+| content          | class           | R          | 1.3     | String    | The class of the content (video, etc)                   |
+| content          | source          | R          | 1.3     | String    | The source of the content (DVD, etc)                    |
+| content          | mediatype       | R          | 1.3     | String    | The media type of the content (DVD, USB, etc)           |
+| content          | mediasource     | R          | 1.3     | String    | The media format of the content (VIDEO, etc)            |
+| content          | edition         | R          | 1.3     | String    | The edition of the content                              |
+| content          | description     | R          | 1.3     | String    | The description of the content                          |
+| content          | genre           | R          | 1.3     | String    | The genre of the content                                |
+| content          | duration        | R          | 1.3     | Number    | The duration (in seconds) of the content                |
+| content          | rating          | R          | 1.3     | String    | The rating of the content (R, PG, etc)                  |
+| content          | daterelease     | R          | 1.3     | DateTime  | The release date of the content                         |
+| content          | director        | R          | 1.3     | String    | The director(s) of the content                          |
+| content          | producer        | R          | 1.3     | String    | The producer(s) of the content                          |
+| content          | screenwriter    | R          | 1.3     | String    | The screen writer(s) of the content                     |
+| content          | image           | R          | 1.3     | Image     | The content image                                       |
 
 Notes:
 
@@ -122,7 +143,8 @@ Notes:
 4. "viewingXXX" will only be populated (with the exception of "viewingtitle") when "isviewing" is true and is only set when actually viewing a disc (not an app or browser)
 5. "contenttitle" will also represent the browser title when viewing a webpage in the browser
 6. "contentXXX" will be available if a disc is inserted (whether you are viewing it or not).
-7. Setting the "contenturl" will start the browser on the device and set the url to the content.  Please note that the url MUST begin with "http://" or "https://" for this to work. 
+7. Setting the "contenturl" will start the browser on the device and set the url to the content.
+Please note that the url MUST begin with "http://" or "https://" for this to work.
 
 ## Full Examples
 
