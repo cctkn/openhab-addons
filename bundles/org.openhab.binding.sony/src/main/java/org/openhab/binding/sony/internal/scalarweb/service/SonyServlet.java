@@ -99,15 +99,9 @@ public class SonyServlet extends HttpServlet {
 
     @Activate
     public void activate() {
-        final HttpService localHttpService = httpService;
-        if (localHttpService == null) {
-            return;
-        }
         try {
-            localHttpService.registerServlet(SONYAPP_PATH, this, new Hashtable<>(),
-                    localHttpService.createDefaultHttpContext());
-            localHttpService.registerResources(SONY_PATH, "web/sonyapp/dist",
-                    localHttpService.createDefaultHttpContext());
+            httpService.registerServlet(SONYAPP_PATH, this, new Hashtable<>(), httpService.createDefaultHttpContext());
+            httpService.registerResources(SONY_PATH, "web/sonyapp/dist", httpService.createDefaultHttpContext());
             logger.debug("Started Sony Web service at {}", SONY_PATH);
         } catch (ServletException | NamespaceException e) {
             logger.debug("Exception starting status servlet: {}", e.getMessage(), e);

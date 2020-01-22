@@ -102,22 +102,8 @@ public class SonyHandlerFactory extends BaseThingHandlerFactory {
             final TransformationService transformationService = TransformationHelper
                     .getTransformationService(getBundleContext(), "MAP");
 
-            final WebSocketClient localWebSocketClient = webSocketClient;
-            if (localWebSocketClient == null) {
-                throw new IllegalStateException("No websocket client found");
-            }
-
-            final SonyDefinitionProvider localSonyDefinitionProvider = sonyDefinitionProvider;
-            if (localSonyDefinitionProvider == null) {
-                throw new IllegalStateException("No SonyDefinitionProvider found");
-            }
-            final SonyDynamicStateProvider localSonyDynamicStateProvider = sonyDynamicStateProvider;
-            if (localSonyDynamicStateProvider == null) {
-                throw new IllegalStateException("No SonyDynamicStateProvider found");
-            }
-
-            return new ScalarWebHandler(thing, transformationService, localWebSocketClient, localSonyDefinitionProvider,
-                    localSonyDynamicStateProvider);
+            return new ScalarWebHandler(thing, transformationService, webSocketClient, sonyDefinitionProvider,
+                    sonyDynamicStateProvider);
         }
 
         return null;

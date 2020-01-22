@@ -66,6 +66,7 @@ public abstract class AbstractDiscoveryParticipant {
     protected AbstractDiscoveryParticipant(final String service, final SonyDefinitionProvider sonyDefinitionProvider) {
         Validate.notEmpty(service, "service cannot be empty");
         Objects.requireNonNull(sonyDefinitionProvider, "sonyDefinitionProvider cannot be null");
+
         this.service = service;
         this.sonyDefinitionProvider = sonyDefinitionProvider;
     }
@@ -82,11 +83,8 @@ public abstract class AbstractDiscoveryParticipant {
         uids.add(new ThingTypeUID(SonyBindingConstants.BINDING_ID, service));
 
         // Add any specific ones
-        final SonyDefinitionProvider localSonyDefinitionProvider = sonyDefinitionProvider;
-        if (localSonyDefinitionProvider != null) {
-            for (final ThingType tt : localSonyDefinitionProvider.getThingTypes(null)) {
-                uids.add(tt.getUID());
-            }
+        for (final ThingType tt : sonyDefinitionProvider.getThingTypes(null)) {
+            uids.add(tt.getUID());
         }
         return uids;
     }
@@ -235,13 +233,7 @@ public abstract class AbstractDiscoveryParticipant {
             return null;
         }
 
-        final SonyDefinitionProvider provider = sonyDefinitionProvider;
-        if (provider == null) {
-            logger.debug("No definition provider!");
-            return null;
-        }
-
-        for (final ThingType tt : provider.getThingTypes(Locale.getDefault())) {
+        for (final ThingType tt : sonyDefinitionProvider.getThingTypes(Locale.getDefault())) {
             if (SonyUtil.isModelMatch(tt.getUID(), service, modelName)) {
                 logger.debug("Using specific thing type for {}: {}", modelName, tt);
                 return tt.getUID();
