@@ -221,12 +221,12 @@
 		<item-type>String</item-type>
 		<label>App Command</label>
 		<description>The application command</description>
-		<state>
+		<command>
 			<options>
 				<option value="start">Start</option>
 				<option value="stop">Stop</option>
 			</options>
-		</state>
+		</command>
 	</channel-type>
 
 	<channel-type id="scalarappcontrolstatus" advanced="true">
@@ -346,11 +346,11 @@
 		<item-type>String</item-type>
 		<label>Content Command</label>
 		<description>The command for the currently selected content</description>
-		<state>
+		<command>
 			<options>
 				<option value="select">Select</option>
 			</options>
-		</state>
+		</command>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolcontenttitle">
