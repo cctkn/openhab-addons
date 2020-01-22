@@ -84,13 +84,29 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
     private final Map<ChannelUID, StateDescription> stateOverride = new HashMap<>();
 
     /** The thing registry used to lookup things */
-    private @NonNullByDefault({}) ThingRegistry thingRegistry;
+    private final ThingRegistry thingRegistry;
 
     /** The thing registry used to lookup things */
-    private @NonNullByDefault({}) ThingTypeRegistry thingTypeRegistry;
+    private final ThingTypeRegistry thingTypeRegistry;
 
     /** Scheduler used to schedule events */
     private final ScheduledExecutorService scheduler = ThreadPoolManager.getScheduledPool("SonyDefinitionProviderImpl");
+
+    /**
+     * Constructs the sony definition provider implmentation
+     * 
+     * @param thingRegistry a non-null thing registry
+     * @param thingTypeRegistry a non-null thing type registry
+     */
+    @Activate
+    public SonyDefinitionProviderImpl(final @Reference ThingRegistry thingRegistry,
+            final @Reference ThingTypeRegistry thingTypeRegistry) {
+        Objects.requireNonNull(thingRegistry, "thingRegistry cannot be null");
+        Objects.requireNonNull(thingTypeRegistry, "thingTypeRegistry cannot be null");
+
+        this.thingRegistry = thingRegistry;
+        this.thingTypeRegistry = thingTypeRegistry;
+    }
 
     @Override
     public @Nullable ChannelGroupType getChannelGroupType(final ChannelGroupTypeUID channelGroupTypeUID,
@@ -354,24 +370,6 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
             src.close();
         }
         sources.clear();
-    }
-
-    @Reference
-    public void setThingRegistry(final ThingRegistry thingRegistry) {
-        this.thingRegistry = thingRegistry;
-    }
-
-    public void unsetThingRegistry(final ThingRegistry thingRegistry) {
-        this.thingRegistry = null;
-    }
-
-    @Reference
-    public void setThingTypeRegistry(final ThingTypeRegistry thingTypeRegistry) {
-        this.thingTypeRegistry = thingTypeRegistry;
-    }
-
-    public void unsetThingTypeRegistry(final ThingTypeRegistry thingTypeRegistry) {
-        this.thingTypeRegistry = null;
     }
 
     @Override

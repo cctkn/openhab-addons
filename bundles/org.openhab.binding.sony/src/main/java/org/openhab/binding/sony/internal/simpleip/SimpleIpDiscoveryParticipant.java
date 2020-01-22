@@ -35,6 +35,7 @@ import org.openhab.binding.sony.internal.UidUtils;
 import org.openhab.binding.sony.internal.net.NetUtil;
 import org.openhab.binding.sony.internal.net.SocketSessionListener;
 import org.openhab.binding.sony.internal.providers.SonyDefinitionProvider;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -49,9 +50,12 @@ import org.osgi.service.component.annotations.Reference;
 public class SimpleIpDiscoveryParticipant extends AbstractDiscoveryParticipant implements UpnpDiscoveryParticipant {
     /**
      * Constructs the participant
+     * 
+     * @param sonyDefinitionProvider a non-null sony definition provider
      */
-    public SimpleIpDiscoveryParticipant() {
-        super(SonyBindingConstants.SIMPLEIP_THING_TYPE_PREFIX);
+    @Activate
+    public SimpleIpDiscoveryParticipant(final @Reference SonyDefinitionProvider sonyDefinitionProvider) {
+        super(SonyBindingConstants.SIMPLEIP_THING_TYPE_PREFIX, sonyDefinitionProvider);
     }
 
     @Override
@@ -152,15 +156,5 @@ public class SimpleIpDiscoveryParticipant extends AbstractDiscoveryParticipant i
             }
         }
         return null;
-    }
-
-    @Reference
-    public void setSonyDefinitionProvider(final SonyDefinitionProvider sonyDefinitionProvider) {
-        Objects.requireNonNull(sonyDefinitionProvider, "sonyDefinitionProvider cannot be null");
-        this.sonyDefinitionProvider = sonyDefinitionProvider;
-    }
-
-    public void unsetSonyDefinitionProvider(final SonyDefinitionProvider sonyDefinitionProvider) {
-        this.sonyDefinitionProvider = null;
     }
 }

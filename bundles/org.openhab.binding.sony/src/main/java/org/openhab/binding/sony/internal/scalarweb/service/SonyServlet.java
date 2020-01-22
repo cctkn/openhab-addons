@@ -71,10 +71,10 @@ public class SonyServlet extends HttpServlet {
     private static final String SONYAPP_PATH = "/sony/app";
 
     /** The http service */
-    private @NonNullByDefault({}) HttpService httpService;
+    private final HttpService httpService;
 
     /** The websocket client to use */
-    private @NonNullByDefault({}) WebSocketClient webSocketClient;
+    private final WebSocketClient webSocketClient;
 
     /** The GSON to use for serialization */
     private final Gson gson = GsonUtilities.getApiGson();
@@ -82,23 +82,19 @@ public class SonyServlet extends HttpServlet {
     /** The scheduler to use to schedule tasks */
     private final ScheduledExecutorService scheduler = ThreadPoolManager.getScheduledPool("sony");
 
-    @Reference
-    protected void setWebSocketFactory(final WebSocketFactory webSocketFactory) {
-        this.webSocketClient = webSocketFactory.getCommonWebSocketClient();
-    }
-
-    protected void unsetWebSocketFactory(final WebSocketFactory webSocketFactory) {
-        this.webSocketClient = null;
-    }
-
-    @Reference
-    public void setHttpService(final HttpService httpService) {
+    /**
+     * Constructs the sony servlet
+     * 
+     * @param webSocketFactory a non-null websocket factory
+     * @param httpService a non-null http service
+     */
+    @Activate
+    public SonyServlet(final @Reference WebSocketFactory webSocketFactory, final @Reference HttpService httpService) {
+        Objects.requireNonNull(webSocketFactory, "webSocketFactory cannot be null");
         Objects.requireNonNull(httpService, "httpService cannot be null");
-        this.httpService = httpService;
-    }
 
-    public void unsetHttpService(final HttpService httpService) {
-        this.httpService = null;
+        this.webSocketClient = webSocketFactory.getCommonWebSocketClient();
+        this.httpService = httpService;
     }
 
     @Activate

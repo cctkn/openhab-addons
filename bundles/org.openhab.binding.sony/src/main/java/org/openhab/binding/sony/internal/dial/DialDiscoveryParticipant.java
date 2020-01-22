@@ -35,6 +35,7 @@ import org.openhab.binding.sony.internal.UidUtils;
 import org.openhab.binding.sony.internal.dial.models.DialClient;
 import org.openhab.binding.sony.internal.net.NetUtil;
 import org.openhab.binding.sony.internal.providers.SonyDefinitionProvider;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -48,9 +49,12 @@ import org.osgi.service.component.annotations.Reference;
 public class DialDiscoveryParticipant extends AbstractDiscoveryParticipant implements UpnpDiscoveryParticipant {
     /**
      * Creates the discovery participant
+     * 
+     * @param sonyDefinitionProvider a non-null sony definition provider
      */
-    public DialDiscoveryParticipant() {
-        super(SonyBindingConstants.DIAL_THING_TYPE_PREFIX);
+    @Activate
+    public DialDiscoveryParticipant(final @Reference SonyDefinitionProvider sonyDefinitionProvider) {
+        super(SonyBindingConstants.DIAL_THING_TYPE_PREFIX, sonyDefinitionProvider);
     }
 
     @Override
@@ -139,15 +143,5 @@ public class DialDiscoveryParticipant extends AbstractDiscoveryParticipant imple
             }
         }
         return null;
-    }
-
-    @Reference
-    public void setSonyDefinitionProvider(final SonyDefinitionProvider sonyDefinitionProvider) {
-        Objects.requireNonNull(sonyDefinitionProvider, "sonyDefinitionProvider cannot be null");
-        this.sonyDefinitionProvider = sonyDefinitionProvider;
-    }
-
-    public void unsetSonyDefinitionProvider(final SonyDefinitionProvider sonyDefinitionProvider) {
-        this.sonyDefinitionProvider = null;
     }
 }

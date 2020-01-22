@@ -48,11 +48,11 @@ public abstract class AbstractDiscoveryParticipant {
     /** The logger */
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** The sony definition provider - must be SET by super classes since it's an OSGI service */
-    protected @NonNullByDefault({}) SonyDefinitionProvider sonyDefinitionProvider;
-
     /** The service this discovery participant is for */
     private final String service;
+
+    /** The sony definition provider */
+    private final SonyDefinitionProvider sonyDefinitionProvider;
 
     /** Whether discovery is enabled */
     private final AtomicBoolean discoveryEnabled = new AtomicBoolean();
@@ -61,10 +61,13 @@ public abstract class AbstractDiscoveryParticipant {
      * Construct the participant from the given service
      *
      * @param service a non-null, non-empty service
+     * @param sonyDefinitionProvider a non-null sony definition provider
      */
-    protected AbstractDiscoveryParticipant(final String service) {
+    protected AbstractDiscoveryParticipant(final String service, final SonyDefinitionProvider sonyDefinitionProvider) {
         Validate.notEmpty(service, "service cannot be empty");
+        Objects.requireNonNull(sonyDefinitionProvider, "sonyDefinitionProvider cannot be null");
         this.service = service;
+        this.sonyDefinitionProvider = sonyDefinitionProvider;
     }
 
     /**
@@ -266,12 +269,12 @@ public abstract class AbstractDiscoveryParticipant {
     protected abstract boolean getDiscoveryEnableDefault();
 
     @Activate
-    protected void activate(ComponentContext componentContext) {
+    protected void activate(final ComponentContext componentContext) {
         activateOrModifyService(componentContext);
     }
 
     @Modified
-    protected void modified(ComponentContext componentContext) {
+    protected void modified(final ComponentContext componentContext) {
         activateOrModifyService(componentContext);
     }
 
@@ -280,7 +283,7 @@ public abstract class AbstractDiscoveryParticipant {
      * 
      * @param componentContext a non-null component context
      */
-    private void activateOrModifyService(ComponentContext componentContext) {
+    private void activateOrModifyService(final ComponentContext componentContext) {
         Objects.requireNonNull(componentContext, "componentContext cannot be null");
 
         final Dictionary<String, @Nullable Object> properties = componentContext.getProperties();

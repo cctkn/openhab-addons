@@ -35,6 +35,7 @@ import org.openhab.binding.sony.internal.providers.SonyDynamicStateProvider;
 import org.openhab.binding.sony.internal.scalarweb.ScalarWebHandler;
 import org.openhab.binding.sony.internal.simpleip.SimpleIpConstants;
 import org.openhab.binding.sony.internal.simpleip.SimpleIpHandler;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -47,13 +48,33 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, service = ThingHandlerFactory.class)
 public class SonyHandlerFactory extends BaseThingHandlerFactory {
     /** websocket client used for scalar operations */
-    private @NonNullByDefault({}) WebSocketClient webSocketClient;
+    private final WebSocketClient webSocketClient;
 
     /** The sony thing type provider */
-    private @NonNullByDefault({}) SonyDefinitionProvider sonyDefinitionProvider;
+    private final SonyDefinitionProvider sonyDefinitionProvider;
 
     /** The sony thing type provider */
-    private @NonNullByDefault({}) SonyDynamicStateProvider sonyDynamicStateProvider;
+    private final SonyDynamicStateProvider sonyDynamicStateProvider;
+
+    /**
+     * Constructs the handler factory
+     * 
+     * @param webSocketFactory a non-null websocket factory
+     * @param sonyDefinitionProvider a non-null sony definition provider
+     * @param sonyDynamicStateProvider a non-null sony dynamic state provider
+     */
+    @Activate
+    public SonyHandlerFactory(final @Reference WebSocketFactory webSocketFactory,
+            final @Reference SonyDefinitionProvider sonyDefinitionProvider,
+            final @Reference SonyDynamicStateProvider sonyDynamicStateProvider) {
+        Objects.requireNonNull(webSocketFactory, "webSocketFactory cannot be null");
+        Objects.requireNonNull(sonyDefinitionProvider, "sonyDefinitionProvider cannot be null");
+        Objects.requireNonNull(sonyDynamicStateProvider, "sonyDynamicStateProvider cannot be null");
+
+        this.webSocketClient = webSocketFactory.getCommonWebSocketClient();
+        this.sonyDefinitionProvider = sonyDefinitionProvider;
+        this.sonyDynamicStateProvider = sonyDynamicStateProvider;
+    }
 
     @Override
     public boolean supportsThingType(final ThingTypeUID thingTypeUID) {
@@ -100,32 +121,5 @@ public class SonyHandlerFactory extends BaseThingHandlerFactory {
         }
 
         return null;
-    }
-
-    @Reference
-    protected void setWebSocketFactory(final WebSocketFactory webSocketFactory) {
-        this.webSocketClient = webSocketFactory.getCommonWebSocketClient();
-    }
-
-    protected void unsetWebSocketFactory(final WebSocketFactory webSocketFactory) {
-        this.webSocketClient = null;
-    }
-
-    @Reference
-    protected void setSonyDefinitionProvider(final SonyDefinitionProvider sonyDefinitionProvider) {
-        this.sonyDefinitionProvider = sonyDefinitionProvider;
-    }
-
-    protected void unsetSonyDefinitionProvider(final SonyDefinitionProvider sonyDefinitionProvider) {
-        this.sonyDefinitionProvider = null;
-    }
-
-    @Reference
-    protected void setSonyDynamicStateProvider(final SonyDynamicStateProvider sonyDynamicStateProvider) {
-        this.sonyDynamicStateProvider = sonyDynamicStateProvider;
-    }
-
-    protected void unsetSonyDynamicStateProvider(final SonyDynamicStateProvider sonyDynamicStateProvider) {
-        this.sonyDynamicStateProvider = null;
     }
 }

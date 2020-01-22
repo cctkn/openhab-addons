@@ -35,6 +35,7 @@ import org.openhab.binding.sony.internal.AbstractDiscoveryParticipant;
 import org.openhab.binding.sony.internal.SonyBindingConstants;
 import org.openhab.binding.sony.internal.UidUtils;
 import org.openhab.binding.sony.internal.providers.SonyDefinitionProvider;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -51,16 +52,19 @@ public class ScalarWebDiscoveryParticipant extends AbstractDiscoveryParticipant 
 
     /**
      * Constructs the participant
+     * 
+     * @param sonyDefinitionProvider a non-null sony definition provider
      */
-    public ScalarWebDiscoveryParticipant() {
-        super(SonyBindingConstants.SCALAR_THING_TYPE_PREFIX);
+    @Activate
+    public ScalarWebDiscoveryParticipant(final @Reference SonyDefinitionProvider sonyDefinitionProvider) {
+        super(SonyBindingConstants.SCALAR_THING_TYPE_PREFIX, sonyDefinitionProvider);
     }
 
     @Override
     protected boolean getDiscoveryEnableDefault() {
         return true;
     }
-    
+
     @Override
     public @Nullable DiscoveryResult createResult(final RemoteDevice device) {
         Objects.requireNonNull(device, "device cannot be null");
@@ -234,15 +238,5 @@ public class ScalarWebDiscoveryParticipant extends AbstractDiscoveryParticipant 
         final UDN udn = device.getIdentity().getUdn();
         final ThingTypeUID modelUID = getThingTypeUID(modelName);
         return UidUtils.createThingUID(modelUID == null ? ScalarWebConstants.THING_TYPE_SCALAR : modelUID, udn);
-    }
-
-    @Reference
-    public void setSonyDefinitionProvider(final SonyDefinitionProvider sonyDefinitionProvider) {
-        Objects.requireNonNull(sonyDefinitionProvider, "sonyDefinitionProvider cannot be null");
-        this.sonyDefinitionProvider = sonyDefinitionProvider;
-    }
-
-    public void unsetSonyDefinitionProvider(final SonyDefinitionProvider sonyDefinitionProvider) {
-        this.sonyDefinitionProvider = null;
     }
 }
