@@ -144,7 +144,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
      * @param callback a non-null {@link ThingCallback} to callback
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    SimpleIpProtocol(final SimpleIpConfig config, @Nullable final TransformationService transformService,
+    SimpleIpProtocol(final SimpleIpConfig config, final @Nullable TransformationService transformService,
             final ThingCallback<String> callback) throws IOException {
         Objects.requireNonNull(config, "config cannot be null");
         Objects.requireNonNull(callback, "callback cannot be null");
@@ -650,7 +650,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
      * @param response the non-null, possibly empty response
      * @param command the possibly null, possibly empty command that triggered this response
      */
-    private void handleResponse(final Matcher m, final String response, @Nullable final String command) {
+    private void handleResponse(final Matcher m, final String response, final @Nullable String command) {
         Objects.requireNonNull(m, "m cannot be null");
         Objects.requireNonNull(response, "response cannot be null");
 

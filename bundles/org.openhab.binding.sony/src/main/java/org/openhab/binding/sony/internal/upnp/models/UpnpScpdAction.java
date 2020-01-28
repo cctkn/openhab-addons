@@ -12,7 +12,6 @@
  */
 package org.openhab.binding.sony.internal.upnp.models;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class UpnpScpdAction {
     public List<UpnpScpdArgument> getArguments() {
         final UpnpScpdArgumentList localArgumentList = argumentList;
         final List<UpnpScpdArgument> arguments = localArgumentList == null ? null : localArgumentList.arguments;
-        return Collections.unmodifiableList(arguments == null ? new ArrayList<>() : arguments);
+        return arguments == null ? Collections.emptyList() : Collections.unmodifiableList(arguments);
     }
 
     /**

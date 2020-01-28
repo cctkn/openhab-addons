@@ -43,7 +43,7 @@ public class TextFormRequest_1_1 {
      * @param encKey the non-null, non-empty encryption key
      * @param text the possibly null, possibly empty text
      */
-    public TextFormRequest_1_1(final String encKey, @Nullable final String text) {
+    public TextFormRequest_1_1(final String encKey, final @Nullable String text) {
         Validate.notEmpty(encKey, "encKey cannot be empty");
         this.encKey = encKey;
         this.text = text;

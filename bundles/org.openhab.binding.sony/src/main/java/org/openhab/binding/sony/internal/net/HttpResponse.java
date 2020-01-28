@@ -108,7 +108,7 @@ public class HttpResponse {
      * @param httpCode the http code
      * @param msg the possibly null, possibly empty msg
      */
-    public HttpResponse(final int httpCode, @Nullable final String msg) {
+    public HttpResponse(final int httpCode, final @Nullable String msg) {
         httpStatus = httpCode;
         httpReason = msg;
         contents = null;

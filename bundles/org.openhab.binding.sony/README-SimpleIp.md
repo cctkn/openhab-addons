@@ -10,10 +10,10 @@ Simple IP needs no additional authentication and should automatically come onlin
 
 The configuration for the Simple IP Service Thing:
 
-| Name             | Required | Default | Description                                                                   |
-|------------------| ---------|---------|-------------------------------------------------------------------------------|
-| commandsMapFile  | No (1)   | None    | The commands map file that translates words to the underlying protocol string |
-| netInterface     | No (2)   | eth0    | The network interface the is using (eth0 for wired, wlan0 for wireless).      |
+| Name            | Required | Default | Description                                                                   |
+| --------------- | -------- | ------- | ----------------------------------------------------------------------------- |
+| commandsMapFile | No (1)   | None    | The commands map file that translates words to the underlying protocol string |
+| netInterface    | No (2)   | eth0    | The network interface the is using (eth0 for wired, wlan0 for wireless).      |
 
 1. See transformations below
 2. The netInterface is ONLY required if you wish to retrieve the broadcast address or mac address 
@@ -51,21 +51,21 @@ Please note that you can recreate the .map file by simply deleting it from ```co
 
 All devices support the following channels (non exhaustive):
 
-| Channel Type ID   | Read/Write | Item Type    | Description                                                     |
-|-------------------|------------|--------------|-----------------------------------------------------------------|
-| ir                | W          | String       | The ir codes to send (see transformations above)                |
-| power             | R          | Switch       | Whether device is powered on                                    |
-| volume            | R          | Dimmer       | The volume for the device                                       |
-| audiomute         | R          | Switch       | Whether the audio is muted                                      |
-| channel           | R          | String       | The channel in the form of "x.x" ("50.1") or "x" ("13")         |
-| tripletchannel    | R          | String       | The triplet channel in the form of "x.x.x" ("32736.32736.1024") |
-| inputsource       | R          | String       | The input source ("antenna"). See note 1 below                  |
-| input             | R          | String       | The input in the form of "xxxxyyyy" ("HDMI1"). See note 2 below |
-| picturemute       | R          | Switch       | Whether the picture is shown or not (muted)                     |
-| togglepicturemute | W          | Switch       | Toggles the picture mute                                        |
-| pip               | R          | Switch       | Enables or disabled picture-in-picture                          |
-| togglepip         | W          | Switch       | Toggles the picture-in-picture enabling                         |
-| togglepipposition | W          | Switch       | Toggles the picture-in-picture position                         |
+| Channel Type ID   | Read/Write | Item Type | Description                                                     |
+| ----------------- | ---------- | --------- | --------------------------------------------------------------- |
+| ir                | W          | String    | The ir codes to send (see transformations above)                |
+| power             | R          | Switch    | Whether device is powered on                                    |
+| volume            | R          | Dimmer    | The volume for the device                                       |
+| audiomute         | R          | Switch    | Whether the audio is muted                                      |
+| channel           | R          | String    | The channel in the form of "x.x" ("50.1") or "x" ("13")         |
+| tripletchannel    | R          | String    | The triplet channel in the form of "x.x.x" ("32736.32736.1024") |
+| inputsource       | R          | String    | The input source ("antenna"). See note 1 below                  |
+| input             | R          | String    | The input in the form of "xxxxyyyy" ("HDMI1"). See note 2 below |
+| picturemute       | R          | Switch    | Whether the picture is shown or not (muted)                     |
+| togglepicturemute | W          | Switch    | Toggles the picture mute                                        |
+| pip               | R          | Switch    | Enables or disabled picture-in-picture                          |
+| togglepip         | W          | Switch    | Toggles the picture-in-picture enabling                         |
+| togglepipposition | W          | Switch    | Toggles the picture-in-picture position                         |
 
 1.  The text of the input source is specific to the TV.  The documentation lists as valid dvbt, dvbc, dvbs, isdbt, isdbbs, isdbcs, antenna, cable, isdbgt.  However, "atsct" seems to be supported as well and others may be valid. 
 2.  The input can be either "TV" or "xxxxyyyy" where xxxx is the port name and yyyy is the port number.  Valid port names (case insensitive) are "hdmi", "scart", "composite", "component", "screen mirroring", and "pc rgb input".  The port number is dependent on how many ports the device supports.  Example: the X830 supports 4 hdmi ports - so "hdmi1", "hdmi2", "hdmi3" and "hdmi4" are all valid.
@@ -94,8 +94,6 @@ Switch Bravia_TogglePictureMute "Toggle Picture Mute [%s]" { channel="sony:simpl
 Switch Bravia_Pip "PIP [%s]" { channel="sony:simpleip:home:pip" }
 Switch Bravia_TogglePip "Toggle PIP [%s]" { channel="sony:simpleip:home:togglepip", autoupdate="false" }
 Switch Bravia_TogglePipPosition "Toggle PIP Position [%s]" { channel="sony:simpleip:home:togglepipposition", autoupdate="false" }
-String Bravia_BroadcastAddress "Broadcast [%s]" { channel="sony:simpleip:home:broadcastaddress" }
-String Bravia_MacAddress "MAC [%s]" { channel="sony:simpleip:home:macaddress" }
 ```
 
 simpleip.sitemap:

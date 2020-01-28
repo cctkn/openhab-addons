@@ -329,6 +329,9 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
     /** Maximum amount of content to pull in one request */
     private static final int MAX_CT = 150;
 
+    /** The notifications that are enabled */
+    private final NotificationHelper notificationHelper;
+
     /**
      * Function interface to process a content list result
      */
@@ -353,17 +356,18 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
     ScalarWebAvContentProtocol(final ScalarWebProtocolFactory<T> factory, final ScalarWebContext context,
             final ScalarWebService service, final T callback) {
         super(factory, context, service, callback);
-        enableNotifications(ScalarWebEvent.NOTIFYPLAYINGCONTENTINFO, ScalarWebEvent.NOTIFYEXTERNALTERMINALSTATUS);
+        notificationHelper = new NotificationHelper(enableNotifications(ScalarWebEvent.NOTIFYPLAYINGCONTENTINFO,
+                /** ScalarWebEvent.NOTIFYAVAILABLEPLAYBACKFUNCTION, */
+                ScalarWebEvent.NOTIFYEXTERNALTERMINALSTATUS));
     }
 
     @Override
     public Collection<ScalarWebChannelDescriptor> getChannelDescriptors(final boolean dynamicOnly) {
-        final ChannelIdCache cache = new ChannelIdCache();
         final List<ScalarWebChannelDescriptor> descriptors = new ArrayList<ScalarWebChannelDescriptor>();
 
         // Add the predefined channels (dynamic)
         if (service.hasMethod(ScalarWebMethod.GETCONTENTLIST)) {
-            addPresetChannelDescriptors(descriptors, cache);
+            addPresetChannelDescriptors(descriptors);
         }
 
         if (!dynamicOnly) {
@@ -380,10 +384,10 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             }
 
             // don't check has here since we create a dummy terminal for single output devices
-            addTerminalStatusDescriptors(descriptors, cache);
+            addTerminalStatusDescriptors(descriptors);
 
             if (service.hasMethod(ScalarWebMethod.GETCURRENTEXTERNALINPUTSSTATUS)) {
-                addInputStatusDescriptors(descriptors, cache);
+                addInputStatusDescriptors(descriptors);
             }
 
             if (service.hasMethod(ScalarWebMethod.GETPARENTALRATINGSETTINGS)) {
@@ -392,14 +396,18 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
             // Note: must come AFTER terminal descriptors since we use the IDs generated from it
             if (service.hasMethod(ScalarWebMethod.GETPLAYINGCONTENTINFO)) {
-                addPlayingContentDescriptors(descriptors, cache);
+                addPlayingContentDescriptors(descriptors);
             }
 
-            addGeneralSettingsDescriptor(descriptors, cache, ScalarWebMethod.GETBLUETOOTHSETTINGS, BLUETOOTHSETTINGS,
-                    "Bluetooth Setting");
+            if (service.hasMethod(ScalarWebMethod.GETBLUETOOTHSETTINGS)) {
+                addGeneralSettingsDescriptor(descriptors, ScalarWebMethod.GETBLUETOOTHSETTINGS, BLUETOOTHSETTINGS,
+                        "Bluetooth Setting");
+            }
 
-            addGeneralSettingsDescriptor(descriptors, cache, ScalarWebMethod.GETPLAYBACKMODESETTINGS, PLAYBACKSETTINGS,
-                    "Playback Setting");
+            if (service.hasMethod(ScalarWebMethod.GETPLAYBACKMODESETTINGS)) {
+                addGeneralSettingsDescriptor(descriptors, ScalarWebMethod.GETPLAYBACKMODESETTINGS, PLAYBACKSETTINGS,
+                        "Playback Setting");
+            }
         }
 
         // update the terminal sources
@@ -798,23 +806,23 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         Validate.notEmpty(apiVersion, "apiVersion cannot be empty");
 
         descriptors.add(createDescriptor(createChannel(IN_URI, id, uri), "String", "scalarwebavcontrolinpstatusuri",
-                "Input " + title + " URI", uri));
+                "Input " + title + " URI", null));
 
         descriptors.add(createDescriptor(createChannel(IN_TITLE, id, uri), "String", "scalarwebavcontrolinpstatustitle",
-                "Input " + title + " Title", uri));
+                "Input " + title + " Title", null));
 
         descriptors.add(createDescriptor(createChannel(IN_CONNECTION, id, uri), "Switch",
                 "scalarwebavcontrolinpstatusconnection", "Input " + title + " Connected", uri));
 
         descriptors.add(createDescriptor(createChannel(IN_LABEL, id, uri), "String", "scalarwebavcontrolinpstatuslabel",
-                "Input " + title + " Label", uri));
+                "Input " + title + " Label", null));
 
         descriptors.add(createDescriptor(createChannel(IN_ICON, id, uri), "String", "scalarwebavcontrolinpstatusicon",
-                "Input " + title + " Icon", uri));
+                "Input " + title + " Icon", null));
 
         if (StringUtils.equalsIgnoreCase(apiVersion, ScalarWebMethod.V1_1)) {
             descriptors.add(createDescriptor(createChannel(IN_STATUS, id, uri), "String",
-                    "scalarwebavcontrolinpstatusstatus", "Input " + title + " Status", uri));
+                    "scalarwebavcontrolinpstatusstatus", "Input " + title + " Status", null));
         }
     }
 
@@ -822,12 +830,9 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * Adds all input status descriptors
      * 
      * @param descriptors a non-null, possibly empty list of descriptors
-     * @param cache a non-null channel cache
      */
-    private void addInputStatusDescriptors(final List<ScalarWebChannelDescriptor> descriptors,
-            final ChannelIdCache cache) {
+    private void addInputStatusDescriptors(final List<ScalarWebChannelDescriptor> descriptors) {
         Objects.requireNonNull(descriptors, "descriptors cannot be null");
-        Objects.requireNonNull(cache, "cache cannot be null");
 
         try {
             final ScalarWebResult result = getInputStatus();
@@ -841,7 +846,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                         continue;
                     }
 
-                    final String id = createChannelId(cache, uri, true);
+                    final String id = createChannelId(uri, true);
                     addInputStatusDescriptor(descriptors, id, uri, status.getTitle(MAINTITLE), ScalarWebMethod.V1_0);
                 }
             } else if (VersionUtilities.equals(version, ScalarWebMethod.V1_1)) {
@@ -853,7 +858,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                         continue;
                     }
 
-                    final String id = createChannelId(cache, uri, true);
+                    final String id = createChannelId(uri, true);
                     addInputStatusDescriptor(descriptors, id, uri, status.getTitle(MAINTITLE), ScalarWebMethod.V1_1);
                 }
             }
@@ -899,12 +904,9 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * Adds the playing content descriptors
      * 
      * @param descriptors a non-null, possibly empty list of descriptors
-     * @param cache a non-null channel cache
      */
-    private void addPlayingContentDescriptors(final List<ScalarWebChannelDescriptor> descriptors,
-            final ChannelIdCache cache) {
+    private void addPlayingContentDescriptors(final List<ScalarWebChannelDescriptor> descriptors) {
         Objects.requireNonNull(descriptors, "descriptors cannot be null");
-        Objects.requireNonNull(cache, "cache cannot be null");
 
         final Map<String, String> outputs = getTerminalOutputs(getTerminalStatuses());
 
@@ -1056,12 +1058,10 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * Adds the terminal status descriptors
      * 
      * @param descriptors a non-null, possibly empty list of descriptors
-     * @param cache a non-null channel cache
      */
-    private void addTerminalStatusDescriptors(final List<ScalarWebChannelDescriptor> descriptors,
-            final ChannelIdCache cache) {
+    private void addTerminalStatusDescriptors(final List<ScalarWebChannelDescriptor> descriptors) {
         Objects.requireNonNull(descriptors, "descriptors cannot be null");
-        Objects.requireNonNull(cache, "cache cannot be null");
+
         for (final CurrentExternalTerminalsStatus_1_0 term : getTerminalStatuses()) {
             final String uri = term.getUri();
             if (uri == null) {
@@ -1070,7 +1070,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             }
 
             final String title = term.getTitle(MAINTITLE);
-            final String id = createChannelId(cache, uri, false);
+            final String id = createChannelId(uri, false);
 
             if (term.isOutput()) {
                 descriptors.add(createDescriptor(createChannel(TERM_SOURCE, id, uri), "String",
@@ -1105,18 +1105,15 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * Adds the preset channel descriptors
      * 
      * @param descriptors a non-null, possibly empty list of descriptors
-     * @param cache a non-null channel cache
      */
-    private void addPresetChannelDescriptors(final List<ScalarWebChannelDescriptor> descriptors,
-            final ChannelIdCache cache) {
+    private void addPresetChannelDescriptors(final List<ScalarWebChannelDescriptor> descriptors) {
         Objects.requireNonNull(descriptors, "descriptors cannot be null");
-        Objects.requireNonNull(cache, "cache cannot be null");
 
         for (final Scheme scheme : getSchemes()) {
             if (StringUtils.equalsIgnoreCase(Scheme.TV, scheme.getScheme())
                     || StringUtils.equalsIgnoreCase(Scheme.RADIO, scheme.getScheme())) {
                 for (final Source src : getSources(scheme)) {
-                    addPresetChannelDescriptor(descriptors, cache, src);
+                    addPresetChannelDescriptor(descriptors, src);
                 }
             }
         }
@@ -1126,13 +1123,10 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * Adds the preset channel descriptors for a specific source
      * 
      * @param descriptors a non-null, possibly empty list of descriptors
-     * @param cache a non-null channel cache
      * @param src a non-null source
      */
-    private void addPresetChannelDescriptor(final List<ScalarWebChannelDescriptor> descriptors,
-            final ChannelIdCache cache, final Source src) {
+    private void addPresetChannelDescriptor(final List<ScalarWebChannelDescriptor> descriptors, final Source src) {
         Objects.requireNonNull(descriptors, "descriptors cannot be null");
-        Objects.requireNonNull(cache, "cache cannot be null");
         Objects.requireNonNull(src, "src cannot be null");
 
         final String source = src.getSource();
@@ -1170,6 +1164,10 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                     notifyPlayingContentInfo(res, getIdForOutput(output));
                 }
 
+                break;
+
+            case ScalarWebEvent.NOTIFYAVAILABLEPLAYBACKFUNCTION:
+                // TODO
                 break;
 
             case ScalarWebEvent.NOTIFYEXTERNALTERMINALSTATUS:
@@ -1456,8 +1454,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                     final StateDescription sd = StateDescriptionFragmentBuilder.create().withOptions(options).build()
                             .toStateDescription();
                     if (sd != null) {
-                        getContext().getStateProvider().addStateOverride(getContext().getThingUID(),
-                                getContext().getMapper().getMappedChannelId(cnl.getChannelId()), sd);
+                        getContext().getStateProvider().addStateOverride(getContext().getThingUID(), cnl.getChannelId(),
+                                sd);
                     }
                 }
             }
@@ -2186,17 +2184,15 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         } else if (StringUtils.startsWith(ctgy, PLAYING)) {
             refreshPlayingContentInfo();
         } else if (StringUtils.startsWith(ctgy, INPUT)) {
-            refreshCurrentExternalInputStatus(Collections.singletonList(channel));
+            refreshCurrentExternalInputStatus(Collections.singleton(channel));
         } else if (StringUtils.startsWith(ctgy, TERM)) {
             notifyCurrentTerminalStatus(channel);
         } else if (StringUtils.startsWith(ctgy, CONTENT)) {
             refreshContent();
         } else if (StringUtils.equalsIgnoreCase(ctgy, BLUETOOTHSETTINGS)) {
-            refreshGeneralSettings(Collections.singletonList(channel), ScalarWebMethod.GETBLUETOOTHSETTINGS,
-                    BLUETOOTHSETTINGS);
+            refreshGeneralSettings(Collections.singleton(channel), ScalarWebMethod.GETBLUETOOTHSETTINGS);
         } else if (StringUtils.equalsIgnoreCase(ctgy, PLAYBACKSETTINGS)) {
-            refreshGeneralSettings(Collections.singletonList(channel), ScalarWebMethod.GETPLAYBACKMODESETTINGS,
-                    PLAYBACKSETTINGS);
+            refreshGeneralSettings(Collections.singleton(channel), ScalarWebMethod.GETPLAYBACKMODESETTINGS);
         } else if (StringUtils.equalsIgnoreCase(ctgy, PS_CHANNEL)) {
             refreshPresetChannelStateDescription(Collections.singletonList(channel));
         } else {
@@ -2300,9 +2296,9 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
     /**
      * Refresh current external input status for a set of channels
      *
-     * @param channels a non-null, possibly empty list of channels
+     * @param channels a non-null, possibly empty set of channels
      */
-    private void refreshCurrentExternalInputStatus(final List<ScalarWebChannel> channels) {
+    private void refreshCurrentExternalInputStatus(final Set<ScalarWebChannel> channels) {
         Objects.requireNonNull(channels, "channels cannot be null");
         if (getService().hasMethod(ScalarWebMethod.GETCURRENTEXTERNALINPUTSSTATUS)) {
             try {
@@ -2418,14 +2414,18 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             refreshParentalRating();
         }
 
-        if (tracker.isCategoryLinked(ctgy -> StringUtils.startsWith(ctgy, PLAYING))) {
-            refreshPlayingContentInfo();
+        if (!notificationHelper.isEnabled(ScalarWebEvent.NOTIFYPLAYINGCONTENTINFO)) {
+            if (tracker.isCategoryLinked(ctgy -> StringUtils.startsWith(ctgy, PLAYING))) {
+                refreshPlayingContentInfo();
+            }
         }
 
         refreshCurrentExternalInputStatus(
                 tracker.getLinkedChannelsForCategory(ctgy -> StringUtils.startsWith(ctgy, INPUT)));
 
-        refreshCurrentExternalTerminalsStatus();
+        if (!notificationHelper.isEnabled(ScalarWebEvent.NOTIFYEXTERNALTERMINALSTATUS)) {
+            refreshCurrentExternalTerminalsStatus();
+        }
 
         if (tracker.isCategoryLinked(ctgy -> StringUtils.startsWith(ctgy, CONTENT))) {
             refreshContent();
@@ -2433,11 +2433,11 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
         if (tracker.isCategoryLinked(BLUETOOTHSETTINGS)) {
             refreshGeneralSettings(tracker.getLinkedChannelsForCategory(BLUETOOTHSETTINGS),
-                    ScalarWebMethod.GETBLUETOOTHSETTINGS, BLUETOOTHSETTINGS);
+                    ScalarWebMethod.GETBLUETOOTHSETTINGS);
         }
         if (tracker.isCategoryLinked(PLAYBACKSETTINGS)) {
             refreshGeneralSettings(tracker.getLinkedChannelsForCategory(PLAYBACKSETTINGS),
-                    ScalarWebMethod.GETPLAYBACKMODESETTINGS, PLAYBACKSETTINGS);
+                    ScalarWebMethod.GETPLAYBACKMODESETTINGS);
         }
 
         // Very heavy call - let's just make them restart binding when a preset changes if they
@@ -2453,19 +2453,9 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         Objects.requireNonNull(command, "command cannot be null");
 
         if (StringUtils.equalsIgnoreCase(channel.getCategory(), BLUETOOTHSETTINGS)) {
-            final String uri = channel.getPathPart(0);
-            if (uri == null || StringUtils.isEmpty(uri)) {
-                logger.debug("{} command - channel has no target: {}", BLUETOOTHSETTINGS, channel);
-                return;
-            }
-            setGeneralSetting(ScalarWebMethod.SETBLUETOOTHSETTINGS, uri, channel, command);
+            setGeneralSetting(ScalarWebMethod.SETBLUETOOTHSETTINGS, channel, command);
         } else if (StringUtils.equalsIgnoreCase(channel.getCategory(), PLAYBACKSETTINGS)) {
-            final String uri = channel.getPathPart(0);
-            if (uri == null || StringUtils.isEmpty(uri)) {
-                logger.debug("{} command - channel has no uri: {}", PLAYBACKSETTINGS, channel);
-                return;
-            }
-            setGeneralSetting(ScalarWebMethod.SETPLAYBACKMODESETTINGS, uri, channel, command);
+            setGeneralSetting(ScalarWebMethod.SETPLAYBACKMODESETTINGS, channel, command);
         } else if (StringUtils.equalsIgnoreCase(channel.getCategory(), PL_CMD)) {
             final String uri = channel.getPathPart(0);
             if (uri == null || StringUtils.isEmpty(uri)) {
@@ -2614,7 +2604,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * @param output the possibly null, possibly empty output to play on
      * @param on true if playing, false otherwise
      */
-    private void setPlayContent(final String uri, @Nullable final String output, final boolean on) {
+    private void setPlayContent(final String uri, final @Nullable String output, final boolean on) {
         Objects.requireNonNull(uri, "uri cannot be null");
 
         final String translatedOutput = output == null || StringUtils.equalsIgnoreCase(output, MAINOUTPUT) ? ""
@@ -2738,7 +2728,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             case "setpreset":
                 if (isRadio) {
                     final int preset = state == null ? 1 : state.getPreset();
-                    final String presetUri = ms.groupCount() == 1 ? ("?contentId=" + preset) : ms.replaceFirst("$1" + preset);
+                    final String presetUri = ms.groupCount() == 1 ? ("?contentId=" + preset)
+                            : ms.replaceFirst("$1" + preset);
                     handleExecute(ScalarWebMethod.PRESETBROADCASTSTATION, new PresetBroadcastStation(presetUri));
                 } else {
                     logger.debug("Not playing a radio currently: {}", playingUri);
@@ -2748,7 +2739,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             case "getpreset":
                 if (isRadio) {
                     final int preset = state == null ? 1 : state.getPreset();
-                    final String presetUri = ms.groupCount() == 1 ? ("?contentId=" + preset) : ms.replaceFirst("$1" + preset);
+                    final String presetUri = ms.groupCount() == 1 ? ("?contentId=" + preset)
+                            : ms.replaceFirst("$1" + preset);
                     setPlayContent(presetUri, translatedOutput, true);
                 } else {
                     logger.debug("Not playing a radio currently: {}", playingUri);
@@ -2807,8 +2799,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * @param channelSurfingVisibility the channel surfing visibility (null if not specified)
      * @param visibility the visibility (null if not specified)
      */
-    private void setTvContentVisibility(@Nullable final String epgVisibility,
-            @Nullable final String channelSurfingVisibility, @Nullable final String visibility) {
+    private void setTvContentVisibility(final @Nullable String epgVisibility,
+            final @Nullable String channelSurfingVisibility, final @Nullable String visibility) {
         final ContentState cs = stateContent.get();
         handleExecute(ScalarWebMethod.SETTVCONTENTVISIBILITY,
                 new TvContentVisibility(cs.getUri(), epgVisibility, channelSurfingVisibility, visibility));
@@ -2873,8 +2865,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
                 final StateDescription sd = bld.build().toStateDescription();
                 if (sd != null) {
-                    getContext().getStateProvider().addStateOverride(getContext().getThingUID(),
-                            getContext().getMapper().getMappedChannelId(chl.getChannelId()), sd);
+                    getContext().getStateProvider().addStateOverride(getContext().getThingUID(), chl.getChannelId(),
+                            sd);
                 }
             }
         }
@@ -2937,6 +2929,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * Note: CEC schemes are unique by port number/logical address. We will further add a "-{addr}" if a logical address
      * exists
      * 
+     * Note2: if we have inputs only (not a terminal), then the "in" part will be ignored.
+     * 
      * The following demonstrates the various possible inputs and the output of this function:
      * 
      * <table>
@@ -2953,11 +2947,11 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * </tr>
      * <tr>
      * <td>extInput:bd-dvd</td>
-     * <td>in-bd-dvd</td>
+     * <td>in-bd-dvd (bd-dvd for input only)</td>
      * </tr>
      * <tr>
      * <td>extInput:hdmi</td>
-     * <td>in-hdmi</td>
+     * <td>in-hdmi (hdmi for input only)</td>
      * </tr>
      * <tr>
      * <td>extInput:hdmi?port=1</td>
@@ -2980,19 +2974,17 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * <td>in-cec2-1</td>
      * </tr>
      * 
-     * @param cache a non-null channel cache
      * @param uri a non-null, non-empty uri
      * @param isInput true if we are doing inputs, false otherwise
      * @return a non-null channel identifier
      */
-    private String createChannelId(final ChannelIdCache cache, final String uri, final boolean isInput) {
-        Objects.requireNonNull(cache, "cache cannot be null");
+    private String createChannelId(final String uri, final boolean isInput) {
         Validate.notEmpty(uri, "uri cannot be empty");
 
         // Return the uri if just a word (not really a uri!)
         final int colIdx = uri.indexOf(":");
         if (colIdx < 0) {
-            return cache.getUniqueChannelId(uri);
+            return SonyUtil.createValidChannelUId(uri);
         }
 
         String scheme = uri.substring(0, colIdx);
@@ -3009,7 +3001,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
         final int portNameIdx = uri.indexOf("?");
         if (portNameIdx < 0) {
-            return cache.getUniqueChannelId(finalScheme + uri.substring(colIdx + 1));
+            return SonyUtil.createValidChannelUId(finalScheme + uri.substring(colIdx + 1));
         }
 
         final String portName = uri.substring(colIdx + 1, portNameIdx);
@@ -3017,7 +3009,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
         // Handle when there is no query path
         if (StringUtils.isEmpty(query)) {
-            return cache.getUniqueChannelId(finalScheme + portName);
+            return SonyUtil.createValidChannelUId(finalScheme + portName);
         }
 
         // Note that this won't handle multiple parms with the same name - we just hope sony won't ever do that
@@ -3041,7 +3033,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             channelId += ("-" + logAddr);
         }
 
-        return cache.getUniqueChannelId(channelId);
+        return SonyUtil.createValidChannelUId(channelId);
     }
 
     /**
@@ -3194,7 +3186,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
          * @param title a possibly null, possibly empty input title
          * @param outputs a possibly null, possibly empty list of outputs
          */
-        public InputSource(final String uri, @Nullable final String title, @Nullable final List<String> outputs) {
+        public InputSource(final String uri, final @Nullable String title, final @Nullable List<String> outputs) {
             Validate.notEmpty(uri, "uri cannot be empty");
             this.uri = uri;
             this.title = StringUtils.defaultIfEmpty(title, uri);

@@ -48,13 +48,10 @@ public class ScalarWebContext {
     private final @Nullable WebSocketClient webSocketClient;
 
     /** The transformation service to use (if specified) */
-    private @Nullable final TransformationService transformService;
+    private final @Nullable TransformationService transformService;
 
     /** The configuration for the thing */
     private final ScalarWebConfig config;
-
-    /** The mapper used to map channels */
-    private final ScalarWebChannelMapper mapper;
 
     /**
      * Constructs the context from the parameters
@@ -66,18 +63,16 @@ public class ScalarWebContext {
      * @param stateProvider the non-null dynamic state provider
      * @param webSocketClient the possibly null websocket client
      * @param transformService the possibly null transformation service
-     * @param mapper the non-null channel mapper
      */
     public ScalarWebContext(final Supplier<Thing> thingSupplier, final ScalarWebConfig config,
             final ScalarWebChannelTracker tracker, final ScheduledExecutorService scheduler,
-            final SonyDynamicStateProvider stateProvider, @Nullable final WebSocketClient webSocketClient,
-            @Nullable final TransformationService transformService, final ScalarWebChannelMapper mapper) {
+            final SonyDynamicStateProvider stateProvider, final @Nullable WebSocketClient webSocketClient,
+            final @Nullable TransformationService transformService) {
         Objects.requireNonNull(thingSupplier, "thingSupplier cannot be null");
         Objects.requireNonNull(thingSupplier, "config cannot be null");
         Objects.requireNonNull(tracker, "tracker cannot be null");
         Objects.requireNonNull(scheduler, "scheduler cannot be null");
         Objects.requireNonNull(stateProvider, "stateProvider cannot be null");
-        Objects.requireNonNull(mapper, "mapper cannot be null");
 
         this.thingSupplier = thingSupplier;
         this.config = config;
@@ -86,7 +81,6 @@ public class ScalarWebContext {
         this.stateProvider = stateProvider;
         this.webSocketClient = webSocketClient;
         this.transformService = transformService;
-        this.mapper = mapper;
     }
 
     /**
@@ -159,14 +153,5 @@ public class ScalarWebContext {
      */
     public @Nullable TransformationService getTransformService() {
         return transformService;
-    }
-
-    /**
-     * Returns the channel mapper to use
-     * 
-     * @return the non-null channel mapper
-     */
-    public ScalarWebChannelMapper getMapper() {
-        return mapper;
     }
 }

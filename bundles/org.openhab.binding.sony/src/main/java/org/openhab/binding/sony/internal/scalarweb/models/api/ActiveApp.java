@@ -36,7 +36,7 @@ public class ActiveApp {
      * @param uri the non-null, non-empty uri
      * @param data the possibly null, possibly empty data
      */
-    public ActiveApp(final String uri, @Nullable final String data) {
+    public ActiveApp(final String uri, final @Nullable String data) {
         Validate.notEmpty(uri, "uri cannot be empty");
         this.uri = uri;
         this.data = data;

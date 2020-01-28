@@ -36,8 +36,8 @@ import com.google.gson.JsonParseException;
 @NonNullByDefault
 public class SupportedApiVersionInfoDeserializer implements JsonDeserializer<SupportedApiVersionInfo> {
     @Override
-    public SupportedApiVersionInfo deserialize(@Nullable final JsonElement je, @Nullable final Type type,
-            @Nullable final JsonDeserializationContext context) throws JsonParseException {
+    public SupportedApiVersionInfo deserialize(final @Nullable JsonElement je, final @Nullable Type type,
+            final @Nullable JsonDeserializationContext context) throws JsonParseException {
         Objects.requireNonNull(je, "je cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
         Objects.requireNonNull(context, "context cannot be null");

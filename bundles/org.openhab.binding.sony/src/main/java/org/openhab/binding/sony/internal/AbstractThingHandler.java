@@ -105,12 +105,12 @@ public abstract class AbstractThingHandler<C extends AbstractConfig> extends Bas
      */
     private void doConnect() {
         updateStatus(ThingStatus.UNKNOWN, ThingStatusDetail.NONE, "Initializing ...");
-        connect();        
+        connect();
     }
-    
+
     @Override
     protected void updateStatus(final ThingStatus status, final ThingStatusDetail statusDetail,
-            @Nullable final String description) {
+            final @Nullable String description) {
         super.updateStatus(status, statusDetail, description);
 
         if (status == ThingStatus.ONLINE) {
@@ -218,6 +218,7 @@ public abstract class AbstractThingHandler<C extends AbstractConfig> extends Bas
 
     /**
      * Gets the URL to check the status for
+     * 
      * @return a non-null URL containing an ipaddress and possibly port
      * @throws MalformedURLException if the url is malformed
      */
@@ -237,8 +238,8 @@ public abstract class AbstractThingHandler<C extends AbstractConfig> extends Bas
      * @param ipAddress a possibly null, possibly empty IP address to check
      * @param port a possibly null port to check
      */
-    private void scheduleCheckStatus(@Nullable final Integer checkStatusInterval, @Nullable final String ipAddress,
-            @Nullable final Integer port) {
+    private void scheduleCheckStatus(final @Nullable Integer checkStatusInterval, final @Nullable String ipAddress,
+            final @Nullable Integer port) {
         if (StringUtils.isNotBlank(ipAddress) && port != null && checkStatusInterval != null
                 && checkStatusInterval > 0) {
             SonyUtil.cancel(checkStatus.getAndSet(scheduler.schedule(() -> {

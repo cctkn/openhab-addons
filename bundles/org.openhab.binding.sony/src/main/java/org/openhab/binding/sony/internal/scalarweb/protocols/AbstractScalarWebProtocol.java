@@ -15,8 +15,10 @@ package org.openhab.binding.sony.internal.scalarweb.protocols;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,10 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.math.NumberUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.library.types.DecimalType;
@@ -59,6 +64,10 @@ import org.openhab.binding.sony.internal.scalarweb.models.api.GeneralSettingsReq
 import org.openhab.binding.sony.internal.scalarweb.models.api.GeneralSettings_1_0;
 import org.openhab.binding.sony.internal.scalarweb.models.api.Notification;
 import org.openhab.binding.sony.internal.scalarweb.models.api.Notifications;
+import org.openhab.binding.sony.internal.scalarweb.models.api.NotifySettingUpdate;
+import org.openhab.binding.sony.internal.scalarweb.models.api.NotifySettingUpdateApi;
+import org.openhab.binding.sony.internal.scalarweb.models.api.NotifySettingUpdateApiMapping;
+import org.openhab.binding.sony.internal.scalarweb.models.api.Source;
 import org.openhab.binding.sony.internal.scalarweb.models.api.Target;
 import org.openhab.binding.sony.internal.transports.SonyTransportListener;
 import org.slf4j.Logger;
@@ -85,10 +94,12 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
     // we need to save curr value if an increase/decrease type comes in
     private static final String PROP_CURRVALUE = "currValue";
 
-    // for sound setting properties - we don't have a mute so we simulate
-    // it by saving the current value when switching to "OFF"
-    // and then restoring when "ON"
+    // The off value (used for the boolean off/false value and the current value of a number channel if mute was pressed
+    // {saved when OFF, restored on ON})
     private static final String PROP_OFFVALUE = "offValue";
+
+    // The on value (used for boolean on/true value)
+    private static final String PROP_ONVALUE = "onValue";
 
     /** The context to use */
     private final ScalarWebContext context;
@@ -105,6 +116,9 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
     /** The listener for transport events */
     private final Listener listener = new Listener();
 
+    /** The API to category lookup for general settings (note: do we support version?) */
+    private final Map<String, String> apiToCtgy = new ConcurrentHashMap<>();
+
     /**
      * Instantiates a new abstract scalar web protocol.
      *
@@ -117,7 +131,7 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
             final ScalarWebService service, final T callback) {
         Objects.requireNonNull(factory, "factory cannot be null");
         Objects.requireNonNull(context, "context cannot be null");
-        Objects.requireNonNull(service, "audioService cannot be null");
+        Objects.requireNonNull(service, "service cannot be null");
         Objects.requireNonNull(callback, "callback cannot be null");
 
         this.factory = factory;
@@ -130,8 +144,9 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
      * Helper method to enable a list of notifications
      * 
      * @param notificationEvents the list of notifications to enable
+     * @return the notifications that were enabled/disabled as a result
      */
-    protected void enableNotifications(final String... notificationEvents) {
+    protected Notifications enableNotifications(final String... notificationEvents) {
         if (service.hasMethod(ScalarWebMethod.SWITCHNOTIFICATIONS)) {
             try {
                 final Notifications notifications = execute(ScalarWebMethod.SWITCHNOTIFICATIONS, new Notifications())
@@ -151,14 +166,26 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                     }
                 }
 
-                if (!newEnabled.isEmpty()) {
+                if (newEnabled.isEmpty()) {
+                    // return the original (since nothing changed)
+                    return notifications;
+                } else {
                     this.service.getTransport().addListener(listener);
-                    execute(ScalarWebMethod.SWITCHNOTIFICATIONS, new Notifications(newEnabled, newDisabled));
+                    // return the results rather than what we feed it since the server may reject some of ours
+                    return execute(ScalarWebMethod.SWITCHNOTIFICATIONS, new Notifications(newEnabled, newDisabled))
+                            .as(Notifications.class);
                 }
             } catch (final IOException e) {
                 logger.debug("switchNotifications doesn't exist - ignoring event processing");
+                final List<Notification> disabled = Arrays.stream(notificationEvents)
+                        .map(s -> new Notification(s, ScalarWebMethod.V1_0)).collect(Collectors.toList());
+                return new Notifications(Collections.emptyList(), disabled);
             }
         }
+
+        final List<Notification> disabled = Arrays.stream(notificationEvents)
+                .map(s -> new Notification(s, ScalarWebMethod.V1_0)).collect(Collectors.toList());
+        return new Notifications(Collections.emptyList(), disabled);
     }
 
     /**
@@ -390,7 +417,7 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
      * @return the scalar web channel descriptor
      */
     protected ScalarWebChannelDescriptor createDescriptor(final ScalarWebChannel channel, final String acceptedItemType,
-            final String channelType, @Nullable final String label, @Nullable final String description) {
+            final String channelType, final @Nullable String label, final @Nullable String description) {
         Objects.requireNonNull(channel, "channel cannot be empty");
         Validate.notEmpty(acceptedItemType, "acceptedItemType cannot be empty");
         Validate.notEmpty(channelType, "channelType cannot be empty");
@@ -446,44 +473,22 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
     }
 
     /**
-     * Refreshs the general sttings for a list of channels
-     * 
-     * @param channels a non-null, possibly empty list of {@link ScalarWebChannel}
-     * @param getMethodName a non-null, non-empty method name to get settings from
-     * @param ctgy a non-null, non-emtpy openhab category to use
-     */
-    protected void refreshGeneralSettings(final List<ScalarWebChannel> channels, final String getMethodName,
-            final String ctgy) {
-        Objects.requireNonNull(channels, "channels cannot be null");
-        Validate.notEmpty(getMethodName, "getMethodName cannot be empty");
-        Validate.notEmpty(ctgy, "ctgy cannot be empty");
-
-        try {
-            final GeneralSettings_1_0 ss = handleExecute(getMethodName, new Target()).as(GeneralSettings_1_0.class);
-            refreshGeneralSettings(ss.getSettings(), channels, ctgy);
-        } catch (final IOException e) {
-            logger.debug("Error in refreshing general settings: {}", e.getMessage(), e);
-        }
-    }
-
-    /**
      * Adds one or more general settings descriptors based on the general settings retrived from the given menthod
      * 
      * @param descriptors a non-null, possibly empty list of descriptors
-     * @param cache a non-null channel id cache
      * @param getMethodName a non-null, non-empty get method name to retrieve settings from
      * @param ctgy a non-null, non-empty openhab category
      * @param prefix a non-null, non-empty prefix for descriptor names/labels
      */
     protected void addGeneralSettingsDescriptor(final List<ScalarWebChannelDescriptor> descriptors,
-            final ChannelIdCache cache, final String getMethodName, final String ctgy, final String prefix) {
+            final String getMethodName, final String ctgy, final String prefix) {
         Objects.requireNonNull(descriptors, "descriptors cannot be null");
-        Objects.requireNonNull(cache, "cache cannot be null");
         Validate.notEmpty(getMethodName, "getMethodName cannot be empty");
         Validate.notEmpty(ctgy, "ctgy cannot be empty");
         Validate.notEmpty(prefix, "prefix cannot be empty");
 
         try {
+            // TODO support versioning of the getMethodName?
             final GeneralSettings_1_0 ss = execute(getMethodName, new Target()).as(GeneralSettings_1_0.class);
 
             for (final GeneralSetting set : ss.getSettings()) {
@@ -498,85 +503,118 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                     continue;
                 }
 
-                final String settingType = set.getType();
+                final String uri = StringUtils.defaultIfEmpty(set.getUri(), null);
+                final String uriLabel = uri == null ? null
+                        : StringUtils.defaultIfEmpty(Source.getSourcePart(uri), null);
+
+                final String label = textLookup(set.getTitle(), target)
+                        + (uriLabel == null ? "" : String.format(" (%s)", uriLabel));
+                final String id = getGeneralSettingChannelId(target, uri);
+                final List<GeneralSettingsCandidate> candidates = SonyUtil.convertNull(set.getCandidate());
+
+                String settingType = set.getType();
+                // -- no explicit type - try guessing it from the value
                 if (settingType == null || StringUtils.isEmpty(settingType)) {
-                    logger.debug("Setting Type not valid for {} {} - ignoring", prefix, set);
-                    continue;
+                    String currValue = set.getCurrentValue();
+                    if (currValue == null || StringUtils.isEmpty(currValue)) {
+                        // No value - get the first non-null/non-empty one from the candidates
+                        currValue = candidates.stream().map(e -> e.getValue()).filter(e -> StringUtils.isNotEmpty(e))
+                                .findFirst().orElse(null);
+                    }
+
+                    if (BooleanUtils.toBooleanObject(currValue) != null) {
+                        // we'll further validate the boolean target candidates below
+                        settingType = GeneralSetting.BOOLEANTARGET;
+                    } else if (NumberUtils.isNumber(currValue)) {
+                        settingType = StringUtils.isNumeric(currValue) ? GeneralSetting.INTEGERTARGET
+                                : GeneralSetting.DOUBLETARGET;
+                    } else {
+                        settingType = candidates.size() > 0 ? GeneralSetting.ENUMTARGET : GeneralSetting.STRINGTARGET;
+                    }
                 }
 
-                final String title = textLookup(set.getTitle());
-
-                final String label = StringUtils.defaultIfEmpty(title, target);
-                final String id = cache.getUniqueChannelId(target).toLowerCase();
-                final List<@Nullable GeneralSettingsCandidate> candidates = set.getCandidate();
-
-                final ScalarWebChannel channel = createChannel(ctgy, id, target);
+                final ScalarWebChannel channel = createChannel(ctgy, id, target, uri);
 
                 final String ui = set.getDeviceUIInfo();
-                if (ui != null) {
+                if (ui != null && StringUtils.isNotEmpty(ui)) {
                     channel.addProperty(PROP_DEVICEUI, ui);
                 }
                 channel.addProperty(PROP_SETTINGTYPE, settingType);
 
+                StateDescriptionFragmentBuilder bld = StateDescriptionFragmentBuilder.create();
+                if (candidates.size() == 0) {
+                    bld = bld.withReadOnly(Boolean.TRUE);
+                }
+
+                // Make sure we actually have a boolean target:
+                // 1. Must be 2 in size
+                // 2. Both need to be a valid Boolean (must be on/off, true/false, yes/no)
+                // 3. Both cannot be the same (must be true/false or false/true)
+                // If all three aren't true - revert to an enum target
+                // If they are true - save the actual value used for the boolean (on/off or true/false or yes/no)
+                if (StringUtils.equals(settingType, GeneralSetting.BOOLEANTARGET) && candidates.size() > 0) {
+                    if (candidates.size() > 2) {
+                        settingType = GeneralSetting.ENUMTARGET;
+                    } else {
+                        final @Nullable String value1 = candidates.get(0).getValue();
+                        final @Nullable String value2 = candidates.get(1).getValue();
+                        final @Nullable Boolean bool1 = BooleanUtils.toBooleanObject(value1);
+                        final @Nullable Boolean bool2 = BooleanUtils.toBooleanObject(value2);
+
+                        if (value1 == null || value2 == null || bool1 == null || bool2 == null || bool1.equals(bool2)) {
+                            settingType = GeneralSetting.ENUMTARGET;
+                        } else {
+                            channel.addProperty(PROP_OFFVALUE, bool1 == Boolean.FALSE ? value1 : value2);
+                            channel.addProperty(PROP_ONVALUE, bool1 == Boolean.TRUE ? value1 : value2);
+                        }
+                    }
+                }
+
                 switch (settingType) {
                     case GeneralSetting.BOOLEANTARGET:
-                        descriptors.add(createDescriptor(channel, "Switch", "scalaraudiogeneralsettingswitch",
+                        descriptors.add(createDescriptor(channel, "Switch", "scalargeneralsettingswitch",
                                 prefix + " " + label, prefix + " for " + label));
 
                         break;
                     case GeneralSetting.DOUBLETARGET:
                         if (set.isUiSlider()) {
-                            descriptors.add(createDescriptor(channel, "Dimmer", "scalaraudiogeneralsettingdimmer",
+                            descriptors.add(createDescriptor(channel, "Dimmer", "scalargeneralsettingdimmer",
                                     prefix + " " + label, prefix + " for " + label));
 
                         } else {
-                            descriptors.add(createDescriptor(channel, "Number", "scalaraudiogeneralsettingnumber",
+                            descriptors.add(createDescriptor(channel, "Number", "scalargeneralsettingnumber",
                                     prefix + " " + label, prefix + " for " + label));
                         }
 
-                        if (candidates != null) {
-                            final @Nullable GeneralSettingsCandidate candidate = candidates.stream()
-                                    .filter(c -> c != null).findFirst().orElseGet(() -> null);
-                            // ..filter(c -> c != null && c.isAvailable()).findFirst().orElseGet(() ->
-                            // null);
+                        if (candidates.size() > 0) {
+                            final GeneralSettingsCandidate candidate = candidates.get(0);
 
-                            if (candidate != null) {
-                                final Double min = candidate.getMin(), max = candidate.getMax(),
-                                        step = candidate.getStep();
-                                if (min != null || max != null || step != null) {
-                                    final List<StateOption> options = new ArrayList<>();
-                                    if (set.isUiPicker()) {
-                                        final double dmin = min == null || min.isInfinite() || min.isNaN() ? 0
-                                                : min.doubleValue();
-                                        final double dmax = max == null || max.isInfinite() || max.isNaN() ? 100
-                                                : max.doubleValue();
-                                        final double dstep = step == null || step.isInfinite() || step.isNaN() ? 1
-                                                : step.doubleValue();
-                                        for (double p = dmin; p <= dmax; p += (dstep == 0 ? 1 : dstep)) {
-                                            final String opt = Double.toString(p);
-                                            options.add(new StateOption(opt, opt));
-                                        }
+                            final Double min = candidate.getMin(), max = candidate.getMax(), step = candidate.getStep();
+                            if (min != null || max != null || step != null) {
+                                final List<StateOption> options = new ArrayList<>();
+                                if (set.isUiPicker()) {
+                                    final double dmin = min == null || min.isInfinite() || min.isNaN() ? 0
+                                            : min.doubleValue();
+                                    final double dmax = max == null || max.isInfinite() || max.isNaN() ? 100
+                                            : max.doubleValue();
+                                    final double dstep = step == null || step.isInfinite() || step.isNaN() ? 1
+                                            : step.doubleValue();
+                                    for (double p = dmin; p <= dmax; p += (dstep == 0 ? 1 : dstep)) {
+                                        final String opt = Double.toString(p);
+                                        options.add(new StateOption(opt, opt));
                                     }
-                                    StateDescriptionFragmentBuilder bld = StateDescriptionFragmentBuilder.create();
-                                    if (min != null) {
-                                        bld = bld.withMinimum(new BigDecimal(min));
-                                    }
-                                    if (max != null) {
-                                        bld = bld.withMaximum(new BigDecimal(max));
-                                    }
-                                    if (step != null) {
-                                        bld = bld.withStep(new BigDecimal(step));
-                                    }
-                                    if (!options.isEmpty()) {
-                                        bld = bld.withOptions(options);
-                                    }
-
-                                    final StateDescription sd = bld.build().toStateDescription();
-                                    if (sd != null) {
-                                        getContext().getStateProvider().addStateOverride(getContext().getThingUID(),
-                                                getContext().getMapper().getMappedChannelId(channel.getChannelId()),
-                                                sd);
-                                    }
+                                }
+                                if (min != null) {
+                                    bld = bld.withMinimum(new BigDecimal(min));
+                                }
+                                if (max != null) {
+                                    bld = bld.withMaximum(new BigDecimal(max));
+                                }
+                                if (step != null) {
+                                    bld = bld.withStep(new BigDecimal(step));
+                                }
+                                if (!options.isEmpty()) {
+                                    bld = bld.withOptions(options);
                                 }
                             }
                         }
@@ -584,54 +622,41 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                         break;
                     case GeneralSetting.INTEGERTARGET:
                         if (set.isUiSlider()) {
-                            descriptors.add(createDescriptor(channel, "Dimmer", "scalaraudiogeneralsettingdimmer",
+                            descriptors.add(createDescriptor(channel, "Dimmer", "scalargeneralsettingdimmer",
                                     prefix + " " + label, prefix + " for " + label));
 
                         } else {
-                            descriptors.add(createDescriptor(channel, "Number", "scalaraudiogeneralsettingnumber",
+                            descriptors.add(createDescriptor(channel, "Number", "scalargeneralsettingnumber",
                                     prefix + " " + label, prefix + " for " + label));
                         }
 
-                        if (candidates != null) {
-                            final @Nullable GeneralSettingsCandidate candidate = candidates.stream()
-                                    .filter(c -> c != null).findFirst().orElseGet(() -> null);
-                            // ..filter(c -> c != null && c.isAvailable()).findFirst().orElseGet(() ->
-                            // null);
+                        if (candidates.size() > 0) {
+                            final GeneralSettingsCandidate candidate = candidates.get(0);
 
-                            if (candidate != null) {
-                                final Double min = candidate.getMin(), max = candidate.getMax(),
-                                        step = candidate.getStep();
-                                if (min != null || max != null || step != null) {
-                                    final List<StateOption> options = new ArrayList<>();
-                                    if (set.isUiPicker()) {
-                                        final int imin = min == null ? 0 : min.intValue();
-                                        final int imax = max == null ? 100 : max.intValue();
-                                        final int istep = step == null ? 1 : step.intValue();
-                                        for (int p = imin; p <= imax; p += (istep == 0 ? 1 : istep)) {
-                                            final String opt = Double.toString(p);
-                                            options.add(new StateOption(opt, opt));
-                                        }
+                            final Double min = candidate.getMin(), max = candidate.getMax(), step = candidate.getStep();
+                            if (min != null || max != null || step != null) {
+                                final List<StateOption> options = new ArrayList<>();
+                                if (set.isUiPicker()) {
+                                    final int imin = min == null ? 0 : min.intValue();
+                                    final int imax = max == null ? 100 : max.intValue();
+                                    final int istep = step == null ? 1 : step.intValue();
+                                    for (int p = imin; p <= imax; p += (istep == 0 ? 1 : istep)) {
+                                        final String opt = Double.toString(p);
+                                        options.add(new StateOption(opt, opt));
                                     }
+                                }
 
-                                    StateDescriptionFragmentBuilder bld = StateDescriptionFragmentBuilder.create();
-                                    if (min != null) {
-                                        bld = bld.withMinimum(new BigDecimal(min));
-                                    }
-                                    if (max != null) {
-                                        bld = bld.withMaximum(new BigDecimal(max));
-                                    }
-                                    if (step != null) {
-                                        bld = bld.withStep(new BigDecimal(step));
-                                    }
-                                    if (!options.isEmpty()) {
-                                        bld = bld.withOptions(options);
-                                    }
-
-                                    final StateDescription sd = bld.build().toStateDescription();
-                                    if (sd != null) {
-                                        getContext().getStateProvider().addStateOverride(getContext().getThingUID(),
-                                                channel.getChannelId(), sd);
-                                    }
+                                if (min != null) {
+                                    bld = bld.withMinimum(new BigDecimal(min));
+                                }
+                                if (max != null) {
+                                    bld = bld.withMaximum(new BigDecimal(max));
+                                }
+                                if (step != null) {
+                                    bld = bld.withStep(new BigDecimal(step));
+                                }
+                                if (!options.isEmpty()) {
+                                    bld = bld.withOptions(options);
                                 }
                             }
                         }
@@ -639,45 +664,76 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                         break;
 
                     case GeneralSetting.ENUMTARGET:
-                        descriptors.add(createDescriptor(channel, "String", "scalaraudiogeneralsettingstring",
+                        descriptors.add(createDescriptor(channel, "String", "scalargeneralsettingstring",
                                 prefix + " " + label, prefix + " for " + label));
 
-                        if (candidates != null) {
-                            final List<StateOption> stateInfo = candidates.stream()
-                                    // .filter(c -> c != null && c.isAvailable())
-                                    .map(c -> {
-                                        if (c == null) {
-                                            return null;
-                                        }
-                                        final String stateVal = c.getValue();
-                                        if (stateVal == null || StringUtils.isEmpty(stateVal)) {
-                                            return null;
-                                        }
-                                        final String stateTitle = textLookup(c.getTitle());
-                                        if (stateTitle == null || StringUtils.isEmpty(stateTitle)) {
-                                            return null;
-                                        }
-                                        return new StateOption(stateVal, stateTitle);
-                                    }).filter(c -> c != null).collect(Collectors.toList());
-                            if (!stateInfo.isEmpty()) {
-                                final StateDescription sd = StateDescriptionFragmentBuilder.create()
-                                        .withOptions(stateInfo).build().toStateDescription();
-                                if (sd != null) {
-                                    getContext().getStateProvider().addStateOverride(getContext().getThingUID(),
-                                            channel.getChannelId(), sd);
-                                }
+                        final List<StateOption> stateInfo = candidates.stream().map(c -> {
+                            if (c == null) {
+                                return null;
                             }
+                            final String stateVal = c.getValue();
+                            if (stateVal == null || StringUtils.isEmpty(stateVal)) {
+                                return null;
+                            }
+                            final String stateTitle = textLookup(c.getTitle(), null);
+                            if (stateTitle == null || StringUtils.isEmpty(stateTitle)) {
+                                return null;
+                            }
+                            return new StateOption(stateVal, stateTitle);
+                        }).filter(c -> c != null).collect(Collectors.toList());
+
+                        if (!stateInfo.isEmpty()) {
+                            bld = bld.withOptions(stateInfo);
                         }
 
                         break;
                     default:
-                        descriptors.add(createDescriptor(channel, "String", "scalaraudiogeneralsettingstring",
+                        descriptors.add(createDescriptor(channel, "String", "scalargeneralsettingstring",
                                 prefix + " " + label, prefix + " for " + label));
                         break;
                 }
+
+                final StateDescription sd = bld.build().toStateDescription();
+                if (sd != null) {
+                    getContext().getStateProvider().addStateOverride(getContext().getThingUID(), channel.getChannelId(),
+                            sd);
+                }
             }
+
+            apiToCtgy.put(getMethodName, ctgy);
+
         } catch (final IOException e) {
             // ignore - probably not handled
+        }
+    }
+
+    /**
+     * Helper method to create a general settings channel id
+     * 
+     * @param target a non-null, non-empty target
+     * @param uri a possibly null, possibly empty uri
+     * @return
+     */
+    private @Nullable String getGeneralSettingChannelId(String target, @Nullable String uri) {
+        Validate.notEmpty(target, "target cannot be empty");
+        return SonyUtil.createValidChannelUId(target + (uri == null || StringUtils.isEmpty(uri) ? "" : "-" + uri));
+    }
+
+    /**
+     * Refreshs the general sttings for a list of channels
+     * 
+     * @param channels a non-null, possibly empty set of {@link ScalarWebChannel}
+     * @param getMethodName a non-null, non-empty method name to get settings from
+     */
+    protected void refreshGeneralSettings(final Set<ScalarWebChannel> channels, final String getMethodName) {
+        Objects.requireNonNull(channels, "channels cannot be null");
+        Validate.notEmpty(getMethodName, "getMethodName cannot be empty");
+
+        try {
+            final GeneralSettings_1_0 ss = handleExecute(getMethodName, new Target()).as(GeneralSettings_1_0.class);
+            refreshGeneralSettings(ss.getSettings(), channels);
+        } catch (final IOException e) {
+            logger.debug("Error in refreshing general settings: {}", e.getMessage(), e);
         }
     }
 
@@ -685,45 +741,57 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
      * Refreshs the general settings for a list of channels and their openHAB category
      * 
      * @param settings a non-null, possibly empty list of {@link GeneralSetting}
-     * @param channels a non-null, possibly empty list of {@link ScalarWebChannel}
-     * @param ctgy a non-null, non-empty category
+     * @param channels a non-null, possibly empty set of {@link ScalarWebChannel}
      */
-    protected void refreshGeneralSettings(final List<GeneralSetting> settings, final List<ScalarWebChannel> channels,
-            final String ctgy) {
+    protected void refreshGeneralSettings(final List<GeneralSetting> settings, final Set<ScalarWebChannel> channels) {
         Objects.requireNonNull(settings, "settings cannot be null");
         Objects.requireNonNull(channels, "channels cannot be null");
-        Validate.notEmpty(ctgy, "ctgy cannot be empty");
 
-        final Map<String, GeneralSetting> settingValues = new HashMap<>();
+        final Map<Map.Entry<String, String>, GeneralSetting> settingValues = new HashMap<>();
         for (final GeneralSetting set : settings) {
             final String target = set.getTarget();
             if (target == null || StringUtils.isEmpty(target)) {
                 continue;
             }
-            settingValues.put(target, set);
+            final Map.Entry<String, String> key = new AbstractMap.SimpleEntry<>(target,
+                    StringUtils.defaultIfEmpty(set.getUri(), ""));
+            settingValues.put(key, set);
         }
 
         for (final ScalarWebChannel chl : channels) {
             final String target = chl.getPathPart(0);
             if (target == null) {
+                logger.debug("Cannot refresh general setting {} - has no target", chl);
                 continue;
             }
 
-            final String settingType = chl.getProperty(PROP_SETTINGTYPE, GeneralSetting.STRINGTARGET);
+            final String uri = StringUtils.defaultIfEmpty(chl.getPathPart(1), "");
+            final Map.Entry<String, String> key = new AbstractMap.SimpleEntry<>(target, uri);
 
-            final GeneralSetting setting = settingValues.get(target);
+            final GeneralSetting setting = settingValues.get(key);
+            if (setting == null) {
+                logger.debug("Could not find a setting for {} ({})", target, uri);
+                continue;
+            }
+
             final String currentValue = setting.getCurrentValue();
+
+            final String settingType = chl.getProperty(PROP_SETTINGTYPE,
+                    StringUtils.defaultIfEmpty(setting.getType(), GeneralSetting.STRINGTARGET));
+            final String ui = chl.getProperty(PROP_DEVICEUI, StringUtils.defaultIfEmpty(setting.getDeviceUIInfo(), ""));
 
             switch (settingType) {
                 case GeneralSetting.BOOLEANTARGET:
-                    stateChanged(ctgy, chl.getId(),
-                            StringUtils.equalsIgnoreCase(currentValue, GeneralSetting.ON) ? OnOffType.ON
-                                    : OnOffType.OFF);
+                    final String onValue = StringUtils.defaultIfEmpty(chl.getProperty(PROP_ONVALUE),
+                            GeneralSetting.DEFAULTON);
+
+                    stateChanged(chl.getCategory(), chl.getId(),
+                            StringUtils.equalsIgnoreCase(currentValue, onValue) ? OnOffType.ON : OnOffType.OFF);
                     break;
 
                 case GeneralSetting.DOUBLETARGET:
                 case GeneralSetting.INTEGERTARGET:
-                    if (setting.isUiSlider()) {
+                    if (StringUtils.containsIgnoreCase(ui, GeneralSetting.SLIDER)) {
                         final StateDescription sd = getContext().getStateProvider()
                                 .getStateDescription(getContext().getThingUID(), chl.getChannelId());
                         final BigDecimal min = sd == null ? BigDecimal.ZERO : sd.getMinimum();
@@ -734,52 +802,66 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                             chl.addProperty(PROP_CURRVALUE, currVal.toString());
 
                             if (settingType.equals(GeneralSetting.INTEGERTARGET)) {
-                                stateChanged(ctgy, chl.getId(),
+                                stateChanged(chl.getCategory(), chl.getId(),
                                         SonyUtil.newPercentType(val.setScale(0, RoundingMode.FLOOR)));
                             } else {
-                                stateChanged(ctgy, chl.getId(), SonyUtil.newPercentType(val));
-
+                                stateChanged(chl.getCategory(), chl.getId(), SonyUtil.newPercentType(val));
                             }
                         } catch (final NumberFormatException e) {
                             logger.debug("Current value {} was not a valid integer", currentValue);
                         }
                     } else {
-                        stateChanged(ctgy, chl.getId(), SonyUtil.newDecimalType(currentValue));
+                        stateChanged(chl.getCategory(), chl.getId(), SonyUtil.newDecimalType(currentValue));
                     }
                     break;
 
                 default:
-                    stateChanged(ctgy, chl.getId(), SonyUtil.newStringType(currentValue));
+                    stateChanged(chl.getCategory(), chl.getId(), SonyUtil.newStringType(currentValue));
                     break;
             }
         }
-
     }
 
     /**
-     * Sets a general setting. This method will take a target (method, target, channel) and execute a command against
-     * it.
+     * Sets a general setting. This method will take a method and channel and execute a command against it.
      * 
      * @param method a non-null, non-empty method
-     * @param target a non-null, non-empty sony target id
      * @param chl a non-null channel describing the setting
      * @param cmd a non-null command to execute
      */
-    protected void setGeneralSetting(final String method, final String target, final ScalarWebChannel chl,
-            final Command cmd) {
+    protected void setGeneralSetting(final String method, final ScalarWebChannel chl, final Command cmd) {
         Validate.notEmpty(method, "method cannot be empty");
-        Validate.notEmpty(target, "target cannot be empty");
         Objects.requireNonNull(chl, "chl cannot be null");
         Objects.requireNonNull(cmd, "cmd cannot be null");
+
+        final String target = StringUtils.defaultIfEmpty(chl.getPathPart(0), null);
+        if (target == null) {
+            logger.debug("Cannot set general setting {} for channel {} because it has no target: {}", method, chl, cmd);
+            return;
+        }
+
+        final String uri = StringUtils.defaultIfEmpty(chl.getPathPart(1), null);
 
         final String settingType = chl.getProperty(PROP_SETTINGTYPE, GeneralSetting.STRINGTARGET);
         final String deviceUi = chl.getProperty(PROP_DEVICEUI);
 
+        final StateDescription sd = getContext().getStateProvider().getStateDescription(getContext().getThingUID(),
+                chl.getChannelId());
+        if (sd != null & sd.isReadOnly()) {
+            logger.debug("Method {} ({}) is readonly - ignoring: {}", method, target, cmd);
+            return;
+        }
+
         switch (settingType) {
             case GeneralSetting.BOOLEANTARGET:
                 if (cmd instanceof OnOffType) {
-                    handleExecute(method, new GeneralSettingsRequest(target,
-                            cmd == OnOffType.ON ? GeneralSetting.ON : GeneralSetting.OFF));
+                    final String onValue = StringUtils.defaultIfEmpty(chl.getProperty(PROP_ONVALUE),
+                            GeneralSetting.DEFAULTON);
+                    final String offValue = StringUtils.defaultIfEmpty(chl.getProperty(PROP_OFFVALUE),
+                            GeneralSetting.DEFAULTOFF);
+
+                    handleExecute(method,
+                            new GeneralSettingsRequest(target, cmd == OnOffType.ON ? onValue : offValue, uri));
                 } else {
                     logger.debug("{} command not an OnOffType: {}", method, cmd);
                 }
@@ -788,9 +870,6 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
             case GeneralSetting.DOUBLETARGET:
             case GeneralSetting.INTEGERTARGET:
                 if (StringUtils.contains(deviceUi, GeneralSetting.SLIDER)) {
-                    final StateDescription sd = getContext().getStateProvider()
-                            .getStateDescription(getContext().getThingUID(), chl.getChannelId());
-
                     final BigDecimal sdMin = sd == null ? null : sd.getMinimum();
                     final BigDecimal sdMax = sd == null ? null : sd.getMaximum();
                     final BigDecimal min = sdMin == null ? BigDecimal.ZERO : sdMin;
@@ -824,10 +903,10 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                         }
                         if (settingType.equals(GeneralSetting.INTEGERTARGET)) {
                             handleExecute(method,
-                                    new GeneralSettingsRequest(target, Integer.toString(newVal.intValue())));
+                                    new GeneralSettingsRequest(target, Integer.toString(newVal.intValue()), uri));
                         } else {
                             handleExecute(method,
-                                    new GeneralSettingsRequest(target, Double.toString(newVal.doubleValue())));
+                                    new GeneralSettingsRequest(target, Double.toString(newVal.doubleValue()), uri));
                         }
                     } catch (final NumberFormatException e) {
                         logger.debug("{} command current/off value not a valid number - either {} or {}: {}", method,
@@ -837,10 +916,10 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                     if (cmd instanceof DecimalType) {
                         if (settingType.equals(GeneralSetting.INTEGERTARGET)) {
                             handleExecute(method, new GeneralSettingsRequest(target,
-                                    Integer.toString(((DecimalType) cmd).intValue())));
+                                    Integer.toString(((DecimalType) cmd).intValue()), uri));
                         } else {
                             handleExecute(method, new GeneralSettingsRequest(target,
-                                    Double.toString(((DecimalType) cmd).doubleValue())));
+                                    Double.toString(((DecimalType) cmd).doubleValue()), uri));
                         }
                     } else {
                         logger.debug("{} command not an DecimalType: {}", method, cmd);
@@ -848,9 +927,10 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                 }
                 break;
 
+            // handles both String and Enum types
             default:
                 if (cmd instanceof StringType) {
-                    handleExecute(method, new GeneralSettingsRequest(target, ((StringType) cmd).toString()));
+                    handleExecute(method, new GeneralSettingsRequest(target, ((StringType) cmd).toString(), uri));
                 } else {
                     logger.debug("{} command not an StringType: {}", method, cmd);
                 }
@@ -860,12 +940,98 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
     }
 
     /**
+     * Called when notifying the protocol of a settings update
+     * 
+     * @param setting a non-null notify
+     */
+    public void notifySettingUpdate(final NotifySettingUpdate notify) {
+        Objects.requireNonNull(notify, "notify cannot be null");
+
+        final @Nullable NotifySettingUpdateApiMapping apiMappingUpdate = notify.getApiMappingUpdate();
+        if (apiMappingUpdate == null) {
+            logger.debug("Received a notifySettingUpdate with no api mapping - ignoring: {}", notify);
+            return;
+        }
+
+        final String serviceName = apiMappingUpdate.getService();
+        if (serviceName == null || StringUtils.isEmpty(serviceName)) {
+            logger.debug("Received a notifySettingUpdate with no service name - ignoring: {}", notify);
+            return;
+        }
+
+        if (StringUtils.equalsIgnoreCase(serviceName, getService().getServiceName())) {
+            internalNotifySettingUpdate(notify);
+        } else {
+            final @Nullable ScalarWebProtocol<T> protocol = getFactory().getProtocol(serviceName);
+            if (protocol == null) {
+                logger.debug("Received a notifySettingUpdate for an unknown service: {} - {}", serviceName, notify);
+                return;
+            }
+            protocol.notifySettingUpdate(notify);
+        }
+    }
+
+    /**
+     * Internal application of the settings update notification.
+     * 
+     * @param setting a non-null setting
+     */
+    private void internalNotifySettingUpdate(final NotifySettingUpdate setting) {
+        Objects.requireNonNull(setting, "setting cannot be null");
+
+        final NotifySettingUpdateApiMapping apiMapping = setting.getApiMappingUpdate();
+        if (apiMapping == null) {
+            logger.debug("Trying to update setting but apiMapping was null: {}", setting);
+            return;
+        }
+
+        final String target = apiMapping.getTarget();
+        if (target == null || StringUtils.isEmpty(target)) {
+            logger.debug("Trying to update setting but target is empty: {}", setting);
+            return;
+        }
+
+        // Create our settings from the notification (only need a few of the attributes - see refreshGeneralSettings)
+        final List<GeneralSetting> settings = Collections.singletonList(
+                new GeneralSetting(target, apiMapping.getUri(), setting.getType(), apiMapping.getCurrentValue()));
+
+        final NotifySettingUpdateApi getApi = apiMapping.getGetApi();
+        if (getApi == null) {
+            logger.debug("Trying to update setting but getAPI was missing: {}", setting);
+            return;
+        }
+
+        final String getMethodName = getApi.getName();
+        if (getMethodName == null || StringUtils.isEmpty(getMethodName)) {
+            logger.debug("Trying to update setting but getAPI had no name: {}", setting);
+            return;
+        }
+
+        final String ctgy = apiToCtgy.get(getMethodName);
+        if (ctgy == null || StringUtils.isEmpty(ctgy)) {
+            logger.debug("Trying to update setting but couldn't find the category for the getAPI {}: {}", getMethodName,
+                    setting);
+            return;
+
+        }
+
+        final String id = getGeneralSettingChannelId(target, apiMapping.getUri());
+
+        // Get the channels linked to that category and for that identifier
+        final Set<ScalarWebChannel> channels = getChannelTracker().getLinkedChannelsForCategory(ctgy).stream()
+                .filter(e -> StringUtils.equalsIgnoreCase(e.getId(), id)).collect(Collectors.toSet());
+
+        refreshGeneralSettings(settings, channels);
+    }
+
+    /**
      * Helper function to lookup common sony text and translate to a better name
      * 
      * @param text a possibly null, possibly empty text string
+     * @param target a posssibly null, possibly empty target (as a text backup)
      * @return the translated text or text if not recognized
      */
-    private static @Nullable String textLookup(@Nullable final String text) {
+    private static @Nullable String textLookup(final @Nullable String text, final @Nullable String target) {
         if (StringUtils.equalsIgnoreCase("IDMR_TEXT_FOOTBALL_STRING", text)) {
             return "Football";
         }
@@ -878,7 +1044,30 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
             return "Narration On";
         }
 
-        return text;
+        if (StringUtils.equalsIgnoreCase("IDMR_TEXT_XMBSETUP_GRACENOTESETTING_STRING", text)) {
+            return "Gracenote";
+        }
+
+        if (StringUtils.equalsIgnoreCase("IDMR_TEXT_SETUP_PULLDOWN_MANUAL_STRING", text)) {
+            return "Manual";
+        }
+
+        if (StringUtils.equalsIgnoreCase("IDMR_TEXT_COMMON_AUTO_STRING", text)) {
+            return "Auto";
+        }
+
+        if (StringUtils.equalsIgnoreCase("IDMR_TEXT_XMBSETUP_REMOTE_START_STRING", text)) {
+            return "Remote Start";
+        }
+
+        if (text != null && StringUtils.isNotEmpty(text)) {
+            return text;
+        }
+
+        // If we have a target, un-camel case it
+        return target == null || StringUtils.isEmpty(target) ? "Unknown"
+                : target.replaceAll(String.format("%s|%s|%s", "(?<=[A-Z])(?=[A-Z][a-z])", "(?<=[^A-Z])(?=[A-Z])",
+                        "(?<=[A-Za-z])(?=[^A-Za-z])"), " ");
     }
 
     @Override

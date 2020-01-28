@@ -57,7 +57,7 @@ public class ScalarWebChannelDescriptor {
      * @param description the potentially null, potentially empty description
      */
     public ScalarWebChannelDescriptor(final ScalarWebChannel channel, final String acceptedItemType,
-            final String channelType, @Nullable final String label, @Nullable final String description) {
+            final String channelType, final @Nullable String label, final @Nullable String description) {
         Objects.requireNonNull(channel, "channel cannot be null");
         Validate.notEmpty(acceptedItemType, "acceptedItemType cannot be empty");
         Validate.notEmpty(channelType, "channelType cannot be empty");
@@ -81,15 +81,13 @@ public class ScalarWebChannelDescriptor {
      * Creates the channel builder from the descriptor
      *
      * @param thingUid the non-null thing uid to use
-     * @param mapper the non-null channel mapper to use
      * @return the channel builder
      */
-    public ChannelBuilder createChannel(final ThingUID thingUid, final ScalarWebChannelMapper mapper) {
+    public ChannelBuilder createChannel(final ThingUID thingUid) {
         Objects.requireNonNull(thingUid, "thingUid canot be null");
-        Objects.requireNonNull(mapper, "mapper canot be null");
 
-        ChannelBuilder channelBuilder = ChannelBuilder
-                .create(new ChannelUID(thingUid, mapper.getMappedChannelId(channel.getChannelId())), acceptedItemType);
+        ChannelBuilder channelBuilder = ChannelBuilder.create(new ChannelUID(thingUid, channel.getChannelId()),
+                acceptedItemType);
 
         final ChannelTypeUID stateTypeUid = new ChannelTypeUID(ScalarWebConstants.THING_TYPE_SCALAR.getBindingId(),
                 channelType);

@@ -203,7 +203,7 @@ public class ScalarWebDiscoveryParticipant extends AbstractDiscoveryParticipant 
      * @return a non-null result
      */
     private DiscoveryResult createResult(final RemoteDevice device, final ThingUID uid,
-            @Nullable final String irccUrl) {
+            final @Nullable String irccUrl) {
         Objects.requireNonNull(device, "device cannot be null");
         Objects.requireNonNull(uid, "uid cannot be null");
 

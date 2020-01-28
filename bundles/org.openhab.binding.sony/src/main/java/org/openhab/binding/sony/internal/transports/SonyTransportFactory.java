@@ -77,8 +77,8 @@ public class SonyTransportFactory {
      * @param webSocketClient a potentially null websocket client
      * @param scheduler a potentially null scheduler
      */
-    public SonyTransportFactory(final URL baseUrl, final Gson gson, @Nullable final WebSocketClient webSocketClient,
-            @Nullable final ScheduledExecutorService scheduler) {
+    public SonyTransportFactory(final URL baseUrl, final Gson gson, final @Nullable WebSocketClient webSocketClient,
+            final @Nullable ScheduledExecutorService scheduler) {
         Objects.requireNonNull(baseUrl, "baseUrl cannot be null");
         Objects.requireNonNull(gson, "gson cannot be null");
 

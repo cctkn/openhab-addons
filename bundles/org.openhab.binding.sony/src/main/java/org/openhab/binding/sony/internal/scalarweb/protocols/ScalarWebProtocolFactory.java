@@ -13,9 +13,9 @@
 package org.openhab.binding.sony.internal.scalarweb.protocols;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
@@ -42,8 +42,8 @@ public class ScalarWebProtocolFactory<T extends ThingCallback<String>> implement
     /** The logger */
     private final Logger logger = LoggerFactory.getLogger(ScalarWebProtocolFactory.class);
 
-    /** The protocols by service name */
-    private final Map<String, ScalarWebProtocol<T>> protocols = new HashMap<>();
+    /** The protocols by service name (key is case insensitive) */
+    private final Map<String, ScalarWebProtocol<T>> protocols = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     /**
      * Instantiates a new scalar web protocol factory.
@@ -83,6 +83,11 @@ public class ScalarWebProtocolFactory<T extends ThingCallback<String>> implement
                     protocols.put(ScalarWebService.CEC, new ScalarWebCecProtocol<T>(this, context, service, callback));
                     break;
 
+                case ScalarWebService.ILLUMINATION:
+                    protocols.put(ScalarWebService.ILLUMINATION,
+                            new ScalarWebIlluminationProtocol<T>(this, context, service, callback));
+                    break;
+
                 case ScalarWebService.SYSTEM:
                     protocols.put(ScalarWebService.SYSTEM, new ScalarWebSystemProtocol<T>(this, context, service,
                             callback, context.getConfig().getIrccUrl()));
@@ -114,7 +119,7 @@ public class ScalarWebProtocolFactory<T extends ThingCallback<String>> implement
      * @param name the service name
      * @return the protocol or null if not found
      */
-    public @Nullable ScalarWebProtocol<T> getProtocol(@Nullable final String name) {
+    public @Nullable ScalarWebProtocol<T> getProtocol(final @Nullable String name) {
         if (name == null || StringUtils.isEmpty(name)) {
             return null;
         }

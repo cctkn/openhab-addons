@@ -82,8 +82,9 @@ public class RemoteControllerInfo {
                 if (typeElm != null) {
                     myType = typeElm.getAsString();
                 }
+            } else {
+                throw new JsonParseException("Unknown element in array: " + elm);
             }
-
         }
 
         if (myBundled == null) {

@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.binding.sony.internal.SonyUtil;
 import org.openhab.binding.sony.internal.scalarweb.gson.GsonUtilities;
 
 import com.google.gson.Gson;
@@ -80,7 +81,12 @@ public abstract class AbstractScalarResponse {
                     final JsonObject jobj = elm.getAsJsonObject();
                     return gson.fromJson(jobj, clazz);
                 } else {
-                    return gson.fromJson(elm, clazz);
+                    if (SonyUtil.isPrimitive(clazz)) {
+                        return gson.fromJson(elm, clazz);
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Cannot convert ScalarWebResult to " + clazz + " with results: " + localResults, e);
+                    }
                 }
             }
             throw new IllegalArgumentException(
@@ -89,7 +95,7 @@ public abstract class AbstractScalarResponse {
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             throw new IllegalArgumentException(
-                "Cannot convert ScalarWebResult to " + clazz + " for reason: " + e.getMessage(), e);
+                    "Cannot convert ScalarWebResult to " + clazz + " for reason: " + e.getMessage(), e);
         }
     }
 
@@ -109,18 +115,22 @@ public abstract class AbstractScalarResponse {
             throw new IllegalArgumentException(
                     "Cannot convert ScalarWebResult for " + clazz + " with results: " + localResults);
         }
-        
-        final Gson gson = new Gson();
+
+        final Gson gson = GsonUtilities.getDefaultGson();
         final List<T> rc = new ArrayList<T>();
 
         for (final JsonElement resElm : localResults) {
             if (resElm.isJsonArray()) {
                 for (final JsonElement elm : resElm.getAsJsonArray()) {
                     if (elm.isJsonObject()) {
-                        final JsonObject jobj = elm.getAsJsonObject();
-                        rc.add(gson.fromJson(jobj, clazz));
-                    } else {
                         rc.add(gson.fromJson(elm, clazz));
+                    } else {
+                        if (SonyUtil.isPrimitive(clazz)) {
+                            rc.add(gson.fromJson(elm, clazz));
+                        } else {
+                            throw new IllegalArgumentException(
+                                    "Cannot convert ScalarWebResult to " + clazz + " with results: " + localResults);
+                        }
                     }
                 }
             } else {
@@ -128,7 +138,12 @@ public abstract class AbstractScalarResponse {
                     final JsonObject jobj = resElm.getAsJsonObject();
                     rc.add(gson.fromJson(jobj, clazz));
                 } else {
-                    rc.add(gson.fromJson(resElm, clazz));
+                    if (SonyUtil.isPrimitive(clazz)) {
+                        rc.add(gson.fromJson(resElm, clazz));
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Cannot convert ScalarWebResult to " + clazz + " with results: " + localResults);
+                    }
                 }
             }
         }
@@ -142,7 +157,7 @@ public abstract class AbstractScalarResponse {
      * @param arry the json array to check
      * @return true if empty or null, false otherwise
      */
-    protected static boolean isBlank(@Nullable final JsonArray arry) {
+    protected static boolean isBlank(final @Nullable JsonArray arry) {
         if (arry == null || arry.size() == 0) {
             return true;
         }

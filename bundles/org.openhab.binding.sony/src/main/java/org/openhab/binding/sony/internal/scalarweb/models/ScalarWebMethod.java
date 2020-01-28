@@ -53,14 +53,14 @@ public class ScalarWebMethod {
 
     // Only Audio service
     public static final String GETCUSTOMEQUALIZERSETTINGS = "getCustomEqualizerSettings";
-    public static final String GETSPEAKERSETTINGS = "getSpeakerSettings";
     public static final String GETSOUNDSETTINGS = "getSoundSettings";
+    public static final String GETSPEAKERSETTINGS = "getSpeakerSettings";
     public static final String GETVOLUMEINFORMATION = "getVolumeInformation";
     public static final String SETAUDIOMUTE = "setAudioMute";
     public static final String SETAUDIOVOLUME = "setAudioVolume";
     public static final String SETCUSTOMEQUALIZERSETTINGS = "setCustomEqualizerSettings";
-    public static final String SETSPEAKERSETTINGS = "setSpeakerSettings";
     public static final String SETSOUNDSETTINGS = "setSoundSettings";
+    public static final String SETSPEAKERSETTINGS = "setSpeakerSettings";
 
     // Only AvContent service
     public static final String DELETECOUNT = "deleteContent";
@@ -78,8 +78,8 @@ public class ScalarWebMethod {
     public static final String PAUSEPLAYINGCONTENT = "pausePlayingContent";
     public static final String PRESETBROADCASTSTATION = "presetBroadcastStation";
     public static final String SCANPLAYINGCONTENT = "scanPlayingContent";
-    public static final String SETACTIVETERMINAL = "setActiveTerminal";
     public static final String SEEKBROADCASTSTATION = "seekBroadcastStation";
+    public static final String SETACTIVETERMINAL = "setActiveTerminal";
     public static final String SETBLUETOOTHSETTINGS = "setBluetoothSettings";
     public static final String SETDELETEPROTECTION = "setDeleteProtection";
     public static final String SETFAVORITECONTENTLIST = "setFavoriteContentList";// TODO - figure out
@@ -105,34 +105,46 @@ public class ScalarWebMethod {
     public static final String GETTEXTURL = "getTextUrl";
     public static final String SETTEXTURL = "setTextUrl";
 
+    // Only Illumination service
+    public static final String GETILLUMNATIONSETTING = "getIlluminationSettings";
+    public static final String SETILLUMNATIONSETTING = "setIlluminationSettings";
+
     // Only Guide service
     public static final String GETSERVICEPROTOCOLS = "getServiceProtocols";
     public static final String GETSUPPORTEDAPIINFO = "getSupportedApiInfo";
 
     // Only System service
     public static final String GETCURRENTTIME = "getCurrentTime";
+    public static final String GETDEVICEMISCSETTINGS = "getDeviceMiscSettings";
     public static final String GETDEVICEMODE = "getDeviceMode";
     public static final String GETINTERFACEINFORMATION = "getInterfaceInformation";
     public static final String GETLEDINDICATORSTATUS = "getLEDIndicatorStatus";
     public static final String GETNETWORKSETTINGS = "getNetworkSettings";
     public static final String GETPOSTALCODE = "getPostalCode";
     public static final String GETPOWERSAVINGMODE = "getPowerSavingMode";
+    public static final String GETPOWERSETTINGS = "getPowerSettings";
     public static final String GETPOWERSTATUS = "getPowerStatus";
     public static final String GETREMOTECONTROLLERINFO = "getRemoteControllerInfo";
     public static final String GETREMOTEDEVICESETTINGS = "getRemoteDeviceSettings";
+    public static final String GETSLEEPTIMERSETTINGS = "getSleepTimerSettings";
     public static final String GETSTORAGELIST = "getStorageList"; // TODO- figure out
     public static final String GETSYSTEMINFORMATION = "getSystemInformation";
     public static final String GETSYSTEMSUPPORTEDFUNCTION = "getSystemSupportedFunction"; // TODO- figure out
     public static final String GETWOLMODE = "getWolMode";
+    public static final String GETWUTANGINFO = "getWuTangInfo";
     public static final String MOUNTSTORAGE = "mountStorage"; // TODO- figure out
     public static final String REQUESTREBOOT = "requestReboot";
+    public static final String SETDEVICEMISSETTINGS = "setDeviceMiscSettings";
     public static final String SETDEVICEMODE = "setDeviceMode";
-    public static final String SETLEDINDICATORSTATUS = "setLEDIndicatorStatus";
     public static final String SETLANGUAGE = "setLanguage";
+    public static final String SETLEDINDICATORSTATUS = "setLEDIndicatorStatus";
     public static final String SETPOSTALCODE = "setPostalCode";
     public static final String SETPOWERSAVINGMODE = "setPowerSavingMode";
+    public static final String SETPOWERSETTINGS = "setPowerSettings";
     public static final String SETPOWERSTATUS = "setPowerStatus";
+    public static final String SETSLEEPTIMERSETTINGS = "setSleepTimerSettings";
     public static final String SETWOLMODE = "setWolMode";
+    public static final String SETWUTANGINFO = "setWuTangInfo";
     public static final String SWITCHNOTIFICATIONS = "switchNotifications";
 
     // Only Video Screen service

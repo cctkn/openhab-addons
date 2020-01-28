@@ -18,6 +18,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * This class represents a general setting request. Please note the API supports setting multiple values at a time but
@@ -31,15 +32,16 @@ public class GeneralSettingsRequest {
     private final List<Setting> settings;
 
     /**
-     * Constructs the setting request from the target/value
+     * Constructs the setting request from the target/value/uri
      * 
      * @param target a non-null, non-empty target
      * @param value a non-null, possibly empty value
+     * @param uri a possibly null, possibly empty URI target
      */
-    public GeneralSettingsRequest(String target, String value) {
+    public GeneralSettingsRequest(final String target, final String value, final @Nullable String uri) {
         Validate.notEmpty(target, "target cannot be empty");
         Objects.requireNonNull(value, "value cannot be null");
-        settings = Collections.singletonList(new Setting(target, value));
+        settings = Collections.singletonList(new Setting(target, value, uri));
     }
 
     @Override
@@ -58,22 +60,27 @@ public class GeneralSettingsRequest {
         /** the setting value */
         private final String value;
 
+        /** the setting uri */
+        private final @Nullable String uri;
+
         /**
          * Constructs the setting from the target/value
          * 
          * @param target a non-null, non-empty target
          * @param value a non-null, possibly empty value
+         * @param uri a possibly null uri
          */
-        private Setting(String target, String value) {
+        private Setting(final String target, final String value, final @Nullable String uri) {
             Validate.notEmpty(target, "target cannot be empty");
             Objects.requireNonNull(value, "value cannot be null");
             this.target = target;
             this.value = value;
+            this.uri = uri;
         }
 
         @Override
         public String toString() {
-            return "Setting [target=" + target + ", value=" + value + "]";
+            return "Setting [target=" + target + ", uri=" + uri + ", value=" + value + "]";
         }
     }
 }

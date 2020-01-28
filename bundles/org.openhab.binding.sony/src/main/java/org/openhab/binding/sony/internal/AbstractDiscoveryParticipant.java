@@ -212,7 +212,7 @@ public abstract class AbstractDiscoveryParticipant {
      * @param modelName a possibly null, possibly empty model name
      * @return a ThingTypeUID if found, null if not
      */
-    protected @Nullable ThingTypeUID getThingTypeUID(@Nullable final String modelName) {
+    protected @Nullable ThingTypeUID getThingTypeUID(final @Nullable String modelName) {
         return getThingTypeUID(service, modelName);
     }
 
@@ -225,7 +225,7 @@ public abstract class AbstractDiscoveryParticipant {
      * @param modelName a possibly null, possibly empty model name
      * @return a ThingTypeUID if found, null if not
      */
-    private @Nullable ThingTypeUID getThingTypeUID(final String service, @Nullable final String modelName) {
+    private @Nullable ThingTypeUID getThingTypeUID(final String service, final @Nullable String modelName) {
         Validate.notEmpty(service, "service cannot be empty");
 
         if (modelName == null || StringUtils.isEmpty(modelName)) {

@@ -39,6 +39,7 @@ No status is available.
 3. 1.1 - ???
 4. 1.2 - ???
 5. 1.3 - implemented on blurays.
+   
 Provides a command interface, text field entry and status feedback (including disc information).
 The status feedback is provided via polling of the device.
 
@@ -59,6 +60,10 @@ A channel will be created for each application (at startup only) and you can sen
 
 For specifics - see [DIAL](README-README-DIAL.md.md)
 
+## Bluray Players
+
+Please note that somy Bluray players have only a limited, partial implementation of SCALAR.  If you have a bluray player and scalar seems limited, you should try the DIAL/IRCC services as well.
+
 ## Application status
 
 Sony has 'broken' the API that determines which application is currently running regardless if you use DIAL or Scalar services.
@@ -73,6 +78,23 @@ To enable automation of your device may require changes on the device.
 This section mainly applies to TVs as the other devices generally are setup correctly.
 Unfortunately the location of the settings generally depend on the device and the firmware that is installed.
 I'll mention the most common area for each below but do remember that it may differ on your device.
+
+### Turn the device ON!!!
+
+When a sony device is off, there are a number of 'things' that get turned off as well.  
+You best action would be to turn the device ON when you are trying to set it up and bring it online for the first time.
+
+1. IRCC/Scalar on Blurays will not be auto discovered if the device is off (however DIAL will be discovered).  
+Both these services are turned off when the device is turned off.
+2. Audio service on certain devices will either be turned off or limited in scope.  
+If the audio service is off, you will either see no audio channels (volume, etc) or will be missing audio channels (like headphone volume for Bravias)
+
+### Wireless Interface
+
+If you are using the wireless interface on the device, you will *likely* lose the ability to power on the device with any of the services.  
+Most sony devices will power down the wireless port when turning off or going into standby - making communication to that device impossible (and thus trying to power on the device impossible).
+As of the when this was written, there is no known way to change this behaviour through device options or setup.
+
 
 ### Wake on LAN
 

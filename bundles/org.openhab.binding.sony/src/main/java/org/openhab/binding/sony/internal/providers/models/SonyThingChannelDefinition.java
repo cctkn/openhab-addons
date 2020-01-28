@@ -35,19 +35,19 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class SonyThingChannelDefinition {
     /** The channel identifier */
-    private @Nullable final String channelId;
+    private final @Nullable String channelId;
 
     /** The mapped channel identifier (null if no mapping) */
-    private @Nullable final String mappedChannelId;
+    private final @Nullable String mappedChannelId;
 
     /** The channel type identifier */
-    private @Nullable final String channelType;
+    private final @Nullable String channelType;
 
     /** The channel properties */
-    private @Nullable final Map<@Nullable String, @Nullable String> properties;
+    private final @Nullable Map<@Nullable String, @Nullable String> properties;
 
     /** The channel options */
-    private @Nullable final SonyThingStateDefinition state;
+    private final @Nullable SonyThingStateDefinition state;
 
     /**
      * Constructs the definition from the passed arguments.
@@ -58,7 +58,7 @@ public class SonyThingChannelDefinition {
      * @param state the non-null thing state definition
      * @param properties the non-null, possibly empty properties
      */
-    public SonyThingChannelDefinition(final String channelId, @Nullable final String mappedChannelId,
+    public SonyThingChannelDefinition(final String channelId, final @Nullable String mappedChannelId,
             final String channelType, final SonyThingStateDefinition state, final Map<String, String> properties) {
         Validate.notEmpty(channelId, "channelId must not be empty");
         Validate.notEmpty(channelType, "channelType must not be empty");

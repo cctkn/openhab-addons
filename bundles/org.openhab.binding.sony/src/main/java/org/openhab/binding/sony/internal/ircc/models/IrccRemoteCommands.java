@@ -78,7 +78,7 @@ public class IrccRemoteCommands {
      *
      * @param cmds a possibly null, possibly empty map of commands
      */
-    private IrccRemoteCommands(@Nullable final Map<String, IrccRemoteCommand> cmds) {
+    private IrccRemoteCommands(final @Nullable Map<String, IrccRemoteCommand> cmds) {
         remoteCmds.putAll(cmds == null || cmds.isEmpty() ? getDefaultCommands() : cmds);
     }
 
@@ -240,7 +240,7 @@ public class IrccRemoteCommands {
      * @param codeList a possibly null {@link IrccCodeList}
      * @return a non-null {@link IrccRemoteCommands}
      */
-    public IrccRemoteCommands withCodeList(@Nullable final IrccCodeList codeList) {
+    public IrccRemoteCommands withCodeList(final @Nullable IrccCodeList codeList) {
         if (codeList == null) {
             return this;
         }
@@ -368,20 +368,20 @@ public class IrccRemoteCommands {
     @NonNullByDefault
     static class IrccRemoteCommandsConverter implements Converter {
         @Override
-        public boolean canConvert(@SuppressWarnings("rawtypes") @Nullable final Class clazz) {
+        public boolean canConvert(@SuppressWarnings("rawtypes") final @Nullable Class clazz) {
             return IrccRemoteCommands.class.equals(clazz);
         }
 
         @Override
-        public void marshal(@Nullable final Object obj, @Nullable final HierarchicalStreamWriter writer,
-                @Nullable final MarshallingContext context) {
+        public void marshal(final @Nullable Object obj, final @Nullable HierarchicalStreamWriter writer,
+                final @Nullable MarshallingContext context) {
             throw new NotImplementedException();
 
         }
 
         @Override
-        public Object unmarshal(@Nullable final HierarchicalStreamReader reader,
-                @Nullable final UnmarshallingContext context) {
+        public Object unmarshal(final @Nullable HierarchicalStreamReader reader,
+                final @Nullable UnmarshallingContext context) {
             Objects.requireNonNull(reader, "reader cannot be null");
             Objects.requireNonNull(context, "context cannot be null");
 

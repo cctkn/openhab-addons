@@ -24,7 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class TextUrl {
     /** The url */
-    private @Nullable final String url;
+    private final @Nullable String url;
 
     /** The title of the page (result only) */
     private @Nullable String title;

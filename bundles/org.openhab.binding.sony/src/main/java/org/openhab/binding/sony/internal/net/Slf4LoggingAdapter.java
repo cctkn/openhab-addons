@@ -41,7 +41,7 @@ class Slf4LoggingAdapter extends java.util.logging.Logger {
     }
 
     @Override
-    public void log(@Nullable final LogRecord record) {
+    public void log(final @Nullable LogRecord record) {
         if (record != null) {
             logger.debug("{}", record.getMessage());
         }

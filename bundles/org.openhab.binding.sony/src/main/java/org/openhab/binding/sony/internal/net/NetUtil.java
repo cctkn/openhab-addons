@@ -193,7 +193,7 @@ public class NetUtil {
      * @param potentialMacAddress a possibly null, possibly empty mac address
      * @return true if formatted like a mac address, false otherwise
      */
-    public static boolean isMacAddress(@Nullable final String potentialMacAddress) {
+    public static boolean isMacAddress(final @Nullable String potentialMacAddress) {
         if (potentialMacAddress == null || potentialMacAddress.length() != 17) {
             return false;
         }
@@ -244,6 +244,7 @@ public class NetUtil {
 
     /**
      * Gets an raw type from the given transport and url
+     * 
      * @param transport a non-null http transport to use
      * @param url a possibly null, possibly empty URL to use
      * @return a rawtype (with correct mime) or null if not found (or URL was null/empty)
@@ -253,7 +254,7 @@ public class NetUtil {
 
         byte[] iconData = null;
         String mimeType = RawType.DEFAULT_MIME_TYPE;
-        
+
         if (url != null && StringUtils.isNotEmpty(url)) {
             final HttpResponse resp = transport.executeGet(url);
             if (resp.getHttpCode() == HttpStatus.OK_200) {
@@ -272,6 +273,7 @@ public class NetUtil {
 
         return iconData == null ? null : new RawType(iconData, mimeType);
     }
+
     /**
      * Send a request to the specified ipaddress/port using a socket connection. Any results will be sent back via the
      * callback.
@@ -296,7 +298,7 @@ public class NetUtil {
             final PrintStream ps = new PrintStream(socket.getOutputStream());
             final BufferedReader bf = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            ps.println(request + "\n");
+            ps.print(request + "\n");
             ps.flush();
 
             int c;

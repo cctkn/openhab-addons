@@ -63,7 +63,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
      * @param thing a non-null {@link Thing} the handler is for
      * @param transformationService a possibly null {@link TransformationService} to use to transform MAP file
      */
-    public SimpleIpHandler(final Thing thing, @Nullable final TransformationService transformationService) {
+    public SimpleIpHandler(final Thing thing, final @Nullable TransformationService transformationService) {
         super(thing, SimpleIpConfig.class);
 
         Objects.requireNonNull(thing, "thing cannot be null");
@@ -287,7 +287,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                     new ThingCallback<String>() {
                         @Override
                         public void statusChanged(final ThingStatus status, final ThingStatusDetail detail,
-                                @Nullable final String msg) {
+                                final @Nullable String msg) {
                             updateStatus(status, detail, msg);
                         }
 
@@ -297,7 +297,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                         }
 
                         @Override
-                        public void setProperty(final String propertyName, @Nullable final String propertyValue) {
+                        public void setProperty(final String propertyName, final @Nullable String propertyValue) {
                             getThing().setProperty(propertyName, propertyValue);
                         }
                     });

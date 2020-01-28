@@ -196,7 +196,7 @@ public abstract class AbstractSonySource implements SonySource {
      * @throws IOException if an IO Exception occurs reading the file
      * @throws JsonSyntaxException if a json syntax error occurs
      */
-    protected List<Map.Entry<ThingType, SonyThingDefinition>> readFile(@Nullable final String filePath)
+    protected List<Map.Entry<ThingType, SonyThingDefinition>> readFile(final @Nullable String filePath)
             throws IOException, JsonSyntaxException {
         final List<SonyThingDefinition> ttds = readThingDefinitions(filePath);
         if (ttds.isEmpty()) {
@@ -215,7 +215,7 @@ public abstract class AbstractSonySource implements SonySource {
      * @throws IOException if an IO Exception occurs reading the file
      * @throws JsonSyntaxException if a json syntax error occurs
      */
-    protected List<SonyThingDefinition> readThingDefinitions(@Nullable final String filePath)
+    protected List<SonyThingDefinition> readThingDefinitions(final @Nullable String filePath)
             throws IOException, JsonSyntaxException {
         if (filePath != null && StringUtils.isEmpty(filePath)) {
             logger.debug("Unknown file: {}", filePath);
@@ -301,10 +301,6 @@ public abstract class AbstractSonySource implements SonySource {
                     if (channelId == null || StringUtils.isEmpty(channelId)) {
                         channelValidationMessage.add("Missing channelID element");
                         continue;
-                        // } else if (!channelId.matches(AbstractUID.SEGMENT_PATTERN)) {
-                        // channelValidationMessage.add("Invalid channelID element (must be a valid
-                        // UID): " + channelId);
-                        // continue;
                     }
                     final String chlIdToUse = mappedId == null ? channelId : mappedId;
 

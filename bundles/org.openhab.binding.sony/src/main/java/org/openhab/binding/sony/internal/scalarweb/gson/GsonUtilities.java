@@ -39,15 +39,29 @@ import org.openhab.binding.sony.internal.scalarweb.models.api.SupportedApiVersio
  */
 @NonNullByDefault
 public class GsonUtilities {
+    /** The default builder */
+    private static GsonBuilder defaultBuilder = new GsonBuilder().disableHtmlEscaping()
+            .addDeserializationExclusionStrategy(new ExposeExclusionStrategy(true))
+            .addSerializationExclusionStrategy(new ExposeExclusionStrategy(false));
+
+    /** The default GSON */
+    private static Gson defaultGson = defaultBuilder.create();
+
+    /** The default API based GSON */
+    private static Gson apiGson = defaultBuilder
+            .registerTypeAdapter(ScalarWebEvent.class, new ScalarWebEventDeserializer())
+            .registerTypeAdapter(ScalarWebResult.class, new ScalarWebResultDeserializer())
+            .registerTypeAdapter(SupportedApi.class, new SupportedApiDeserializer())
+            .registerTypeAdapter(SupportedApiInfo.class, new SupportedApiInfoDeserializer())
+            .registerTypeAdapter(SupportedApiVersionInfo.class, new SupportedApiVersionInfoDeserializer()).create();
+
     /**
      * Creates a generic {@link GsonBuilder} object to use for generic serialization/deserialization
      * 
      * @return a non-null GsonBuilder object
      */
     public static GsonBuilder getDefaultGsonBuilder() {
-        return new GsonBuilder().disableHtmlEscaping()
-                .addDeserializationExclusionStrategy(new ExposeExclusionStrategy(true))
-                .addSerializationExclusionStrategy(new ExposeExclusionStrategy(false));
+        return defaultBuilder;
     }
 
     /**
@@ -56,7 +70,7 @@ public class GsonUtilities {
      * @return a non-null Gson object
      */
     public static Gson getDefaultGson() {
-        return getDefaultGsonBuilder().create();
+        return defaultGson;
     }
 
     /**
@@ -65,12 +79,7 @@ public class GsonUtilities {
      * @return a non-null Gson object
      */
     public static Gson getApiGson() {
-        return getDefaultGsonBuilder()
-                .registerTypeAdapter(ScalarWebEvent.class, new ScalarWebEventDeserializer())
-                .registerTypeAdapter(ScalarWebResult.class, new ScalarWebResultDeserializer())
-                .registerTypeAdapter(SupportedApi.class, new SupportedApiDeserializer())
-                .registerTypeAdapter(SupportedApiInfo.class, new SupportedApiInfoDeserializer())
-                .registerTypeAdapter(SupportedApiVersionInfo.class, new SupportedApiVersionInfoDeserializer()).create();
+        return apiGson;
     }
 
     /**

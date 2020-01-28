@@ -104,7 +104,7 @@ public class SonyWebSocketTransport extends AbstractSonyTransport {
      * @throws IOException if an IO exception occurred
      */
     public SonyWebSocketTransport(final WebSocketClient webSocketClient, final URI uri, final Gson gson,
-            @Nullable final ScheduledExecutorService scheduler)
+            final @Nullable ScheduledExecutorService scheduler)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
         super(uri);
         Objects.requireNonNull(webSocketClient, "webSocketClient cannot be null");

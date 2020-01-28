@@ -127,7 +127,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
      * @param callback a non-null {@link ThingCallback} to use as a callback
      * @throws IOException if an io exception occurs to the IRCC device
      */
-    IrccProtocol(final IrccConfig config, @Nullable final TransformationService transformService, final T callback)
+    IrccProtocol(final IrccConfig config, final @Nullable TransformationService transformService, final T callback)
             throws IOException, URISyntaxException {
         Objects.requireNonNull(config, "config cannot be null");
         Objects.requireNonNull(callback, "callback cannot be null");
@@ -397,7 +397,10 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                                 SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_DURATION),
                                 new DecimalType(Integer.parseInt(dur)));
                     } catch (final NumberFormatException e) {
-                        logger.error("Could not convert {} into an integer", dur);
+                        logger.warn("Could not convert {} into an integer", dur);
+                        callback.stateChanged(
+                                SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_DURATION),
+                                UnDefType.NULL);
                     }
                 }
 
@@ -605,7 +608,10 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                             SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DURATION),
                             new DecimalType(Integer.parseInt(dur)));
                 } catch (final NumberFormatException e) {
-                    logger.error("Could not convert {} into an integer", dur);
+                    logger.warn("Could not convert {} into an integer", dur);
+                    callback.stateChanged(
+                            SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DURATION),
+                            UnDefType.NULL);
                 }
             }
 
@@ -622,8 +628,10 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                             SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DATERELEASE),
                             new DateTimeType(daterelease));
                 } catch (final IllegalArgumentException e) {
-                    logger.error("Could not convert {} into an valid date", daterelease);
-
+                    logger.warn("Could not convert {} into an valid date", daterelease);
+                    callback.stateChanged(
+                            SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DATERELEASE),
+                            UnDefType.NULL);
                 }
             }
 
@@ -757,7 +765,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
         } else if (resp.getHttpCode() == HttpStatus.INTERNAL_SERVER_ERROR_500) {
             logger.debug("IRCC service returned a 500 - probably an unknown command: {}", cmdToSend);
         } else {
-            logger.error("Bad return code from {}: {}", IrccClient.SRV_ACTION_SENDIRCC, resp);
+            logger.warn("Bad return code from {}: {}", IrccClient.SRV_ACTION_SENDIRCC, resp);
         }
     }
 

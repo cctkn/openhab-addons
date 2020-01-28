@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -75,6 +76,9 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
     private static final String VOLUME = "volume";
     private static final String DEFAULTKEY = "main";
 
+    /** The notifications that are enabled */
+    private final NotificationHelper notificationHelper;
+
     /**
      * Instantiates a new scalar web audio protocol.
      *
@@ -86,7 +90,7 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
     ScalarWebAudioProtocol(final ScalarWebProtocolFactory<T> factory, final ScalarWebContext context,
             final ScalarWebService audioService, final T callback) {
         super(factory, context, audioService, callback);
-        enableNotifications(ScalarWebEvent.NOTIFYVOLUMEINFORMATION);
+        notificationHelper = new NotificationHelper(enableNotifications(ScalarWebEvent.NOTIFYVOLUMEINFORMATION));
     }
 
     @Override
@@ -116,20 +120,19 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
             }
         }
 
-        final ChannelIdCache cache = new ChannelIdCache();
         try {
             final String version = getService().getVersion(ScalarWebMethod.GETVOLUMEINFORMATION);
             if (VersionUtilities.equals(version, ScalarWebMethod.V1_0)) {
                 for (final VolumeInformation_1_0 vi : execute(ScalarWebMethod.GETVOLUMEINFORMATION)
                         .asArray(VolumeInformation_1_0.class)) {
-                    addVolumeDescriptors(descriptors, cache, vi.getTarget(), vi.getTarget(), vi.getMinVolume(),
+                    addVolumeDescriptors(descriptors, vi.getTarget(), vi.getTarget(), vi.getMinVolume(),
                             vi.getMaxVolume());
                 }
             } else if (VersionUtilities.equals(version, ScalarWebMethod.V1_1)) {
                 for (final VolumeInformation_1_1 vi : execute(ScalarWebMethod.GETVOLUMEINFORMATION, new Output())
                         .asArray(VolumeInformation_1_1.class)) {
-                    addVolumeDescriptors(descriptors, cache, vi.getOutput(), termTitles.get(vi.getOutput()),
-                            vi.getMinVolume(), vi.getMaxVolume());
+                    addVolumeDescriptors(descriptors, vi.getOutput(), termTitles.get(vi.getOutput()), vi.getMinVolume(),
+                            vi.getMaxVolume());
                 }
 
             } else {
@@ -139,14 +142,19 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
             logger.debug("Exception getting volume information: {}", e.getMessage());
         }
 
-        addGeneralSettingsDescriptor(descriptors, cache, ScalarWebMethod.GETSOUNDSETTINGS, SOUNDSETTING,
-                "Sound Setting");
+        if (service.hasMethod(ScalarWebMethod.GETSOUNDSETTINGS)) {
+            addGeneralSettingsDescriptor(descriptors, ScalarWebMethod.GETSOUNDSETTINGS, SOUNDSETTING, "Sound Setting");
+        }
 
-        addGeneralSettingsDescriptor(descriptors, cache, ScalarWebMethod.GETSPEAKERSETTINGS, SPEAKERSETTING,
-                "Speaker Setting");
+        if (service.hasMethod(ScalarWebMethod.GETSPEAKERSETTINGS)) {
+            addGeneralSettingsDescriptor(descriptors, ScalarWebMethod.GETSPEAKERSETTINGS, SPEAKERSETTING,
+                    "Speaker Setting");
+        }
 
-        addGeneralSettingsDescriptor(descriptors, cache, ScalarWebMethod.GETCUSTOMEQUALIZERSETTINGS, CUSTOMEQUALIZER,
-                "Custom Equalizer");
+        if (service.hasMethod(ScalarWebMethod.GETCUSTOMEQUALIZERSETTINGS)) {
+            addGeneralSettingsDescriptor(descriptors, ScalarWebMethod.GETCUSTOMEQUALIZERSETTINGS, CUSTOMEQUALIZER,
+                    "Custom Equalizer");
+        }
 
         return descriptors;
     }
@@ -155,21 +163,18 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
      * Helper method to add volume descriptors for the specified parameters
      * 
      * @param descriptors a non-null, possibly empty list of descriptors to add too
-     * @param cache a non-null channel id cache
      * @param viKey a possibly null, possibly empty volume information key
      * @param outputLabel a possibly null, possibly emtpy output label to assign
      * @param min a possibly null minimum volume level
      * @param max a possibly null maximum volume level
      */
-    private void addVolumeDescriptors(final List<ScalarWebChannelDescriptor> descriptors, final ChannelIdCache cache,
-            @Nullable final String viKey, @Nullable final String outputLabel, @Nullable final Integer min,
-            @Nullable final Integer max) {
+    private void addVolumeDescriptors(final List<ScalarWebChannelDescriptor> descriptors, final @Nullable String viKey,
+            final @Nullable String outputLabel, final @Nullable Integer min, final @Nullable Integer max) {
         Objects.requireNonNull(descriptors, "descriptors cannot be null");
-        Objects.requireNonNull(cache, "cache cannot be null");
 
         final String key = StringUtils.defaultIfEmpty(viKey, DEFAULTKEY);
         final String label = outputLabel == null ? WordUtils.capitalize(key) : outputLabel;
-        final String id = cache.getUniqueChannelId(key).toLowerCase();
+        final String id = SonyUtil.createValidChannelUId(key);
         final ScalarWebChannel volChannel = createChannel(VOLUME, id, key);
 
         descriptors.add(
@@ -189,30 +194,31 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
         final StateDescription sd = bld.build().toStateDescription();
 
         if (sd != null) {
-            getContext().getStateProvider().addStateOverride(getContext().getThingUID(),
-                    getContext().getMapper().getMappedChannelId(volChannel.getChannelId()), sd);
+            getContext().getStateProvider().addStateOverride(getContext().getThingUID(), volChannel.getChannelId(), sd);
         }
-
     }
 
     @Override
     public void refreshState() {
         final ScalarWebChannelTracker tracker = getContext().getTracker();
-        if (tracker.isCategoryLinked(VOLUME, MUTE)) {
-            refreshVolume(getChannelTracker().getLinkedChannelsForCategory(VOLUME, MUTE));
+
+        if (!notificationHelper.isEnabled(ScalarWebEvent.NOTIFYVOLUMEINFORMATION)) {
+            if (tracker.isCategoryLinked(VOLUME, MUTE)) {
+                refreshVolume(getChannelTracker().getLinkedChannelsForCategory(VOLUME, MUTE));
+            }
         }
 
         if (tracker.isCategoryLinked(SOUNDSETTING)) {
-            refreshGeneralSettings(tracker.getLinkedChannelsForCategory(SOUNDSETTING), ScalarWebMethod.GETSOUNDSETTINGS,
-                    SOUNDSETTING);
+            refreshGeneralSettings(tracker.getLinkedChannelsForCategory(SOUNDSETTING),
+                    ScalarWebMethod.GETSOUNDSETTINGS);
         }
         if (tracker.isCategoryLinked(SPEAKERSETTING)) {
             refreshGeneralSettings(tracker.getLinkedChannelsForCategory(SPEAKERSETTING),
-                    ScalarWebMethod.GETSPEAKERSETTINGS, SPEAKERSETTING);
+                    ScalarWebMethod.GETSPEAKERSETTINGS);
         }
         if (tracker.isCategoryLinked(CUSTOMEQUALIZER)) {
             refreshGeneralSettings(tracker.getLinkedChannelsForCategory(CUSTOMEQUALIZER),
-                    ScalarWebMethod.GETCUSTOMEQUALIZERSETTINGS, CUSTOMEQUALIZER);
+                    ScalarWebMethod.GETCUSTOMEQUALIZERSETTINGS);
         }
     }
 
@@ -222,24 +228,22 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
 
         final String ctgy = channel.getCategory();
         if (StringUtils.equalsIgnoreCase(ctgy, MUTE) || StringUtils.equalsIgnoreCase(ctgy, VOLUME)) {
-            refreshVolume(Collections.singletonList(channel));
+            refreshVolume(Collections.singleton(channel));
         } else if (StringUtils.equalsIgnoreCase(ctgy, SOUNDSETTING)) {
-            refreshGeneralSettings(Collections.singletonList(channel), ScalarWebMethod.GETSOUNDSETTINGS, SOUNDSETTING);
+            refreshGeneralSettings(Collections.singleton(channel), ScalarWebMethod.GETSOUNDSETTINGS);
         } else if (StringUtils.equalsIgnoreCase(ctgy, SPEAKERSETTING)) {
-            refreshGeneralSettings(Collections.singletonList(channel), ScalarWebMethod.GETSPEAKERSETTINGS,
-                    SPEAKERSETTING);
+            refreshGeneralSettings(Collections.singleton(channel), ScalarWebMethod.GETSPEAKERSETTINGS);
         } else if (StringUtils.equalsIgnoreCase(ctgy, CUSTOMEQUALIZER)) {
-            refreshGeneralSettings(Collections.singletonList(channel), ScalarWebMethod.GETCUSTOMEQUALIZERSETTINGS,
-                    CUSTOMEQUALIZER);
+            refreshGeneralSettings(Collections.singleton(channel), ScalarWebMethod.GETCUSTOMEQUALIZERSETTINGS);
         }
     }
 
     /**
      * Helper method to refresh volume information based on a set of channels
      * 
-     * @param channels a non-null, possibly empty list of channels
+     * @param channels a non-null, possibly empty set of channels
      */
-    private void refreshVolume(final List<ScalarWebChannel> channels) {
+    private void refreshVolume(final Set<ScalarWebChannel> channels) {
         Objects.requireNonNull(channels, "channels cannot be null");
 
         try {
@@ -299,15 +303,15 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
                 break;
 
             case SOUNDSETTING:
-                setGeneralSetting(ScalarWebMethod.SETSOUNDSETTINGS, path0, channel, command);
+                setGeneralSetting(ScalarWebMethod.SETSOUNDSETTINGS, channel, command);
                 break;
 
             case SPEAKERSETTING:
-                setGeneralSetting(ScalarWebMethod.SETSPEAKERSETTINGS, path0, channel, command);
+                setGeneralSetting(ScalarWebMethod.SETSPEAKERSETTINGS, channel, command);
                 break;
 
             case CUSTOMEQUALIZER:
-                setGeneralSetting(ScalarWebMethod.SETCUSTOMEQUALIZERSETTINGS, path0, channel, command);
+                setGeneralSetting(ScalarWebMethod.SETCUSTOMEQUALIZERSETTINGS, channel, command);
                 break;
 
             default:
@@ -393,7 +397,7 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
         switch (event.getMethod()) {
             case ScalarWebEvent.NOTIFYVOLUMEINFORMATION:
                 final String version = getVersion(ScalarWebMethod.GETVOLUMEINFORMATION);
-                final List<ScalarWebChannel> channels = getChannelTracker().getLinkedChannelsForCategory(VOLUME, MUTE);
+                final Set<ScalarWebChannel> channels = getChannelTracker().getLinkedChannelsForCategory(VOLUME, MUTE);
 
                 if (VersionUtilities.equals(version, ScalarWebMethod.V1_0)) {
                     final VolumeInformation_1_0 vi = event.as(VolumeInformation_1_0.class);
@@ -417,9 +421,9 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
      * The method that will handle notification of a volume change
      * 
      * @param vi a non-null volume information
-     * @param channels a non-null, possibly empty list of chanenls to notify
+     * @param channels a non-null, possibly empty set of channels to notify
      */
-    private void notifyVolumeInformation(final VolumeInformation_1_0 vi, final List<ScalarWebChannel> channels) {
+    private void notifyVolumeInformation(final VolumeInformation_1_0 vi, final Set<ScalarWebChannel> channels) {
         Objects.requireNonNull(vi, "vi cannot be null");
         Objects.requireNonNull(channels, "channels cannot be null");
 
@@ -459,9 +463,9 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
      * The method that will handle notification of a volume change
      * 
      * @param vi a non-null volume information
-     * @param channels a non-null, possibly empty list of chanenls to notify
+     * @param channels a non-null, possibly empty set of chanenls to notify
      */
-    private void notifyVolumeInformation(final VolumeInformation_1_1 vi, final List<ScalarWebChannel> channels) {
+    private void notifyVolumeInformation(final VolumeInformation_1_1 vi, final Set<ScalarWebChannel> channels) {
         Objects.requireNonNull(vi, "vi cannot be null");
         Objects.requireNonNull(channels, "channels cannot be null");
 

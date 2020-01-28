@@ -158,7 +158,7 @@ public class ScalarWebConfig extends AbstractConfig {
      *
      * @param irccUrl the discovered model name
      */
-    public void setDiscoveredModelName(@Nullable final String discoveredModelName) {
+    public void setDiscoveredModelName(final @Nullable String discoveredModelName) {
         this.discoveredModelName = discoveredModelName;
     }
 

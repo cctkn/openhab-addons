@@ -12,7 +12,6 @@
  */
 package org.openhab.binding.sony.internal.dial.models;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -89,6 +88,6 @@ public class DialService {
      * @return a non-null, possibly empty list of {@link DialApp}
      */
     public List<DialApp> getApps() {
-        return Collections.unmodifiableList(apps == null ? new ArrayList<>() : apps);
+        return apps == null ? Collections.emptyList() : Collections.unmodifiableList(apps);
     }
 }

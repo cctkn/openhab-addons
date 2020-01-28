@@ -49,10 +49,10 @@ class MetaInfo {
      */
     MetaInfo() {
         this.enabled = true;
-        this.ignoreModelName = Collections.unmodifiableList(Collections.emptyList());
-        this.ignoreChannelId = Collections.unmodifiableList(Collections.emptyList());
-        this.modelNameConvert = Collections.unmodifiableList(Collections.emptyList());
-        this.channelIdConvert = Collections.unmodifiableList(Collections.emptyList());
+        this.ignoreModelName = Collections.emptyList();
+        this.ignoreChannelId = Collections.emptyList();
+        this.modelNameConvert = Collections.emptyList();
+        this.channelIdConvert = Collections.emptyList();
 
     }
 

@@ -24,16 +24,16 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class TvContentVisibility {
     /** The uri of the content */
-    private @Nullable final String uri;
+    private final @Nullable String uri;
 
     /** The epg visibility */
-    private @Nullable final String epgVisibility;
+    private final @Nullable String epgVisibility;
 
     /** The channel surfing visibility */
-    private @Nullable final String channelSurfingVisibility;
+    private final @Nullable String channelSurfingVisibility;
 
     /** The overall visibility */
-    private @Nullable final String visibility;
+    private final @Nullable String visibility;
 
     /**
      * Instantiates a new tv content visibility.
@@ -43,8 +43,8 @@ public class TvContentVisibility {
      * @param channelSurfingVisibility the channel surfing visibility (null if not specified)
      * @param visibility the overall visibility (null if not specified)
      */
-    public TvContentVisibility(final String uri, @Nullable final String epgVisibility,
-            @Nullable final String channelSurfingVisibility, @Nullable final String visibility) {
+    public TvContentVisibility(final String uri, final @Nullable String epgVisibility,
+            final @Nullable String channelSurfingVisibility, final @Nullable String visibility) {
         Validate.notEmpty(uri, "uri cannot be null");
         this.uri = uri;
         this.epgVisibility = epgVisibility;

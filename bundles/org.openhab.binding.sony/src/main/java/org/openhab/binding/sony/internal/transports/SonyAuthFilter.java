@@ -91,7 +91,7 @@ public class SonyAuthFilter implements ClientRequestFilter, ClientResponseFilter
     }
 
     @Override
-    public void filter(@Nullable final ClientRequestContext requestCtx) throws IOException {
+    public void filter(final @Nullable ClientRequestContext requestCtx) throws IOException {
         Objects.requireNonNull(requestCtx, "requestCtx cannot be null");
 
         boolean authNeeded = true;
@@ -157,8 +157,8 @@ public class SonyAuthFilter implements ClientRequestFilter, ClientResponseFilter
     }
 
     @Override
-    public void filter(@Nullable final ClientRequestContext requestCtx,
-            @Nullable final ClientResponseContext responseCtx) throws IOException {
+    public void filter(final @Nullable ClientRequestContext requestCtx,
+            final @Nullable ClientResponseContext responseCtx) throws IOException {
         Objects.requireNonNull(responseCtx, "responseCtx cannot be null");
 
         // The response may included an auth cookie that we need to save

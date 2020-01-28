@@ -35,8 +35,8 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class MetaConvertDeserializer implements JsonDeserializer<MetaConvert> {
     @Override
-    public MetaConvert deserialize(@Nullable final JsonElement je, @Nullable final Type type,
-            @Nullable final JsonDeserializationContext context) throws JsonParseException {
+    public MetaConvert deserialize(final @Nullable JsonElement je, final @Nullable Type type,
+            final @Nullable JsonDeserializationContext context) throws JsonParseException {
         Objects.requireNonNull(je, "je cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
         Objects.requireNonNull(context, "context cannot be null");

@@ -42,19 +42,19 @@ public class UpnpService {
 
     /** The service identifier */
     @XStreamAlias("serviceId")
-    private @Nullable final String serviceId;
+    private final @Nullable String serviceId;
 
     /** The service type */
     @XStreamAlias("serviceType")
-    private @Nullable final String serviceType;
+    private final @Nullable String serviceType;
 
     /** The scpd url */
     @XStreamAlias("SCPDURL")
-    private @Nullable final String scpdUrl;
+    private final @Nullable String scpdUrl;
 
     /** The control url */
     @XStreamAlias("controlURL")
-    private @Nullable final String controlUrl;
+    private final @Nullable String controlUrl;
 
     /**
      * Constructs a UpnpService

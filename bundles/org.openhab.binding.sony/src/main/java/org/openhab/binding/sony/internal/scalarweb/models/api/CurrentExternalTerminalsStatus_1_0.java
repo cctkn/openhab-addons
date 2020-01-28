@@ -42,16 +42,16 @@ public class CurrentExternalTerminalsStatus_1_0 {
     private @Nullable String label;
 
     /** The meta identifying information on the terminal */
-    private @Nullable final String meta;
+    private final @Nullable String meta;
 
     /** The outputs associated with this terminal (usually an input) */
     private @Nullable String @Nullable [] outputs;
 
     /** The title (name) of the terminal */
-    private @Nullable final String title;
+    private final @Nullable String title;
 
     /** The uri identifying the terminal */
-    private @Nullable final String uri;
+    private final @Nullable String uri;
 
     public CurrentExternalTerminalsStatus_1_0(final String uri, final String title) {
         this.uri = uri;

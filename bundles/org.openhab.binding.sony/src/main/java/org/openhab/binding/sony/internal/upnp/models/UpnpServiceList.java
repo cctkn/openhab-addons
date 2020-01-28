@@ -12,7 +12,6 @@
  */
 package org.openhab.binding.sony.internal.upnp.models;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,6 +45,6 @@ public class UpnpServiceList {
      * @return a non-null, possibly empty list of services
      */
     public List<UpnpService> getServices() {
-        return Collections.unmodifiableList(services == null ? new ArrayList<UpnpService>() : services);
+        return services == null ? Collections.emptyList() : Collections.unmodifiableList(services);
     }
 }

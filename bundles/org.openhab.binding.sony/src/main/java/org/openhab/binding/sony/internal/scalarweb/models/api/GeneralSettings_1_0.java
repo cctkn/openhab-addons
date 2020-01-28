@@ -16,14 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.sony.internal.scalarweb.gson.GsonUtilities;
-import org.openhab.binding.sony.internal.scalarweb.models.ScalarWebResult;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.binding.sony.internal.scalarweb.gson.GsonUtilities;
+import org.openhab.binding.sony.internal.scalarweb.models.ScalarWebResult;
 
 /**
  * This class represents all the various setting values.
@@ -32,7 +32,6 @@ import com.google.gson.JsonParseException;
  */
 @NonNullByDefault
 public class GeneralSettings_1_0 {
-
     /** The general settings */
     private final List<GeneralSetting> generalSettings = new ArrayList<>();
 
@@ -54,7 +53,11 @@ public class GeneralSettings_1_0 {
         for (final JsonElement elm : rsts) {
             if (elm.isJsonArray()) {
                 for (final JsonElement arr : elm.getAsJsonArray()) {
-                    generalSettings.add(gson.fromJson(arr, GeneralSetting.class));
+                    if (arr.isJsonObject()) {
+                        generalSettings.add(gson.fromJson(arr, GeneralSetting.class));
+                    } else {
+                        throw new JsonParseException("General Settings entry not an object: " + arr);
+                    }
                 }
             }
         }

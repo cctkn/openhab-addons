@@ -41,7 +41,7 @@ public class IrccUnrDeviceInfo {
 
     /** The version. */
     @XStreamAlias("X_UNR_Version")
-    private @Nullable final String version;
+    private final @Nullable String version;
 
     /** The action list url. */
     @XStreamAlias("X_CERS_ActionList_URL")

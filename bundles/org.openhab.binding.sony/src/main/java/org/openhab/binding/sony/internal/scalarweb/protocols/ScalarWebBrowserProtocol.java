@@ -204,7 +204,7 @@ class ScalarWebBrowserProtocol<T extends ThingCallback<String>> extends Abstract
      *
      * @param control the new activate browser control
      */
-    private void setActivateBrowserControl(@Nullable final String control) {
+    private void setActivateBrowserControl(final @Nullable String control) {
         handleExecute(ScalarWebMethod.ACTIVATEBROWSERCONTROL,
                 new BrowserControl(StringUtils.defaultIfEmpty(control, null)));
     }

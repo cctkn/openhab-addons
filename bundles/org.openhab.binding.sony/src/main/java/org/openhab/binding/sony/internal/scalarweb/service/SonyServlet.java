@@ -101,7 +101,7 @@ public class SonyServlet extends HttpServlet {
     public void activate() {
         try {
             httpService.registerServlet(SONYAPP_PATH, this, new Hashtable<>(), httpService.createDefaultHttpContext());
-            httpService.registerResources(SONY_PATH, "web/sonyapp/dist", httpService.createDefaultHttpContext());
+            httpService.registerResources(SONY_PATH, "web/sonyapp", httpService.createDefaultHttpContext());
             logger.debug("Started Sony Web service at {}", SONY_PATH);
         } catch (ServletException | NamespaceException e) {
             logger.debug("Exception starting status servlet: {}", e.getMessage(), e);
@@ -114,7 +114,7 @@ public class SonyServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(@Nullable final HttpServletRequest req, @Nullable final HttpServletResponse resp)
+    protected void doPost(final @Nullable HttpServletRequest req, final @Nullable HttpServletResponse resp)
             throws ServletException, IOException {
         Objects.requireNonNull(req, "req cannot be null");
         Objects.requireNonNull(resp, "resp cannot be null");
@@ -165,7 +165,7 @@ public class SonyServlet extends HttpServlet {
                 write(resp, gson.toJson(new CommandResponse(false, "No transport of type: " + transportName)));
                 return;
             } else {
-                final String cmd = "{\"id\":100,\"method\":\"" + command + "\",\"version\":\"" + version
+                final String cmd = "{\"id\":10,\"method\":\"" + command + "\",\"version\":\"" + version
                         + "\",\"params\":[" + parms + "]}";
 
                 final ScalarWebRequest rqst = gson.fromJson(cmd, ScalarWebRequest.class);

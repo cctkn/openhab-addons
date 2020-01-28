@@ -25,7 +25,7 @@ import org.eclipse.jdt.annotation.Nullable;
 public class PublicKey {
 
     /** The public key */
-    private @Nullable final String publicKey;
+    private final @Nullable String publicKey;
 
     /**
      * Instantiates a new public key

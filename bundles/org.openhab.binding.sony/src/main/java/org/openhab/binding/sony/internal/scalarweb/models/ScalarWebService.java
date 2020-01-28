@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,13 +61,14 @@ public class ScalarWebService implements AutoCloseable {
     public static final String CONTENTSHARE = "contentshare";
     public static final String ENCRYPTION = "encryption";
     public static final String GUIDE = "guide";
+    public static final String ILLUMINATION = "illumination";
     public static final String SYSTEM = "system";
     public static final String VIDEOSCREEN = "videoScreen";
 
     // These are (undocumented) services that I haven't figured out yet
     public static final String NOTIFICATION = "notification";
     public static final String RECORDING = "recording";
-    
+
     /** The service name */
     private final String serviceName;
 
@@ -82,8 +84,11 @@ public class ScalarWebService implements AutoCloseable {
     /** The API supported by this service */
     private final SupportedApi supportedApi;
 
-    /** The current request identifier */
-    private int currId = 1;
+    /**
+     * The current request identifier (static across all instances)
+     * note: start at 100 since below 100 tend to be utility ids (getting method types, etc)
+     */
+    private static AtomicInteger id = new AtomicInteger(100);
 
     /**
      * Instantiates a new scalar web service.
@@ -124,7 +129,7 @@ public class ScalarWebService implements AutoCloseable {
         final List<ScalarWebMethod> methods = new ArrayList<>();
         try {
             // Retrieve the api versions for the service
-            versions.addAll(execute(new ScalarWebRequest(++currId, ScalarWebMethod.GETVERSIONS, version))
+            versions.addAll(execute(new ScalarWebRequest(id.incrementAndGet(), ScalarWebMethod.GETVERSIONS, version))
                     .asArray(String.class));
         } catch (final IOException e) {
             if (StringUtils.contains(e.getMessage(), String.valueOf(HttpStatus.NOT_FOUND_404))) {
@@ -139,7 +144,7 @@ public class ScalarWebService implements AutoCloseable {
         for (final String apiVersion : versions) {
             try {
                 final MethodTypes mtdResults = execute(
-                        new ScalarWebRequest(++currId, ScalarWebMethod.GETMETHODTYPES, version, apiVersion))
+                        new ScalarWebRequest(id.incrementAndGet(), ScalarWebMethod.GETMETHODTYPES, version, apiVersion))
                                 .as(MethodTypes.class);
                 methods.addAll(mtdResults.getMethods());
             } catch (final IOException e) {
@@ -172,8 +177,8 @@ public class ScalarWebService implements AutoCloseable {
         // don't use unknown variant since that will prevent change detection in github implementation
         supportedApi.getNotifications().forEach(api -> {
             api.getVersions().forEach(v -> {
-                notifications.add(new ScalarWebMethod(api.getName(), new ArrayList<>(), new ArrayList<>(),
-                        v.getVersion(), 0));
+                notifications.add(
+                        new ScalarWebMethod(api.getName(), new ArrayList<>(), new ArrayList<>(), v.getVersion(), 0));
             });
         });
         return notifications;
@@ -263,7 +268,7 @@ public class ScalarWebService implements AutoCloseable {
      * @param parms the parameters to use
      * @return the scalar web result
      */
-    public ScalarWebResult executeSpecific(final String methodName, @Nullable final String version,
+    public ScalarWebResult executeSpecific(final String methodName, final @Nullable String version,
             final Object... parms) {
         Validate.notEmpty(methodName, "methodName cannot be empty");
 
@@ -273,9 +278,9 @@ public class ScalarWebService implements AutoCloseable {
                 logger.debug("Method {} doesn't exist in the service {}", methodName, serviceName);
                 return ScalarWebResult.createNotImplemented(methodName);
             }
-            return execute(new ScalarWebRequest(currId++, methodName, mtdVersion, parms));
+            return execute(new ScalarWebRequest(id.incrementAndGet(), methodName, mtdVersion, parms));
         } else {
-            return execute(new ScalarWebRequest(currId++, methodName, version, parms));
+            return execute(new ScalarWebRequest(id.incrementAndGet(), methodName, version, parms));
         }
     }
 
@@ -335,6 +340,8 @@ public class ScalarWebService implements AutoCloseable {
                 return "Encryption";
             case GUIDE:
                 return "Guide";
+            case ILLUMINATION:
+                return "Illumination";
             case SYSTEM:
                 return "System";
             case VIDEOSCREEN:
@@ -362,6 +369,7 @@ public class ScalarWebService implements AutoCloseable {
                 put(CONTENTSHARE, labelFor(CONTENTSHARE));
                 put(ENCRYPTION, labelFor(ENCRYPTION));
                 put(GUIDE, labelFor(GUIDE));
+                put(ILLUMINATION, labelFor(ILLUMINATION));
                 put(SYSTEM, labelFor(SYSTEM));
                 put(VIDEOSCREEN, labelFor(VIDEOSCREEN));
             }

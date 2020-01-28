@@ -47,7 +47,6 @@ import org.openhab.binding.sony.internal.ircc.IrccClientFactory;
 import org.openhab.binding.sony.internal.ircc.models.IrccClient;
 import org.openhab.binding.sony.internal.ircc.models.IrccRemoteCommand;
 import org.openhab.binding.sony.internal.ircc.models.IrccRemoteCommands;
-import org.openhab.binding.sony.internal.net.HttpResponse;
 import org.openhab.binding.sony.internal.scalarweb.ScalarWebClient;
 import org.openhab.binding.sony.internal.scalarweb.ScalarWebConfig;
 import org.openhab.binding.sony.internal.scalarweb.ScalarWebConstants;
@@ -107,7 +106,7 @@ public class ScalarWebLoginProtocol<T extends ThingCallback<String>> {
      * @throws IOException
      */
     public ScalarWebLoginProtocol(final ScalarWebClient client, final ScalarWebConfig config, final T callback,
-            @Nullable final TransformationService transformService) throws IOException {
+            final @Nullable TransformationService transformService) throws IOException {
         Objects.requireNonNull(client, "client cannot be null");
         Objects.requireNonNull(config, "config cannot be null");
         Objects.requireNonNull(callback, "callback cannot be null");
@@ -171,35 +170,44 @@ public class ScalarWebLoginProtocol<T extends ThingCallback<String>> {
         final String accessCode = config.getAccessCode();
         final SonyAuthChecker authChecker = new SonyAuthChecker(systemService.getTransport(), accessCode);
         final CheckResult checkResult = authChecker.checkResult(() -> {
-            // Some devices have power status unprotected - so check device mode first
-            // if device mode isn't implement, check power status (which will probably be protected
-            // or not protected if webconnect)
-            ScalarWebResult result = systemService.execute(ScalarWebMethod.GETDEVICEMODE);
-            if (result.getDeviceErrorCode() == ScalarWebError.NOTIMPLEMENTED) {
-                result = systemService.execute(ScalarWebMethod.GETPOWERSTATUS);
+
+            // Default to a bad access result
+            AccessResult ar = new AccessResult("unknown", "Unknown Result!");
+
+            // If we have a power status - execute it first
+            if (systemService.hasMethod(ScalarWebMethod.GETPOWERSTATUS)) {
+                final ScalarWebResult result = systemService.execute(ScalarWebMethod.GETPOWERSTATUS);
+                ar = getAccessResult(result);
+                if (ar == AccessResult.NEEDSPAIRING || ar == AccessResult.DISPLAYOFF) {
+                    return ar;
+                }
             }
 
-            if (result.getDeviceErrorCode() == ScalarWebError.DISPLAYISOFF) {
-                return AccessResult.DISPLAYOFF;
+            // Now try the get system information
+            if (systemService.hasMethod(ScalarWebMethod.GETSYSTEMINFORMATION)) {
+                final ScalarWebResult result = systemService.execute(ScalarWebMethod.GETSYSTEMINFORMATION);
+                ar = getAccessResult(result);
+                if (ar == AccessResult.NEEDSPAIRING || ar == AccessResult.DISPLAYOFF) {
+                    return ar;
+                }
             }
 
-            final HttpResponse httpResponse = result.getHttpResponse();
-
-            // Either a 200 (good call) or an illegalargument (it tried to run it but it's arguments were not good) is
-            // good
-            if (httpResponse.getHttpCode() == HttpStatus.OK_200
-                    || result.getDeviceErrorCode() == ScalarWebError.ILLEGALARGUMENT) {
-                return AccessResult.OK;
+            // and finally the get device mode
+            if (systemService.hasMethod(ScalarWebMethod.GETDEVICEMODE)) {
+                final ScalarWebResult result = systemService.execute(ScalarWebMethod.GETDEVICEMODE);
+                // getDeviceMode takes an unknown "value" argument - if we get back
+                // illegal arugment - then it executed fine and we are OK
+                ar = getAccessResult(result);
+                if (ar == AccessResult.NEEDSPAIRING || ar == AccessResult.DISPLAYOFF) {
+                    return ar;
+                }
+                if (result.getDeviceErrorCode() == ScalarWebError.ILLEGALARGUMENT) {
+                    ar = AccessResult.OK;
+                }
             }
 
-            if (result.getDeviceErrorCode() == ScalarWebError.NOTIMPLEMENTED
-                    || httpResponse.getHttpCode() == HttpStatus.UNAUTHORIZED_401
-                    || httpResponse.getHttpCode() == HttpStatus.FORBIDDEN_403
-                    || result.getDeviceErrorCode() == ScalarWebError.FORBIDDEN) {
-                return AccessResult.NEEDSPAIRING;
-            }
-
-            return new AccessResult(httpResponse);
+            // Finally - return our last result (probably either AccessResult.OK or some http error)
+            return ar;
         });
 
         if (CheckResult.OK_HEADER.equals(checkResult)) {
@@ -237,6 +245,34 @@ public class ScalarWebLoginProtocol<T extends ThingCallback<String>> {
         postLogin();
         return AccessResult.OK;
 
+    }
+
+    /**
+     * Get's the access result for the result
+     * 
+     * @param result a non-null result
+     * @return a non-null if there is a bad result, null if okay
+     */
+    private static @Nullable AccessResult getAccessResult(ScalarWebResult result) {
+        Objects.requireNonNull(result, "result cannot be null");
+
+        if (result.getDeviceErrorCode() == ScalarWebError.DISPLAYISOFF) {
+            return AccessResult.DISPLAYOFF;
+        }
+
+        final int deviceErrorCode = result.getDeviceErrorCode();
+        final int httpCode = result.getHttpResponse().getHttpCode();
+
+        if (deviceErrorCode == ScalarWebError.NOTIMPLEMENTED || deviceErrorCode == ScalarWebError.FORBIDDEN
+                || httpCode == HttpStatus.UNAUTHORIZED_401 || httpCode == HttpStatus.FORBIDDEN_403) {
+            return AccessResult.NEEDSPAIRING;
+        }
+
+        if (httpCode == HttpStatus.OK_200) {
+            return AccessResult.OK;
+        }
+
+        return new AccessResult(result.getHttpResponse());
     }
 
     /**

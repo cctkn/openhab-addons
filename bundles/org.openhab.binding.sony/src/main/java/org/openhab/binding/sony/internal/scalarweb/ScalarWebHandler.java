@@ -99,9 +99,6 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
     /** The dynamic state provider to use */
     private final SonyDynamicStateProvider sonyDynamicStateProvider;
 
-    /** The channel mapper to use */
-    private final ScalarWebChannelMapper mapper;
-
     /** The definition listener */
     private final DefinitionListener definitionListener = new DefinitionListener();
 
@@ -114,7 +111,7 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
      * @param sonyDefinitionProvider a non-null definition provider
      * @param sonyDynamicStateProvider a non-null dynamic state provider
      */
-    public ScalarWebHandler(final Thing thing, @Nullable final TransformationService transformationService,
+    public ScalarWebHandler(final Thing thing, final @Nullable TransformationService transformationService,
             final WebSocketClient webSocketClient, final SonyDefinitionProvider sonyDefinitionProvider,
             final SonyDynamicStateProvider sonyDynamicStateProvider) {
         super(thing, ScalarWebConfig.class);
@@ -128,24 +125,22 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
         this.webSocketClient = webSocketClient;
         this.sonyDefinitionProvider = sonyDefinitionProvider;
         this.sonyDynamicStateProvider = sonyDynamicStateProvider;
-        this.mapper = new ScalarWebChannelMapper(getThing());
 
         callback = new ThingCallback<String>() {
             @Override
             public void statusChanged(final ThingStatus state, final ThingStatusDetail detail,
-                    @Nullable final String msg) {
+                    final @Nullable String msg) {
                 updateStatus(state, detail, msg);
 
             }
 
             @Override
             public void stateChanged(final String channelId, final State newState) {
-                final String mappedId = mapper.getMappedChannelId(channelId);
-                updateState(mappedId, newState);
+                updateState(channelId, newState);
             }
 
             @Override
-            public void setProperty(final String propertyName, @Nullable final String propertyValue) {
+            public void setProperty(final String propertyName, final @Nullable String propertyValue) {
                 // change meaning of null propertyvalue
                 // setProperty says remove - here we are ignoring
                 if (propertyValue != null && StringUtils.isNotEmpty(propertyValue)) {
@@ -178,7 +173,7 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
             logger.debug("Channel for {} could not be found", channelUID);
             return;
         }
-        final ScalarWebChannel scalarChannel = new ScalarWebChannel(mapper.getBaseChannelId(channelUID), channel);
+        final ScalarWebChannel scalarChannel = new ScalarWebChannel(channelUID, channel);
 
         final ScalarWebProtocolFactory<ThingCallback<String>> localProtocolFactory = protocolFactory.get();
         if (localProtocolFactory == null) {
@@ -216,7 +211,7 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
             SonyUtil.checkInterrupt();
 
             final ScalarWebContext context = new ScalarWebContext(() -> getThing(), config, tracker, scheduler,
-                    sonyDynamicStateProvider, webSocketClient, transformationService, mapper);
+                    sonyDynamicStateProvider, webSocketClient, transformationService);
 
             final ScalarWebClient client = new ScalarWebClientFactory().get(scalarWebUrl, context);
             scalarClient.set(client);
@@ -273,7 +268,7 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
             }
         } catch (final InterruptedException e) {
             logger.debug("Initialization was interrupted");
-            // status would have already been set if interrupted - don't update it 
+            // status would have already been set if interrupted - don't update it
             // since another instance of this will occur
         } catch (IOException | ParserConfigurationException | SAXException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR,
@@ -304,7 +299,7 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
         // Get all channel descriptors if we are generic
         // Get ONLY the app control descriptors (which are dynamic) if not
         for (final ScalarWebChannelDescriptor descriptor : factory.getChannelDescriptors(!genericThing)) {
-            final Channel channel = descriptor.createChannel(thingUid, mapper).build();
+            final Channel channel = descriptor.createChannel(thingUid).build();
             final String channelId = channel.getUID().getId();
             if (channels.containsKey(channelId)) {
                 logger.debug("Channel definition already exists for {}: {}", channel.getUID().getId(), descriptor);
@@ -404,7 +399,7 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
     public void channelUnlinked(final ChannelUID channelUID) {
         Objects.requireNonNull(channelUID, "channelUID cannot be null");
 
-        tracker.channelUnlinked(mapper.getBaseChannelId(channelUID));
+        tracker.channelUnlinked(channelUID);
         super.channelUnlinked(channelUID);
     }
 
@@ -415,7 +410,7 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
         if (channel == null) {
             logger.debug("channel linked called but channelUID {} could not be found", channelUID);
         } else {
-            tracker.channelLinked(new ScalarWebChannel(mapper.getBaseChannelId(channelUID), channel));
+            tracker.channelLinked(new ScalarWebChannel(channelUID, channel));
         }
         super.channelLinked(channelUID);
     }

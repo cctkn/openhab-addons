@@ -150,7 +150,7 @@ public class Source {
      * @param uri a possibly null, possibly empty source uri
      * @return the scheme part or null if not found
      */
-    public static @Nullable String getSchemePart(@Nullable final String uri) {
+    public static @Nullable String getSchemePart(final @Nullable String uri) {
         if (uri == null || StringUtils.isEmpty(uri)) {
             return null;
         }
@@ -165,7 +165,7 @@ public class Source {
      * @param uri a possibly null, possibly empty source uri
      * @return the source part or null if not found
      */
-    public static @Nullable String getSourcePart(@Nullable final String uri) {
+    public static @Nullable String getSourcePart(final @Nullable String uri) {
         if (uri == null || StringUtils.isEmpty(uri)) {
             return null;
         }
@@ -181,7 +181,7 @@ public class Source {
     }
 
     @Override
-    public boolean equals(@Nullable final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (this == obj) {
             return true;
         }

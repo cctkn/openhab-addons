@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -42,11 +43,11 @@ public class GeneralSetting {
     /** A string setting target */
     public static final String STRINGTARGET = "stringTarget";
 
-    /** The value for boolean ON */
-    public static final String ON = "on";
+    /** The DEFAULT value for boolean ON */
+    public static final String DEFAULTON = "on";
 
-    /** The value for boolean OFF */
-    public static final String OFF = "off";
+    /** The DEFAULT value for boolean OFF */
+    public static final String DEFAULTOFF = "off";
 
     /** The slider deviceUI type for a setting */
     public static final String SLIDER = "slider";
@@ -75,8 +76,28 @@ public class GeneralSetting {
     /** The device UI info (picker/slider) */
     private @Nullable String deviceUIInfo;
 
+    /** The URI the setting may apply to */
+    private @Nullable String uri;
+
     /** The candidates for the setting (think enums or min/max/step values) */
     private @Nullable List<@Nullable GeneralSettingsCandidate> candidate;
+
+    /**
+     * Constructs a setting form the parameters
+     * 
+     * @param target a non-null, non-empty target
+     * @param uri a possibly null, possibly empty uri
+     * @param type a possibly null, possibly empty type
+     * @param currentValue a possibly null, possibly empty current value
+     */
+    public GeneralSetting(final String target, @Nullable final String uri, @Nullable final String type,
+            @Nullable final String currentValue) {
+        Validate.notEmpty(target, "target cannot be empty");
+        this.target = target;
+        this.uri = uri;
+        this.type = type;
+        this.currentValue = currentValue;
+    }
 
     /**
      * Whether the setting is currently available
@@ -142,6 +163,15 @@ public class GeneralSetting {
     }
 
     /**
+     * The uri to apply the setting to
+     * 
+     * @return the uri to apply the setting to
+     */
+    public @Nullable String getUri() {
+        return uri;
+    }
+
+    /**
      * Whether the setting's UI is a slider
      * 
      * @return true if a slider, false otherwise
@@ -174,5 +204,4 @@ public class GeneralSetting {
                 + ", title=" + title + ", titleTextID=" + titleTextID + ", type=" + type + ", deviceUIInfo="
                 + deviceUIInfo + ", candidate=" + candidate + "]";
     }
-
 }

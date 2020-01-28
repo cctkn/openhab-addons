@@ -35,7 +35,7 @@ public class PowerSyncMode {
      * @param sinkPowerOffSync the sink power off sync (null to not specify)
      * @param sourcePowerOnSync the source power on sync (null to not specify)
      */
-    public PowerSyncMode(@Nullable final Boolean sinkPowerOffSync, @Nullable final Boolean sourcePowerOnSync) {
+    public PowerSyncMode(final @Nullable Boolean sinkPowerOffSync, final @Nullable Boolean sourcePowerOnSync) {
         this.sinkPowerOffSync = sinkPowerOffSync;
         this.sourcePowerOnSync = sourcePowerOnSync;
     }

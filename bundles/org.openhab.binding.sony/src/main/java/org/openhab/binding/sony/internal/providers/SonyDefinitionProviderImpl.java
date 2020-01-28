@@ -110,7 +110,7 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
 
     @Override
     public @Nullable ChannelGroupType getChannelGroupType(final ChannelGroupTypeUID channelGroupTypeUID,
-            @Nullable final Locale locale) {
+            final @Nullable Locale locale) {
         Objects.requireNonNull(channelGroupTypeUID, "thingTypeUID cannot be null");
         if (StringUtils.equalsIgnoreCase(channelGroupTypeUID.getBindingId(), SonyBindingConstants.BINDING_ID)) {
             for (final SonySource src : sources) {
@@ -124,7 +124,7 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
     }
 
     @Override
-    public Collection<ChannelGroupType> getChannelGroupTypes(@Nullable final Locale locale) {
+    public Collection<ChannelGroupType> getChannelGroupTypes(final @Nullable Locale locale) {
         final Map<ChannelGroupTypeUID, ChannelGroupType> groupTypes = new HashMap<>();
         for (final SonySource src : sources) {
             final Collection<ChannelGroupType> localGroupTypes = src.getChannelGroupTypes();
@@ -140,7 +140,7 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
     }
 
     @Override
-    public Collection<ThingType> getThingTypes(@Nullable final Locale locale) {
+    public Collection<ThingType> getThingTypes(final @Nullable Locale locale) {
         final Map<ThingTypeUID, ThingType> thingTypes = new HashMap<>();
         for (final SonySource src : sources) {
             for (final ThingType tt : src.getThingTypes()) {
@@ -153,7 +153,7 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
     }
 
     @Override
-    public @Nullable ThingType getThingType(final ThingTypeUID thingTypeUID, @Nullable final Locale locale) {
+    public @Nullable ThingType getThingType(final ThingTypeUID thingTypeUID, final @Nullable Locale locale) {
         Objects.requireNonNull(thingTypeUID, "thingTypeUID cannot be null");
         if (StringUtils.equalsIgnoreCase(thingTypeUID.getBindingId(), SonyBindingConstants.BINDING_ID)) {
             for (final SonySource src : sources) {
@@ -179,7 +179,7 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
 
     @Override
     public @Nullable StateDescription getStateDescription(final Channel channel,
-            @Nullable final StateDescription originalStateDescription, @Nullable final Locale locale) {
+            final @Nullable StateDescription originalStateDescription, final @Nullable Locale locale) {
         Objects.requireNonNull(channel, "channel cannot be null");
 
         if (StringUtils.equalsIgnoreCase(channel.getUID().getBindingId(), SonyBindingConstants.BINDING_ID)) {
@@ -206,7 +206,7 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
      * @return the state definition for the thing/channel or the original if none found
      */
     private @Nullable StateDescription getStateDescription(final ThingUID thingUID, final String channelId,
-            @Nullable final StateDescription originalStateDescription) {
+            final @Nullable StateDescription originalStateDescription) {
         Objects.requireNonNull(thingUID, "thingUID cannot be null");
         Validate.notEmpty(channelId, "channelID cannot be empty");
 

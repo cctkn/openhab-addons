@@ -23,7 +23,7 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class WolMode {
     /** Whether enabled or not */
-    private @Nullable final Boolean enabled;
+    private final @Nullable Boolean enabled;
 
     /**
      * Constructs the WOL mode

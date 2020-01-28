@@ -17,8 +17,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -114,12 +116,12 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
         // String localPubKey = null;
         // final ScalarWebService enc = getService(ScalarWebService.ENCRYPTION);
         // if (enc != null) {
-        //     try {
-        //         final PublicKey publicKey = enc.execute(ScalarWebMethod.GETPUBLICKEY).as(PublicKey.class);
-        //         localPubKey = publicKey.getPublicKey();
-        //     } catch (final IOException e) {
-        //         logger.debug("Exception getting public key: {}", e.getMessage());
-        //     }
+        // try {
+        // final PublicKey publicKey = enc.execute(ScalarWebMethod.GETPUBLICKEY).as(PublicKey.class);
+        // localPubKey = publicKey.getPublicKey();
+        // } catch (final IOException e) {
+        // logger.debug("Exception getting public key: {}", e.getMessage());
+        // }
         // }
 
         // pubKey = localPubKey;
@@ -127,7 +129,7 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
 
     @Override
     public Collection<ScalarWebChannelDescriptor> getChannelDescriptors(final boolean dynamicOnly) {
-        final ChannelIdCache cache = new ChannelIdCache();
+        final Set<String> cache = new HashSet<>();
         final List<ScalarWebChannelDescriptor> descriptors = new ArrayList<ScalarWebChannelDescriptor>();
 
         // everything is dynamic so we ignore the dynamicOnly flag
@@ -141,7 +143,21 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
 
             final String title = app.getTitle();
             final String label = WordUtils.capitalize(title);
-            final String id = cache.getUniqueChannelId(title).toLowerCase();
+
+            final String origId = SonyUtil.createValidChannelUId(title);
+
+            // Make a unique channel ID for this
+            // We can't solely assume title is unique - there are bravias that have
+            // different apps that are titled the same (go figure)
+            // So do "-x" to the title if we have a duplicate
+            String validId = origId;
+            int i = 0;
+            while (cache.contains(validId)) {
+                validId = origId + "-" + (++i);
+            }
+            cache.add(validId);
+
+            final String id = validId;
 
             descriptors.add(createDescriptor(createChannel(APPTITLE, id, uri), "String", "scalarappcontrolapptitle",
                     "App " + label + " Title", "Title for application " + label));
@@ -163,8 +179,8 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
                     continue;
                 }
 
+                final String id = SonyUtil.createValidChannelUId(name);
                 final String title = WordUtils.capitalize(name);
-                final String id = cache.getUniqueChannelId(title).toLowerCase();
                 descriptors.add(createDescriptor(createChannel(STATUS, id, name), "Switch", "scalarappcontrolstatus",
                         "Indicator " + title, "Indicator for " + title));
             }
@@ -172,24 +188,24 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
             logger.info("Exception getting application status list: {}", e.getMessage());
         }
 
-            // Haven't figured out encryption yet - assume non-encryption format
-        //  try {
-            //final String textFormVersion = getService().getVersion(ScalarWebMethod.GETTEXTFORM);
-            // if (VersionUtilities.equals(textFormVersion, ScalarWebMethod.V1_0)) {
-            if (service.hasMethod(ScalarWebMethod.GETTEXTFORM)) {
-                descriptors.add(createDescriptor(createChannel(TEXTFORM), "String", "scalarappcontroltextform"));
-            }
-            // } else if (VersionUtilities.equals(textFormVersion, ScalarWebMethod.V1_1)) {
-            //     final String localPubKey = pubKey;
-            //     if (localPubKey == null || StringUtils.isEmpty(localPubKey)) {
-            //         logger.info("Can't get text form - no public key");
-            //     } else {
-            //         execute(ScalarWebMethod.GETTEXTFORM, new TextFormRequest_1_1(localPubKey, null));
-            //         descriptors.add(createDescriptor(createChannel(TEXTFORM), "String", "scalarappcontroltextform"));
-            //     }
-            // }
+        // Haven't figured out encryption yet - assume non-encryption format
+        // try {
+        // final String textFormVersion = getService().getVersion(ScalarWebMethod.GETTEXTFORM);
+        // if (VersionUtilities.equals(textFormVersion, ScalarWebMethod.V1_0)) {
+        if (service.hasMethod(ScalarWebMethod.GETTEXTFORM)) {
+            descriptors.add(createDescriptor(createChannel(TEXTFORM), "String", "scalarappcontroltextform"));
+        }
+        // } else if (VersionUtilities.equals(textFormVersion, ScalarWebMethod.V1_1)) {
+        // final String localPubKey = pubKey;
+        // if (localPubKey == null || StringUtils.isEmpty(localPubKey)) {
+        // logger.info("Can't get text form - no public key");
+        // } else {
+        // execute(ScalarWebMethod.GETTEXTFORM, new TextFormRequest_1_1(localPubKey, null));
+        // descriptors.add(createDescriptor(createChannel(TEXTFORM), "String", "scalarappcontroltextform"));
+        // }
+        // }
         // } catch (final IOException e) {
-        //     logger.info("Exception getting text form: {}", e.getMessage());
+        // logger.info("Exception getting text form: {}", e.getMessage());
         // }
 
         return descriptors;
@@ -197,7 +213,7 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
 
     @Override
     public void refreshState() {
-        final List<ScalarWebChannel> appChannels = getChannelTracker().getLinkedChannelsForCategory(APPTITLE, APPICON,
+        final Set<ScalarWebChannel> appChannels = getChannelTracker().getLinkedChannelsForCategory(APPTITLE, APPICON,
                 APPDATA, APPSTATUS, TEXTFORM, STATUS);
         for (final ScalarWebChannel chl : appChannels) {
             refreshChannel(chl);
@@ -420,13 +436,13 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
             // Alwasy assume non encrypted version
             // final String localEncKey = pubKey;
             // if (localEncKey != null && StringUtils.isNotEmpty(localEncKey)) {
-                final TextFormResult form = execute(ScalarWebMethod.GETTEXTFORM, version -> {
-                    // if (VersionUtilities.equals(version, ScalarWebMethod.V1_0)) {
-                        return null;
-                    // }
-                    // return new TextFormRequest_1_1(rsa encrypted aes key, null);
-                }).as(TextFormResult.class);
-                callback.stateChanged(channelId, SonyUtil.newStringType(form.getText()));
+            final TextFormResult form = execute(ScalarWebMethod.GETTEXTFORM, version -> {
+                // if (VersionUtilities.equals(version, ScalarWebMethod.V1_0)) {
+                return null;
+                // }
+                // return new TextFormRequest_1_1(rsa encrypted aes key, null);
+            }).as(TextFormResult.class);
+            callback.stateChanged(channelId, SonyUtil.newStringType(form.getText()));
             // }
         } catch (final IOException e) {
             logger.debug("Exception getting text form: {}", e.getMessage());
@@ -478,20 +494,20 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
      *
      * @param text the possibly null, possibly empty text
      */
-    private void setTextForm(@Nullable final String text) {
+    private void setTextForm(final @Nullable String text) {
         // Assume non-encrypted form
         // final String version = getService().getVersion(ScalarWebMethod.SETTEXTFORM);
         // if (VersionUtilities.equals(version, ScalarWebMethod.V1_0)) {
-            handleExecute(ScalarWebMethod.SETTEXTFORM, text == null ? "" : text);
+        handleExecute(ScalarWebMethod.SETTEXTFORM, text == null ? "" : text);
         // } else if (VersionUtilities.equals(version, ScalarWebMethod.V1_0)) {
-        //     final String localEncKey = pubKey;
-        //     if (localEncKey != null && StringUtils.isNotEmpty(localEncKey)) {
-        //          do encryption
-        //         handleExecute(ScalarWebMethod.SETTEXTFORM,
-        //                 new TextFormRequest_1_1(localEncKey, text == null ? "" : text));
-        //     }
+        // final String localEncKey = pubKey;
+        // if (localEncKey != null && StringUtils.isNotEmpty(localEncKey)) {
+        // do encryption
+        // handleExecute(ScalarWebMethod.SETTEXTFORM,
+        // new TextFormRequest_1_1(localEncKey, text == null ? "" : text));
+        // }
         // } else {
-        //     logger.debug("Unknown {} method version: {}", ScalarWebMethod.SETTEXTFORM, version);
+        // logger.debug("Unknown {} method version: {}", ScalarWebMethod.SETTEXTFORM, version);
         // }
     }
 

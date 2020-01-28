@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -60,7 +61,7 @@ public class SonyUtil {
      * @param channelId the non-null, non-empty channel id
      * @return a non-null, non-empty channel id
      */
-    public static String createChannelId(@Nullable final String groupId, final String channelId) {
+    public static String createChannelId(final @Nullable String groupId, final String channelId) {
         Validate.notEmpty(channelId, "channelId cannot be empty");
         return groupId == null || StringUtils.isEmpty(groupId) ? channelId : (groupId + "#" + channelId);
     }
@@ -74,7 +75,8 @@ public class SonyUtil {
      */
     public static String createValidChannelUId(final String channelUID) {
         Objects.requireNonNull(channelUID, "channelUID cannot be null");
-        return channelUID.replaceAll("[^A-Za-z0-9_-]", "");
+        final String id = channelUID.replaceAll("[^A-Za-z0-9_-]", "").toLowerCase();
+        return StringUtils.isEmpty(id) ? "na" : id;
     }
 
     /**
@@ -82,7 +84,7 @@ public class SonyUtil {
      *
      * @param closeable a possibly null {@link AutoCloseable}. If null, no action is done.
      */
-    public static void close(@Nullable final AutoCloseable closeable) {
+    public static void close(final @Nullable AutoCloseable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
@@ -118,7 +120,7 @@ public class SonyUtil {
      *
      * @param future a possibly null future. If null, no action is done
      */
-    public static void cancel(@Nullable final Future<?> future) {
+    public static void cancel(final @Nullable Future<?> future) {
         if (future != null) {
             future.cancel(true);
         }
@@ -130,7 +132,7 @@ public class SonyUtil {
      * @param str the possibly null string
      * @return either a StringType or UnDefType.UNDEF is null
      */
-    public static State newStringType(@Nullable final String str) {
+    public static State newStringType(final @Nullable String str) {
         return str == null ? UnDefType.UNDEF : new StringType(str);
     }
 
@@ -140,7 +142,7 @@ public class SonyUtil {
      * @param itgr the possibly null integer
      * @return either a DecimalType or UnDefType.UNDEF is null
      */
-    public static State newDecimalType(@Nullable final Integer itgr) {
+    public static State newDecimalType(final @Nullable Integer itgr) {
         return itgr == null ? UnDefType.UNDEF : new DecimalType(itgr);
     }
 
@@ -150,7 +152,7 @@ public class SonyUtil {
      * @param dbl the possibly null double
      * @return either a DecimalType or UnDefType.UNDEF is null
      */
-    public static State newDecimalType(@Nullable final Double dbl) {
+    public static State newDecimalType(final @Nullable Double dbl) {
         return dbl == null ? UnDefType.UNDEF : new DecimalType(dbl);
     }
 
@@ -160,7 +162,7 @@ public class SonyUtil {
      * @param nbr the possibly null, possibly empty string decimal
      * @return either a DecimalType or UnDefType.UNDEF is null
      */
-    public static State newDecimalType(@Nullable final String nbr) {
+    public static State newDecimalType(final @Nullable String nbr) {
         return nbr == null || StringUtils.isEmpty(nbr) ? UnDefType.UNDEF : new DecimalType(nbr);
     }
 
@@ -170,7 +172,7 @@ public class SonyUtil {
      * @param val the possibly null big decimal
      * @return either a PercentType or UnDefType.UNDEF is null
      */
-    public static State newPercentType(@Nullable final BigDecimal val) {
+    public static State newPercentType(final @Nullable BigDecimal val) {
         return val == null ? UnDefType.UNDEF : new PercentType(val);
     }
 
@@ -180,7 +182,7 @@ public class SonyUtil {
      * @param val the possibly null big decimal
      * @return either a PercentType or UnDefType.UNDEF is null
      */
-    public static State newBooleanType(@Nullable final Boolean val) {
+    public static State newBooleanType(final @Nullable Boolean val) {
         return val == null ? UnDefType.UNDEF : val.booleanValue() ? OnOffType.ON : OnOffType.OFF;
     }
 
@@ -192,8 +194,8 @@ public class SonyUtil {
      * @param maximum a possibly null maximum value (if null, 100 will be used)
      * @return a scaled big decimal value
      */
-    public static BigDecimal scale(final BigDecimal value, @Nullable final BigDecimal minimum,
-            @Nullable final BigDecimal maximum) {
+    public static BigDecimal scale(final BigDecimal value, final @Nullable BigDecimal minimum,
+            final @Nullable BigDecimal maximum) {
         Objects.requireNonNull(value, "value cannot be null");
 
         final int initialScale = value.scale();
@@ -219,8 +221,8 @@ public class SonyUtil {
      * @param maximum a possibly null maximum value (if null, 100 will be used)
      * @return a scaled big decimal value
      */
-    public static BigDecimal unscale(final BigDecimal scaledValue, @Nullable final BigDecimal minimum,
-            @Nullable final BigDecimal maximum) {
+    public static BigDecimal unscale(final BigDecimal scaledValue, final @Nullable BigDecimal minimum,
+            final @Nullable BigDecimal maximum) {
         Objects.requireNonNull(scaledValue, "scaledValue cannot be null");
 
         final int initialScale = scaledValue.scale();
@@ -267,8 +269,8 @@ public class SonyUtil {
      * @param deviceIpAddress the possibly null, possibly empty device ip address
      * @param deviceMacAddress the possibly null, possibly empty device mac address
      */
-    public static void sendWakeOnLan(final Logger logger, @Nullable final String deviceIpAddress,
-            @Nullable final String deviceMacAddress) {
+    public static void sendWakeOnLan(final Logger logger, final @Nullable String deviceIpAddress,
+            final @Nullable String deviceMacAddress) {
         Objects.requireNonNull(logger, "logger cannot be null");
 
         if (deviceIpAddress != null && deviceMacAddress != null && StringUtils.isNotBlank(deviceIpAddress)
@@ -296,19 +298,18 @@ public class SonyUtil {
         Objects.requireNonNull(map1, "map1 cannot be null");
         Objects.requireNonNull(map2, "map2 cannot be null");
 
-
         if (map1.size() != map2.size()) {
             return false;
         }
 
         final Map<String, String> lowerMap1 = map1.entrySet().stream()
-                .map(s -> new AbstractMap.SimpleEntry<>(
-                        StringUtils.lowerCase(s.getKey()), StringUtils.lowerCase(s.getValue())))
+                .map(s -> new AbstractMap.SimpleEntry<>(StringUtils.lowerCase(s.getKey()),
+                        StringUtils.lowerCase(s.getValue())))
                 .collect(Collectors.toMap(k -> k.getKey(), v -> v.getValue()));
 
         final Map<String, String> lowerMap2 = map1.entrySet().stream()
-                .map(s -> new AbstractMap.SimpleEntry<>(
-                        StringUtils.lowerCase(s.getKey()), StringUtils.lowerCase(s.getValue())))
+                .map(s -> new AbstractMap.SimpleEntry<>(StringUtils.lowerCase(s.getKey()),
+                        StringUtils.lowerCase(s.getValue())))
                 .collect(Collectors.toMap(k -> k.getKey(), v -> v.getValue()));
 
         return lowerMap1.equals(lowerMap2);
@@ -321,8 +322,8 @@ public class SonyUtil {
      * @param set2 a possibly null, possibly empty set
      * @return true if they match, false otherwise
      */
-    public static boolean equalsIgnoreCase(@Nullable final Set<@Nullable String> set1,
-            @Nullable final Set<@Nullable String> set2) {
+    public static boolean equalsIgnoreCase(final @Nullable Set<@Nullable String> set1,
+            final @Nullable Set<@Nullable String> set2) {
         if (set1 == null && set2 == null) {
             return true;
         }
@@ -441,8 +442,8 @@ public class SonyUtil {
      * @param modelName a non-null, non-empty model name
      * @return true if they match (regardless of model name version), false otherwise
      */
-    public static boolean isModelMatch(@Nullable final String thingTypeServiceName,
-            @Nullable final String thingTypeModelName, final String serviceName, final String modelName) {
+    public static boolean isModelMatch(final @Nullable String thingTypeServiceName,
+            final @Nullable String thingTypeModelName, final String serviceName, final String modelName) {
         Validate.notEmpty(serviceName, "serviceName cannot be empty");
         Validate.notEmpty(modelName, "modelName cannot be empty");
         if (thingTypeServiceName == null || StringUtils.isEmpty(thingTypeServiceName)) {
@@ -492,7 +493,7 @@ public class SonyUtil {
      * @param list the list to convert
      * @return a non-null list of the same type
      */
-    public static <T> List<T> convertNull(@Nullable final List<@Nullable T> list) {
+    public static <T> List<T> convertNull(final @Nullable List<@Nullable T> list) {
         if (list == null) {
             return new ArrayList<>();
         }
@@ -507,11 +508,22 @@ public class SonyUtil {
      * @param list the array to convert
      * @return a non-null list of the same type
      */
-    public static <T> List<T> convertNull(@Nullable final T @Nullable [] list) {
+    public static <T> List<T> convertNull(final @Nullable T @Nullable [] list) {
         if (list == null) {
             return new ArrayList<>();
         }
 
         return Arrays.stream(list).filter(e -> e != null).collect(Collectors.toList());
+    }
+
+    /**
+     * Determines if the pass class is a primitive (we treat string as a primitive here)
+     * 
+     * @param clazz a non-null class
+     * @return true if primitive, false otherwise
+     */
+    public static <T> boolean isPrimitive(final Class<T> clazz) {
+        Objects.requireNonNull(clazz, "clazz cannot be null");
+        return clazz.isPrimitive() || ClassUtils.wrapperToPrimitive(clazz) != null || clazz == String.class;
     }
 }

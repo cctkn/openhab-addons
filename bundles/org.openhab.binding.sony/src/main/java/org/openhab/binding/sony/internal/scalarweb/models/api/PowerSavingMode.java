@@ -24,7 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class PowerSavingMode {
     /** The power savings mode */
-    private @Nullable final String mode;
+    private final @Nullable String mode;
 
     /**
      * Instantiates a new power saving mode.

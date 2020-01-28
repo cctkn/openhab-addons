@@ -69,6 +69,7 @@ Please note that you can recreate the .map file by simply deleting it from `conf
 
 The scalar service will dynamically generate the channels supported by your device.
 The following table(s) will provide all the various channels supported by this addon - not all channels will be applicable for your device.
+Example: Bravia TVs will support input channels but no terminal channels.
 Likewise, even if you device supports a specific channel doesn't necessarily mean that channel will receive any data from the device (example: pl_durationsec may be supported by a TV but will ONLY be active if you are playing specific media and if that media's metadata is in a format the TV supports)
 
 ### Channel ID Format
@@ -174,7 +175,7 @@ Examples would be `radio:fm`, `tv:analog`, `tv:atsct`, `extInput:hdmi` and `extI
 
 You can use the sources then to query information about each source via the `avContent:cn_parenturi` (see the Using Content section below).
 
-#### Parental Ratings
+#### Parental Ratings 
 
 The following channels reflect the parental ratings of the content being played.
 
@@ -483,6 +484,14 @@ The browser service allows management of a browser on the device.
 The browsercontrol allows you to send a command to the browser such as 'start' (or 'activate') or 'stop' to start/stop the browser.
 Send a URL to the texturl to have the browser go to that URL (please note that you can generally just send the URL and the browser will automatically activate).
 
+### Illumination (service ID of "illumination")
+
+The following channels are for the illumination service. The illumination service provides management of illumination functions on the device.
+
+| Channel Type ID      | Read/Write | Item Type      | Description                      |
+| -------------------- | ---------- | -------------- | -------------------------------- |
+| illuminationsettings | RW         | GeneralSetting | The setting for the illumination |
+
 ### CEC Channels (service ID of "cec")
 
 The following list the channels for the HDMI CEC (consumer electronics control) service.
@@ -501,22 +510,62 @@ The CEC service allows management of the HDMI CEC settings.
 The following list the channels for the system service.
 The system service allows management of general system settings.
 
-| Channel Type ID    | Read/Write | Item Type | Description                                           |
-| ------------------ | ---------- | --------- | ----------------------------------------------------- |
-| currenttime        | R          | DateTime  | Current time of the device (format depends on device) |
-| ledindicatorstatus | RW (1)     | String    | LED indicator status                                  |
-| powersavingsmode   | RW (2)     | String    | The power savings mode                                |
-| wolmode            | RW         | Switch    | Whether WOL is enabled                                |
-| language           | RW         | String    | The langauge used                                     |
-| reboot             | RW (3)     | Switch    | Whether to reboot the device                          |
-| syscmd             | RW (4)     | String    | The IRCC command to send                              |
-| postalcode         | RW         | String    | The postal code of the device                         |
+| Channel Type ID                 | Read/Write | Item Type      | Description                                           |
+| ------------------------------- | ---------- | -------------- | ----------------------------------------------------- |
+| currenttime                     | R          | DateTime       | Current time of the device (format depends on device) |
+| ledindicatorstatus              | RW (1)     | String         | LED indicator status                                  |
+| powersavingsmode                | RW (2)     | String         | The power savings mode                                |
+| wolmode                         | RW         | Switch         | Whether WOL is enabled                                |
+| language                        | RW         | String         | The langauge used                                     |
+| reboot                          | RW (3)     | Switch         | Whether to reboot the device                          |
+| syscmd                          | RW (4)     | String         | The IRCC command to send                              |
+| postalcode                      | RW         | String         | The postal code of the device                         |
+| devicemiscsettings              | RW         | GeneralSetting | Misc device settings (timezones, auot update, etc)    |
+| powersettings                   | RW         | GeneralSetting | The power settings (wol, standby, etc)                |
+| sleepsettings                   | RW         | GeneralSetting | The sleep timer settings                              |
+| wutangsettings                  | RW         | GeneralSetting | The wutang settings (google cast settings)            |
+| st_devicename-{src}             | R (5)      | String         | The storage device name                               |
+| st_error-{src}                  | R (5)      | String         | Any storage errors                                    |
+| st_filesystem-{src}             | R (5)      | String         | The storage file system                               |
+| st_finalizestatus-{src}         | R (5)      | String         | The storage finalization status                       |
+| st_format-{src}                 | R (5)      | String         | The storage format                                    |
+| st_formatstatus-{src}           | R (5)      | String         | The storage format status                             |
+| st_formattable-{src}            | R (5)      | String         | The storage formattable status                        |
+| st_formatting-{src}             | R (5)      | String         | Whether the storage is formatting                     |
+| st_freecapacitymb-{src}         | R (5)      | Number         | The storage free space (in MB)                        |
+| st_hasnonstandarddata-{src}     | R (5)      | String         | Whether the storage has non-standard data             |
+| st_hasunsupportedcontents-{src} | R (5)      | String         | Whether the storage has unsupported contents          |
+| st_isavailable-{src}            | R (5)      | String         | Whether the storage is available                      |
+| st_islocked-{src}               | R (5)      | String         | Whether the storage is locked                         |
+| st_ismanagementinfofull-{src}   | R (5)      | String         | Whether the storage management info is full           |
+| st_isprotected-{src}            | R (5)      | String         | Whether the storage is protected                      |
+| st_isregistered-{src}           | R (5)      | String         | Whether the storage is registered                     |
+| st_isselfrecorded-{src}         | R (5)      | String         | Whether the storage is self recorded                  |
+| st_issqvsupported-{src}         | R (5)      | String         | Whether the storage is SQV (standard quality voice)   |
+| st_lun-{src}                    | R (5)      | Number         | The storage LUN (logical unit number)                 |
+| st_mounted-{src}                | R (5)      | String         | The storage mount status                              |
+| st_permission-{src}             | R (5)      | String         | The storage permission                                |
+| st_position-{src}               | R (5)      | String         | The storage position (front, back, internal, etc)     |
+| st_protocol-{src}               | R (5)      | String         | The storage protocol                                  |
+| st_registrationdate-{src}       | R (5)      | String         | The storage registration date                         |
+| st_systemareacapacitymb-{src}   | R (5)      | Number         | The storage system capacity (in MB)                   |
+| st_timesectofinalize-{src}      | R (5)      | Number         | The time (in seconds) to finalize                     |
+| st_timesectogetcontents-{src}   | R (5)      | Number         | The time (in seconds) to get contents                 |
+| st_type-{src}                   | R (5)      | String         | The storage type                                      |
+| st_uri-{src}                    | R (5)      | String         | The storage URI                                       |
+| st_usbdevicetype-{src}          | R (5)      | String         | The storage USB device type                           |
+| st_volumelabel-{src}            | R (5)      | String         | The storage label                                     |
 
 1. Set's the LED status - generally "Off", "Low" or "High" (there may be others specific to your device like "AutoBrightnessAdjust")
 2. Set's the power savings mode - generally "Off", "Low" or "High" (there may be others specific to your device)
 3. Sending 'on' to this channel will reboot the device
 4. Sends an IRCC command to the device.
 This can either be the raw IRCC command (AAAAAwAAHFoAAAAYAw==) or can be a name (`Home`) that is transformed by the transformation file
+5.  These channels will be repeated by every storage source (ie source for a scheme of ```storage```).
+Example: if you have a ```USB1``` and ```CD``` storage sources, you'd have a ```st_uri-usb1``` and a ```st_uri-cd``` channel.
+Please note that, on many devices, the storage information is not reliable and a bit quirkly (the st_mounted status shows unmounted even though the storage is mounted).
+However, the st_mounted will reliably change when a source is physically mounted/unmounted from the unit.
+Just the initial status will likely be incorrect.
 
 ### Video Channels (service ID of "video")
 
@@ -529,6 +578,8 @@ The video service allows management of the video (screen) itself.
 | bannermode           | RW         | String    | The banner mode (demo)                              |
 | multiscreenmode      | RW         | String    | The multiscreen mode (pip)                          |
 | pipsubscreenposition | RW         | String    | The pip screen position                             |
+| pipsubscreenposition | RW         | String    | The pip screen position                             |
+
 
 The values of these channels are pretty much unknown and you'll need to experiment with your device if you wish to use them.
 
@@ -730,25 +781,3 @@ For our example - `tv:atsct?dispNum=4.1&trip=1793.25.3&srvName=UNC-TV`
 For our example - it will switch to station 4.1 (UNC-TV).
 
 Feel free to explore other APIs
-
-#### Type Editor
-
-The type editor will allow you to customize a type for your own purposes.
-The type editor will allow your to regroup channels into their own groups and remap channel names to something that makes more sense for you.
-An example would be if you had an AVR and wanted to regroup channels by zone rather than by service.
-
-To use this page:
-
-1. To load your device, press the "Load File" button and navigate to your device file (in `userdata/sony/definition/types` folder as described above) and open your device JSON file.
-This will load the thing type into the window.
-2. On the left top, you can change general information (please do not change service or the config)
-3. On the right top, you can change the grouping names and add/delete new groups (please note that you can't delete a group until there are no channels referencing that group)
-4. On the bottom, you can change the channel mappings to the group and to new channel names.
-Please be careful to not create duplicate channel names as I probably don't validate for that! ;)
-5. You can press the "list" icon to change a property of the channel - I highly recommend leaving this alone as you can really screw something up.
-6. You can press the "eye" icon to change the state for the channel - I highly recommend leaving this alone as you can really screw something up.
-7. Press "Save" to download your new thing type to some directory.
-8. Move the new thing type to the `userdata/sony/db/local/types` directory to have it become active.
-
-Note that the validations on this screen are rudimentary at best and you can screw things up pretty easily.
-This screen was really mean for my use only.

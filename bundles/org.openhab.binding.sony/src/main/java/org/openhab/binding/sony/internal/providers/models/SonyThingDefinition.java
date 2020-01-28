@@ -53,25 +53,25 @@ public class SonyThingDefinition {
     }.getType();
 
     /** The associated service (scalar, etc) */
-    private @Nullable final String service;
+    private final @Nullable String service;
 
     /** The associated configuration uri */
-    private @Nullable final String configUri;
+    private final @Nullable String configUri;
 
     /** The associated model name */
-    private @Nullable final String modelName;
+    private final @Nullable String modelName;
 
     /** The label for the thing type */
-    private @Nullable final String label;
+    private final @Nullable String label;
 
     /** The description for the thing type */
-    private @Nullable final String description;
+    private final @Nullable String description;
 
     /** The channel group id to label for any channel groups */
-    private @Nullable final Map<@Nullable String, @Nullable String> channelGroups;
+    private final @Nullable Map<@Nullable String, @Nullable String> channelGroups;
 
     /** The channel definitions for the thing type */
-    private @Nullable final List<@Nullable SonyThingChannelDefinition> channels;
+    private final @Nullable List<@Nullable SonyThingChannelDefinition> channels;
 
     /**
      * Constructs the definition from the passed arguments

@@ -24,7 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class PostalCode {
     /** The postal code */
-    private @Nullable final String postalCode;
+    private final @Nullable String postalCode;
 
     /**
      * Instantiates a new postal code

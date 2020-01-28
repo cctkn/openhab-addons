@@ -39,6 +39,9 @@ public class ScalarWebEvent extends AbstractScalarResponse {
 
     // system notifications
     public static final String NOTIFYPOWERSTATUS = "notifyPowerStatus";
+    public static final String NOTIFYSTORAGESTATUS = "notifyStorageStatus";
+    public static final String NOTIFYSWUPDATEINFO = "notifySWUpdateInfo";
+    public static final String NOTIFYSETTINGSUPDATE = "notifySettingsUpdate";
 
     /** The method name for the event */
     private final String method;

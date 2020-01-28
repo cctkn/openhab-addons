@@ -85,7 +85,7 @@ public class ScalarWebChannel {
      * @param paths the possibly null, possibly empty list of paths
      */
     public ScalarWebChannel(final String service, final String category, final String id,
-            final String @Nullable [] paths) {
+            final @Nullable String @Nullable [] paths) {
         Validate.notEmpty(service, "service cannot be empty");
         Validate.notEmpty(category, "category cannot be empty");
         Validate.notEmpty(id, "id cannot be empty");
@@ -93,7 +93,7 @@ public class ScalarWebChannel {
         this.service = service;
         this.category = category;
         this.id = id;
-        this.paths = paths == null ? new String[0] : paths;
+        this.paths = paths == null ? new String[0] : SonyUtil.convertNull(paths).toArray(new String[0]);
     }
 
     /**
@@ -321,5 +321,31 @@ public class ScalarWebChannel {
     @Override
     public String toString() {
         return getChannelId() + " (cid=" + id + ", ctgy=" + category + ", path=" + StringUtils.join(paths, ',') + ")";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + category.hashCode();
+        result = prime * result + id.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof ScalarWebChannel)) {
+            return false;
+        }
+
+        final ScalarWebChannel other = (ScalarWebChannel) obj;
+        return StringUtils.equalsIgnoreCase(category, other.category) && StringUtils.equalsIgnoreCase(id, other.id);
     }
 }

@@ -32,7 +32,7 @@ public class BrowserControl {
      *
      * @param control the non-null, non-empty control
      */
-    public BrowserControl(@Nullable final String control) {
+    public BrowserControl(final @Nullable String control) {
         Validate.notEmpty(control, "control cannot be empty");
         this.control = control;
     }

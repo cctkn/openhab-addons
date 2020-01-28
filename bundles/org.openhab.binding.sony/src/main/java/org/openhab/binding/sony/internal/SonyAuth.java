@@ -94,7 +94,7 @@ public class SonyAuth {
      * @param getIrccClient a non-null IRCC client
      * @param accessControlService a possibly null access control service
      */
-    public SonyAuth(final GetIrccClient getIrccClient, @Nullable final ScalarWebService accessControlService) {
+    public SonyAuth(final GetIrccClient getIrccClient, final @Nullable ScalarWebService accessControlService) {
         Objects.requireNonNull(getIrccClient, "getIrccClient cannot be null");
         this.getIrccClient = getIrccClient;
 
@@ -164,7 +164,7 @@ public class SonyAuth {
      * @param accessCode the access code (null for initial setup)
      * @return the http response
      */
-    public AccessResult requestAccess(final SonyHttpTransport transport, @Nullable final String accessCode) {
+    public AccessResult requestAccess(final SonyHttpTransport transport, final @Nullable String accessCode) {
         Objects.requireNonNull(transport, "transport cannot be null");
 
         logger.debug("Requesting access: {}", StringUtils.defaultIfEmpty(accessCode, "(request)"));
@@ -260,7 +260,7 @@ public class SonyAuth {
      * @param accessCode the possibly null access code
      * @return the non-null {@link HttpResponse}
      */
-    private HttpResponse irccRegister(final SonyHttpTransport transport, @Nullable final String accessCode) {
+    private HttpResponse irccRegister(final SonyHttpTransport transport, final @Nullable String accessCode) {
         Objects.requireNonNull(transport, "transport cannot be null");
 
         final String registrationUrl = getRegistrationUrl();
@@ -331,7 +331,7 @@ public class SonyAuth {
      * @param accessCode the access code to use (or null to initiate the first step of ActRegister)
      * @return the scalar web result
      */
-    private ScalarWebResult scalarActRegister(final SonyHttpTransport transport, @Nullable final String accessCode) {
+    private ScalarWebResult scalarActRegister(final SonyHttpTransport transport, final @Nullable String accessCode) {
         Objects.requireNonNull(transport, "transport cannot be null");
 
         final String actReg = gson.toJson(new ScalarWebRequest(1, ScalarWebMethod.ACTREGISTER, activationVersion,

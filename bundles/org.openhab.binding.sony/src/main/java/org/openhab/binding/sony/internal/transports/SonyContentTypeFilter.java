@@ -33,8 +33,8 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class SonyContentTypeFilter implements ClientResponseFilter {
     @Override
-    public void filter(@Nullable final ClientRequestContext requestCtx,
-            @Nullable final ClientResponseContext responseCtx) throws IOException {
+    public void filter(final @Nullable ClientRequestContext requestCtx,
+            final @Nullable ClientResponseContext responseCtx) throws IOException {
         Objects.requireNonNull(responseCtx, "responseCtx cannot be null");
 
         final List<String> contentValues = responseCtx.getHeaders().remove("content-type");

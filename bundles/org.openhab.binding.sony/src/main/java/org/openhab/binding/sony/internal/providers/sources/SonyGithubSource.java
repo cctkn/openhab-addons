@@ -149,7 +149,7 @@ public class SonyGithubSource extends AbstractSonySource {
     private final Lock capabilitiesLock = new ReentrantLock();
 
     /** The master service capabilities */
-    private List<SonyServiceCapability> capabilitiesMaster = Collections.unmodifiableList(new ArrayList<>());
+    private List<SonyServiceCapability> capabilitiesMaster = Collections.emptyList();
 
     /** The etag of the last download of capabilities */
     private @Nullable String capabilitiesEtag;
@@ -792,7 +792,7 @@ public class SonyGithubSource extends AbstractSonySource {
      * @param lastModified the last modified time or null to ignore
      * @return a non-null modified thing definitions
      */
-    private ModifiedThingDefinitions getThingDefinition(final String name, @Nullable final Long lastModified) {
+    private ModifiedThingDefinitions getThingDefinition(final String name, final @Nullable Long lastModified) {
         Validate.notEmpty(name, "name cannot be empty");
 
         final SimpleDateFormat webDateFormat = new SimpleDateFormat(WEBDATEPATTERN);
@@ -951,8 +951,8 @@ public class SonyGithubSource extends AbstractSonySource {
          * @param modified a possibly null modified date
          * @param definitions a possibly null, possibly empty list of thing definitions
          */
-        ModifiedThingDefinitions(@Nullable final Long modified,
-                @Nullable final List<@Nullable SonyThingDefinition> definitions) {
+        ModifiedThingDefinitions(final @Nullable Long modified,
+                final @Nullable List<@Nullable SonyThingDefinition> definitions) {
             this.modified = modified;
             this.definitions = SonyUtil.convertNull(definitions);
         }

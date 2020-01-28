@@ -47,7 +47,7 @@ public class VersionUtilities {
      * @param otherVersion a list of other versions to compare against
      * @return true if the version equals any version in the list or false otherwise
      */
-    public static boolean equals(@Nullable final String version, final String... otherVersion) {
+    public static boolean equals(final @Nullable String version, final String... otherVersion) {
         if (version == null || StringUtils.isEmpty(version)) {
             return false;
         }

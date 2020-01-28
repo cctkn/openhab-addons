@@ -12,13 +12,12 @@
  */
 package org.openhab.binding.sony.internal.scalarweb;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -38,7 +37,7 @@ public class ScalarWebChannelTracker {
     private final ReadWriteLock linkLock = new ReentrantReadWriteLock();
 
     /** The channel categories that have been linked to which web channels */
-    private final Map<String, List<ScalarWebChannel>> linkedChannelIds = new HashMap<>();
+    private final Map<String, Set<ScalarWebChannel>> linkedChannelIds = new HashMap<>();
 
     /**
      * Notification that a channel has been linked
@@ -51,9 +50,9 @@ public class ScalarWebChannelTracker {
         final Lock writeLock = linkLock.writeLock();
         writeLock.lock();
         try {
-            List<ScalarWebChannel> channels = linkedChannelIds.get(channel.getCategory());
+            Set<ScalarWebChannel> channels = linkedChannelIds.get(channel.getCategory());
             if (channels == null) {
-                channels = new ArrayList<>();
+                channels = new HashSet<>();
                 linkedChannelIds.put(channel.getCategory(), channels);
             }
             channels.add(channel);
@@ -78,7 +77,7 @@ public class ScalarWebChannelTracker {
 
             boolean found = false;
             for (final String id : new HashSet<String>(linkedChannelIds.keySet())) {
-                final List<ScalarWebChannel> channels = linkedChannelIds.get(id);
+                final Set<ScalarWebChannel> channels = linkedChannelIds.get(id);
                 if (channels.removeIf(ch -> StringUtils.equalsIgnoreCase(ch.getChannelId(), channelId))) {
                     found = true;
                     if (channels.isEmpty()) {
@@ -106,7 +105,7 @@ public class ScalarWebChannelTracker {
         readLock.lock();
         try {
             final String channelId = channel.getChannelId();
-            for (final List<ScalarWebChannel> chnls : linkedChannelIds.values()) {
+            for (final Set<ScalarWebChannel> chnls : linkedChannelIds.values()) {
                 for (final ScalarWebChannel chnl : chnls) {
                     if (StringUtils.equalsIgnoreCase(chnl.getChannelId(), channelId)) {
                         return true;
@@ -168,18 +167,18 @@ public class ScalarWebChannelTracker {
      * @param categories the categories to get the channels for
      * @return the non-null, possibly empty unmodifiable list of linked channels
      */
-    public List<ScalarWebChannel> getLinkedChannelsForCategory(final String... categories) {
+    public Set<ScalarWebChannel> getLinkedChannelsForCategory(final String... categories) {
         final Lock readLock = linkLock.readLock();
         readLock.lock();
         try {
-            final List<ScalarWebChannel> channels = new ArrayList<>();
+            final Set<ScalarWebChannel> channels = new HashSet<>();
             for (final String ctgy : categories) {
-                final List<ScalarWebChannel> ctgyChannels = linkedChannelIds.get(ctgy);
+                final Set<ScalarWebChannel> ctgyChannels = linkedChannelIds.get(ctgy);
                 if (ctgyChannels != null) {
                     channels.addAll(ctgyChannels);
                 }
             }
-            return Collections.unmodifiableList(channels);
+            return Collections.unmodifiableSet(channels);
         } finally {
             readLock.unlock();
         }
@@ -191,21 +190,21 @@ public class ScalarWebChannelTracker {
      * @param ctgyFilter the non-null filter to use
      * @return the non-null, possibly empty unmodifiable list of linked channels
      */
-    public List<ScalarWebChannel> getLinkedChannelsForCategory(final Parms ctgyFilter) {
+    public Set<ScalarWebChannel> getLinkedChannelsForCategory(final Parms ctgyFilter) {
         Objects.requireNonNull(ctgyFilter, "ctgyFilter cannot be null");
         final Lock readLock = linkLock.readLock();
         readLock.lock();
         try {
-            final List<ScalarWebChannel> channels = new ArrayList<>();
-            for (final Map.Entry<String, List<ScalarWebChannel>> entry : linkedChannelIds.entrySet()) {
+            final Set<ScalarWebChannel> channels = new HashSet<>();
+            for (final Map.Entry<String, Set<ScalarWebChannel>> entry : linkedChannelIds.entrySet()) {
                 if (ctgyFilter.isMatch(entry.getKey())) {
-                    final List<ScalarWebChannel> ctgyChannels = entry.getValue();
+                    final Set<ScalarWebChannel> ctgyChannels = entry.getValue();
                     if (ctgyChannels != null) {
                         channels.addAll(ctgyChannels);
                     }
                 }
             }
-            return Collections.unmodifiableList(channels);
+            return Collections.unmodifiableSet(channels);
         } finally {
             readLock.unlock();
         }

@@ -45,7 +45,7 @@ public class TransportPayloadHttp implements TransportPayload {
      * @param url a non-null, non-empty URL
      * @param body a possibly null, possibly empty body
      */
-    public TransportPayloadHttp(final String url, @Nullable final String body) {
+    public TransportPayloadHttp(final String url, final @Nullable String body) {
         Validate.notEmpty(url, "url cannot be empty");
         this.url = url;
         this.body = body == null ? "" : body; // convert null to empty

@@ -33,14 +33,15 @@ public class SonyAuthChecker {
     private final SonyTransport transport;
 
     /** The current access code */
-    private @Nullable final String accessCode;
+    private final @Nullable String accessCode;
 
     /**
      * Constructs the checker from the transport and access code
+     * 
      * @param transport a non-null transport
      * @param accessCode a possibly null, possibly empty access code
      */
-    public SonyAuthChecker(final SonyTransport transport, @Nullable final String accessCode) {
+    public SonyAuthChecker(final SonyTransport transport, final @Nullable String accessCode) {
         Objects.requireNonNull(transport, "transport cannot be null");
 
         this.transport = transport;
@@ -49,6 +50,7 @@ public class SonyAuthChecker {
 
     /**
      * Checks the result using the specified callback
+     * 
      * @param callback a non-null callback
      * @return a non-null result
      */
@@ -85,10 +87,11 @@ public class SonyAuthChecker {
     /**
      * Functional interface defining the check result callback
      */
-     @NonNullByDefault
+    @NonNullByDefault
     public interface CheckResultCallback {
         /**
          * Called to check a result and return an {@link AccessResult}
+         * 
          * @return a non-null access result
          */
         AccessResult checkResult();

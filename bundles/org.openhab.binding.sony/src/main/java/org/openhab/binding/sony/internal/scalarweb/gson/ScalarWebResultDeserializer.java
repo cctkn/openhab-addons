@@ -33,8 +33,8 @@ import org.openhab.binding.sony.internal.scalarweb.models.ScalarWebResult;
 @NonNullByDefault
 public class ScalarWebResultDeserializer implements JsonDeserializer<ScalarWebResult> {
     @Override
-    public ScalarWebResult deserialize(@Nullable final JsonElement je, @Nullable final Type type,
-            @Nullable final JsonDeserializationContext context) throws JsonParseException {
+    public ScalarWebResult deserialize(final @Nullable JsonElement je, final @Nullable Type type,
+            final @Nullable JsonDeserializationContext context) throws JsonParseException {
         Objects.requireNonNull(je, "je cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
         Objects.requireNonNull(context, "context cannot be null");

@@ -38,15 +38,15 @@ public class DialDeviceInfo {
 
     /** The apps list url. */
     @XStreamAlias("X_DIALEX_AppsListURL")
-    private @Nullable final String appsListUrl;
+    private final @Nullable String appsListUrl;
 
     /** The device id. */
     @XStreamAlias("X_DIALEX_DeviceID")
-    private @Nullable final String deviceId;
+    private final @Nullable String deviceId;
 
     /** The device type. */
     @XStreamAlias("X_DIALEX_DeviceType")
-    private @Nullable final String deviceType;
+    private final @Nullable String deviceType;
 
     /**
      * Private constructor to construct the object - only called from the {@link #withApps(List)}
@@ -55,8 +55,8 @@ public class DialDeviceInfo {
      * @param deviceId the possibly null, possibly empty application device ID
      * @param deviceType the possibly null, possibly empty application device type
      */
-    public DialDeviceInfo(@Nullable final String appsListUrl, @Nullable final String deviceId,
-            @Nullable final String deviceType) {
+    public DialDeviceInfo(final @Nullable String appsListUrl, final @Nullable String deviceId,
+            final @Nullable String deviceType) {
         this.appsListUrl = appsListUrl;
         this.deviceId = deviceId;
         this.deviceType = deviceType;

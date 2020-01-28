@@ -107,7 +107,7 @@ public class NetworkSetting {
      * @return the non-null, possibly empty unmodifiable list of DNS names
      */
     public List<@Nullable String> getDns() {
-        return Collections.unmodifiableList(dns == null ? Collections.emptyList() : dns);
+        return dns == null ? Collections.emptyList() : Collections.unmodifiableList(dns);
     }
 
     @Override

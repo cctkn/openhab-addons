@@ -24,10 +24,10 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class Notification {
     /** The name of the notification */
-    private @Nullable final String name;
+    private final @Nullable String name;
 
     /** The version of the notification */
-    private @Nullable final String version;
+    private final @Nullable String version;
 
     /**
      * Constructs the notification from the name/version

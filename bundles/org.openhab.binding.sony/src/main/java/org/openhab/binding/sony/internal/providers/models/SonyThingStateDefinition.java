@@ -37,29 +37,29 @@ public class SonyThingStateDefinition {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The stepping */
-    private @Nullable final BigDecimal step;
+    private final @Nullable BigDecimal step;
 
     /** The minimum */
-    private @Nullable final BigDecimal minimum;
+    private final @Nullable BigDecimal minimum;
 
     /** The maximum */
-    private @Nullable final BigDecimal maximum;
+    private final @Nullable BigDecimal maximum;
 
     /** Any pattern to apply */
-    private @Nullable final String pattern;
+    private final @Nullable String pattern;
 
     /** Whether it is readonly or not */
-    private @Nullable final Boolean readonly;
+    private final @Nullable Boolean readonly;
 
     /** The channel options */
-    private @Nullable final Map<@Nullable String, @Nullable String> options;
+    private final @Nullable Map<@Nullable String, @Nullable String> options;
 
     /**
      * Constructs the thing state definition from the state description
      *
      * @param desc a possibly null state description
      */
-    public SonyThingStateDefinition(@Nullable final StateDescription desc) {
+    public SonyThingStateDefinition(final @Nullable StateDescription desc) {
         this.maximum = desc == null ? null : desc.getMaximum();
         this.minimum = desc == null ? null : desc.getMinimum();
         this.step = desc == null ? null : desc.getStep();

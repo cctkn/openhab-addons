@@ -12,7 +12,6 @@
  */
 package org.openhab.binding.sony.internal.dial.models;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -91,9 +90,8 @@ public class DialApp {
      */
     public List<String> getActions() {
         final SupportedAction localSupportedAction = supportedAction;
-        return Collections.unmodifiableList(
-                localSupportedAction == null || localSupportedAction.actions == null ? new ArrayList<>()
-                        : localSupportedAction.actions);
+        return localSupportedAction == null || localSupportedAction.actions == null ? Collections.emptyList()
+                : Collections.unmodifiableList(localSupportedAction.actions);
     }
 
     /**

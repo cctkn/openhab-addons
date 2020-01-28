@@ -91,19 +91,19 @@ class IrccCode {
     @NonNullByDefault
     static class IrccCodeConverter implements Converter {
         @Override
-        public boolean canConvert(@SuppressWarnings("rawtypes") @Nullable final Class clazz) {
+        public boolean canConvert(@SuppressWarnings("rawtypes") final @Nullable Class clazz) {
             return IrccCode.class.equals(clazz);
         }
 
         @Override
-        public void marshal(@Nullable final Object arg0, @Nullable final HierarchicalStreamWriter arg1,
-                @Nullable final MarshallingContext arg2) {
+        public void marshal(final @Nullable Object arg0, final @Nullable HierarchicalStreamWriter arg1,
+                final @Nullable MarshallingContext arg2) {
             throw new NotImplementedException();
         }
 
         @Override
-        public @Nullable Object unmarshal(@Nullable final HierarchicalStreamReader reader,
-                @Nullable final UnmarshallingContext context) {
+        public @Nullable Object unmarshal(final @Nullable HierarchicalStreamReader reader,
+                final @Nullable UnmarshallingContext context) {
             Objects.requireNonNull(reader, "reader cannot be null");
             Objects.requireNonNull(context, "context cannot be null");
 

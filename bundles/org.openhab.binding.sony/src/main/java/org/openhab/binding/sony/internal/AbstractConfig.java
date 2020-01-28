@@ -109,7 +109,7 @@ public class AbstractConfig {
      *
      * @param deviceMacAddress the new device mac address
      */
-    public void setDeviceMacAddress(@Nullable final String deviceMacAddress) {
+    public void setDeviceMacAddress(final @Nullable String deviceMacAddress) {
         this.deviceMacAddress = deviceMacAddress;
     }
 
@@ -118,7 +118,7 @@ public class AbstractConfig {
      *
      * @param discoveredMacAddress the device mac address
      */
-    public void setDiscoveredMacAddress(@Nullable final String discoveredMacAddress) {
+    public void setDiscoveredMacAddress(final @Nullable String discoveredMacAddress) {
         this.discoveredMacAddress = discoveredMacAddress;
     }
 
@@ -205,14 +205,16 @@ public class AbstractConfig {
 
     /**
      * Conditionally adds a property to the property map if the property is not null (or empty if a string)
+     * 
      * @param props a non-null, possibly empty property map
      * @param propName a non-null, non-empty property name
      * @param propValue a possibly null, possibly empty (if string) property value
      */
-    protected void conditionallyAddProperty(final Map<String, Object> props, final String propName, @Nullable final Object propValue) {
+    protected void conditionallyAddProperty(final Map<String, Object> props, final String propName,
+            final @Nullable Object propValue) {
         Objects.requireNonNull(props, "props cannot be null");
         Validate.notEmpty(propName, "propName cannot be empty");
-        
+
         if (propValue == null) {
             return;
         }

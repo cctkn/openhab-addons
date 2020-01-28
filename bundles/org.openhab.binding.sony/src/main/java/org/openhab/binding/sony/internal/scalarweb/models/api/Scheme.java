@@ -24,11 +24,12 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class Scheme {
 
-    /** The TV scheme identifier */
+    /** Various scheme identifiers */
     public static final String EXT_OUTPUT = "extOutput";
     public static final String EXT_INPUT = "extInput";
     public static final String RADIO = "radio";
     public static final String TV = "tv";
+    public static final String STORAGE = "storage";
 
     /** The scheme identifier */
     private @Nullable String scheme;
@@ -49,7 +50,7 @@ public class Scheme {
     }
 
     @Override
-    public boolean equals(@Nullable final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (this == obj) {
             return true;
         }

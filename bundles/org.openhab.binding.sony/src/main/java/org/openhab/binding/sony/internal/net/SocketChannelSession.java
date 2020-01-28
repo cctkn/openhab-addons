@@ -244,7 +244,6 @@ public class SocketChannelSession implements SocketSession {
                         break;
                     } catch (final InterruptedException e1) {
                         // Do nothing - probably shutting down
-                        // Since we set isRunning to false, will drop out of loop and end the thread
                     }
                 }
             }

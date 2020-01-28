@@ -118,25 +118,25 @@
 		<description>Mute audio on all modes [headphone, speakers, etc]</description>
 	</channel-type>
 
-	<channel-type id="scalaraudiogeneralsettingnumber" advanced="true">
+	<channel-type id="scalargeneralsettingnumber" advanced="true">
 		<item-type>Number</item-type>
 		<label>General Setting Number</label>
 		<description>General Setting for a number</description>
 	</channel-type>
 
-	<channel-type id="scalaraudiogeneralsettingswitch" advanced="true">
+	<channel-type id="scalargeneralsettingswitch" advanced="true">
 		<item-type>Switch</item-type>
 		<label>General Setting Switch</label>
 		<description>General Setting for a switch</description>
 	</channel-type>
 
-	<channel-type id="scalaraudiogeneralsettingstring" advanced="true">
+	<channel-type id="scalargeneralsettingstring" advanced="true">
 		<item-type>Switch</item-type>
 		<label>General Setting String</label>
 		<description>General Setting for a string</description>
 	</channel-type>
 
-	<channel-type id="scalaraudiogeneralsettingdimmer" advanced="true">
+	<channel-type id="scalargeneralsettingdimmer" advanced="true">
 		<item-type>Dimmer</item-type>
 		<label>General Setting Dimmer</label>
 		<description>General Setting for a dimmer</description>
@@ -194,6 +194,230 @@
 		<item-type>String</item-type>
 		<label>Postal Code</label>
 		<description>The postal code of the device</description>
+	</channel-type>
+
+	<channel-type id="scalarsystemdevicename" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Name</label>
+		<description>The storage name</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageerror" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Error</label>
+		<description>Any storage error messages</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragefilesystem" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage File System</label>
+		<description>The storage file system</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragefinalizestatus" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Finalization Status</label>
+		<description>The storage finalization status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageformat" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Format</label>
+		<description>The storage format</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageformatstatus" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Format Status</label>
+		<description>The storage format status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageformattable" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Formattable</label>
+		<description>The storage formattable status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageformatting" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Formatting</label>
+		<description>The storage formatting status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragefreecapacitymb" advanced="true">
+		<item-type>Integer</item-type>
+		<label>Storage Free Capacity</label>
+		<description>The storage free capacity (in MB)</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragehasnonstandarddata" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Non-Standard Data</label>
+		<description>Whether the storage has non-standard data</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragehasunsupportedcontents" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Unsupported Content</label>
+		<description>Whether the storage has unsupported content</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageisavailable" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Availability</label>
+		<description>The storage availability status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageislocked" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Locked</label>
+		<description>The storage locked status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageismanagementinfofull" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Management Full</label>
+		<description>The storage management information full status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageisprotected" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Protection</label>
+		<description>The storage protection status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageisregistered" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Registration</label>
+		<description>The storage registration status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageisselfrecorded" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Self Recorded</label>
+		<description>The storage self recorded status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageissqvsupported" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage SQV</label>
+		<description>The storage SQV (standard quality voice) status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragelun" advanced="true">
+		<item-type>Integer</item-type>
+		<label>Storage LUN</label>
+		<description>The storage logical unit number</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragemounted" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Mounted</label>
+		<description>The storage mounted status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragepermission" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Permission</label>
+		<description>The storage permission status</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageposition" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Position</label>
+		<description>The position of the storage (front, back, internal, etc)</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageprotocol" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Protocol</label>
+		<description>The storage protocol</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageregistrationdate" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Registration Date</label>
+		<description>The storage registration date</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragesystemareacapacitymb" advanced="true">
+		<item-type>Integer</item-type>
+		<label>Storage System Capacity</label>
+		<description>The storage system capacity (in MB)</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragetimesectofinalize" advanced="true">
+		<item-type>Integer</item-type>
+		<label>Storage Time to Finalize</label>
+		<description>The time (in seconds) to finalize</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragetimesectogetcontents" advanced="true">
+		<item-type>Integer</item-type>
+		<label>Storage Time to Get Contents</label>
+		<description>The time (in seconds) to get storage contents</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragetype" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Type</label>
+		<description>The storage type</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageuri" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage URI</label>
+		<description>The storage uri</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstorageusbdevicetype" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage USB Type</label>
+		<description>The storage USB device type</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragevolumelabel" advanced="true">
+		<item-type>String</item-type>
+		<label>Storage Label</label>
+		<description>The storage label</description>
+		<state readOnly="true" />
+	</channel-type>
+
+	<channel-type id="scalarsystemstoragewholecapacitymb" advanced="true">
+		<item-type>Integer</item-type>
+		<label>Storage Whole Capacity</label>
+		<description>The storage whole capacity (in MB)</description>
+		<state readOnly="true" />
 	</channel-type>
 
 	<channel-type id="scalarappcontrolapptitle" advanced="true">

@@ -163,7 +163,7 @@ public class DialHandler extends AbstractThingHandler<DialConfig> {
                     new ThingCallback<String>() {
                         @Override
                         public void statusChanged(final ThingStatus state, final ThingStatusDetail detail,
-                                @Nullable final String msg) {
+                                final @Nullable String msg) {
                             updateStatus(state, detail, msg);
                         }
 
@@ -173,7 +173,7 @@ public class DialHandler extends AbstractThingHandler<DialConfig> {
                         }
 
                         @Override
-                        public void setProperty(final String propertyName, @Nullable final String propertyValue) {
+                        public void setProperty(final String propertyName, final @Nullable String propertyValue) {
                             getThing().setProperty(propertyName, propertyValue);
                         }
                     });

@@ -17,7 +17,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * This class represents all the notifications and whether they are enabled or disabled
@@ -27,10 +30,10 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public class Notifications {
     /** The enabled notifications */
-    private final List<Notification> enabled;
+    private final @Nullable List<Notification> enabled;
 
     /** The disabled notifications */
-    private final List<Notification> disabled;
+    private final @Nullable List<Notification> disabled;
 
     /** Constructs an empty list of notifications */
     public Notifications() {
@@ -47,8 +50,11 @@ public class Notifications {
     public Notifications(final List<Notification> enabled, final List<Notification> disabled) {
         Objects.requireNonNull(enabled, "enabled cannot be null");
         Objects.requireNonNull(enabled, "disabled cannot be null");
-        this.enabled = new ArrayList<>(enabled);
-        this.disabled = new ArrayList<>(disabled);
+
+        // note: if empty - set to null. Sony has a bad habit of ignoring
+        // the request if one or the other array is an empty array (both can be empty however - go figure)
+        this.enabled = enabled.size() == 0 && disabled.size() > 0 ? null : new ArrayList<>(enabled);
+        this.disabled = enabled.size() > 0 && disabled.size() == 0 ? null : new ArrayList<>(disabled);
     }
 
     /**
@@ -57,7 +63,8 @@ public class Notifications {
      * @return a non-null, unmodifiable list of notifications
      */
     public List<Notification> getEnabled() {
-        return Collections.unmodifiableList(enabled);
+        final List<Notification> localEnabled = enabled;
+        return localEnabled == null ? Collections.emptyList() : Collections.unmodifiableList(localEnabled);
     }
 
     /**
@@ -66,7 +73,22 @@ public class Notifications {
      * @return a non-null, unmodifiable list of notifications
      */
     public List<Notification> getDisabled() {
-        return Collections.unmodifiableList(disabled);
+        final List<Notification> localDisabled = disabled;
+        return localDisabled == null ? Collections.emptyList() : Collections.unmodifiableList(localDisabled);
+    }
+
+    /**
+     * Determines if the specified name is enabled (true) or not (false)
+     * 
+     * @param name a non-null, non-empty name
+     * @return true if enabled, false otherwise
+     */
+    public boolean isEnabled(final String name) {
+        Validate.notEmpty(name, "name cannot be empty");
+
+        final List<Notification> localEnabled = enabled;
+        return localEnabled != null
+                && localEnabled.stream().anyMatch(e -> StringUtils.equalsIgnoreCase(name, e.getName()));
     }
 
     @Override

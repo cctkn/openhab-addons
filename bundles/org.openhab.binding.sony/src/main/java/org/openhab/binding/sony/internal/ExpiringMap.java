@@ -61,7 +61,7 @@ public class ExpiringMap<K, V> implements AutoCloseable {
      * @param expireTime the expiration time
      * @param timeUnit the non-null time unit of expireTime
      */
-    public ExpiringMap(@Nullable final ScheduledExecutorService scheduler, final int expireTime,
+    public ExpiringMap(final @Nullable ScheduledExecutorService scheduler, final int expireTime,
             final TimeUnit timeUnit) {
         Objects.requireNonNull(timeUnit, "timeUnit cannot be null");
 
@@ -105,7 +105,7 @@ public class ExpiringMap<K, V> implements AutoCloseable {
      * @param key a non-null key
      * @return the value associated with the key or null if not found
      */
-    public @Nullable V get(@Nullable final K key) {
+    public @Nullable V get(final @Nullable K key) {
         Objects.requireNonNull(key, "key cannot be null");
         final Lock readLock = mapLock.readLock();
         readLock.lock();
@@ -142,7 +142,7 @@ public class ExpiringMap<K, V> implements AutoCloseable {
      * @param key the non-null key
      * @return the value associated with the key or null if key not found
      */
-    public @Nullable V remove(@Nullable final K key) {
+    public @Nullable V remove(final @Nullable K key) {
         Objects.requireNonNull(key, "key cannot be null");
         final Lock writeLock = mapLock.writeLock();
         writeLock.lock();

@@ -20,6 +20,7 @@ import org.openhab.binding.sony.internal.ThingCallback;
 import org.openhab.binding.sony.internal.scalarweb.ScalarWebChannel;
 import org.openhab.binding.sony.internal.scalarweb.ScalarWebChannelDescriptor;
 import org.openhab.binding.sony.internal.scalarweb.models.ScalarWebService;
+import org.openhab.binding.sony.internal.scalarweb.models.api.NotifySettingUpdate;
 
 /**
  * The interface definition for all protocols
@@ -63,6 +64,13 @@ public interface ScalarWebProtocol<T extends ThingCallback<String>> {
      * @return a non-null underlying serivce
      */
     public ScalarWebService getService();
+
+    /**
+     * Called when notifying the protocol of a settings update
+     * 
+     * @param setting a non-null setting
+     */
+    public void notifySettingUpdate(final NotifySettingUpdate setting);
 
     /**
      * Defines a close method to release resources. We do NOT implement AutoCloseable since that forces an exception
