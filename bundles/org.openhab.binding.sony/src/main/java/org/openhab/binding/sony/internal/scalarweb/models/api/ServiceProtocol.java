@@ -104,7 +104,7 @@ public class ServiceProtocol {
             return false;
         }
         final ServiceProtocol other = (ServiceProtocol) obj;
-        return StringUtils.equalsIgnoreCase(serviceName, other.serviceName);
+        return StringUtils.equals(serviceName, other.serviceName);
     }
 
     @Override

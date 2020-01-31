@@ -60,7 +60,7 @@ public class Scheme {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        return StringUtils.equalsIgnoreCase(scheme, ((Scheme) obj).scheme);
+        return StringUtils.equals(scheme, ((Scheme) obj).scheme);
     }
 
     @Override

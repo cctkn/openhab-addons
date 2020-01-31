@@ -341,11 +341,11 @@ public class ScalarWebChannel {
             return false;
         }
 
-        if (!(obj instanceof ScalarWebChannel)) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
 
         final ScalarWebChannel other = (ScalarWebChannel) obj;
-        return StringUtils.equalsIgnoreCase(category, other.category) && StringUtils.equalsIgnoreCase(id, other.id);
+        return StringUtils.equals(category, other.category) && StringUtils.equals(id, other.id);
     }
 }

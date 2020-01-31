@@ -191,7 +191,7 @@ public class Source {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        return StringUtils.equalsIgnoreCase(source, ((Source) obj).source);
+        return StringUtils.equals(source, ((Source) obj).source);
     }
 
     @Override

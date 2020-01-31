@@ -785,7 +785,6 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             descriptors.add(
                     createDescriptor(createChannel(CN_VISIBILITY), "String", "scalarwebavcontrolcontentvisibility"));
         }
-
     }
 
     /**
@@ -818,7 +817,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                 "Input " + title + " Label", null));
 
         descriptors.add(createDescriptor(createChannel(IN_ICON, id, uri), "String", "scalarwebavcontrolinpstatusicon",
-                "Input " + title + " Icon", null));
+                "Input " + title + " Icon Type", null));
 
         if (StringUtils.equalsIgnoreCase(apiVersion, ScalarWebMethod.V1_1)) {
             descriptors.add(createDescriptor(createChannel(IN_STATUS, id, uri), "String",
@@ -2897,9 +2896,9 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         }
 
         final int i = ct.getCount();
-        final int max = i + ((i % MAX_CT == 0 ? 0 : 1) * MAX_CT);
-        for (int idx = 0; idx < max; idx += MAX_CT) {
-            final int localIdx = idx;
+        final int max = (int) Math.ceil((double) i / MAX_CT);
+        for (int idx = 0; idx < max; idx++) {
+            final int localIdx = (idx + 1) * MAX_CT;
             try {
                 final ScalarWebResult res = execute(ScalarWebMethod.GETCONTENTLIST, version -> {
                     if (VersionUtilities.equals(version, ScalarWebMethod.V1_0, ScalarWebMethod.V1_1,

@@ -670,24 +670,17 @@ public abstract class AbstractSonySource implements SonySource {
 
         @Override
         public boolean equals(final @Nullable Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             final ServiceModelName other = (ServiceModelName) obj;
-            if (modelName == null) {
-                if (other.modelName != null)
-                    return false;
-            } else if (!modelName.equals(other.modelName))
-                return false;
-            if (serviceName == null) {
-                if (other.serviceName != null)
-                    return false;
-            } else if (!serviceName.equals(other.serviceName))
-                return false;
-            return true;
+            return StringUtils.equals(modelName, other.modelName) && StringUtils.equals(serviceName, other.serviceName);
         }
     }
 }

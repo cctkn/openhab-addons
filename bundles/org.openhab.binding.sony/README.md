@@ -203,13 +203,24 @@ The following is a list of common configuration options for all services
 | deviceAddress      | Yes (1)  | None    | The path to the descriptor file or the IP address/host name of the device                                     |
 | deviceMacAddress   | No (2)   | eth0    | The device MAC address to use for wake on lan (WOL).                                                          |
 | refresh            | No (3)   | 30      | The time, in seconds, to refresh some state from the device (only if the device supports retrieval of status) |
-| retryPolling       | No       | 10      | The time, in seconds, to retry connecting to the device                                                       |
 | checkStatusPolling | No       | 30      | The time, in seconds, to check the device status device                                                       |
+| retryPolling       | No       | 10      | The time, in seconds, to retry connecting to the device                                                       |
 
 1. See IP Address Configuration above
 2. Only specify if the device support wake on lan (WOL)
 3. Only specify if the device provides status information.
 Set to negative to disable (-1).
+
+```refresh``` is the time between checking the state of the device. 
+This will query the device for it's current state (example: volume level, current input, etc) and update all associated channels. 
+This is necessary if there are changes made by the device itself or if something else affects the device state outside of openHAB (such as using a remote).
+
+```checkStatusPolling``` is the time between checking if we still have a valid connection to the device.
+If a connection attempt cannot be made, the thing will be updated to OFFLINE and will start a reconnection attempt (see ```retryPolling```).
+
+```retryPolling``` is the time between re-connection attempts.
+If the thing goes OFFLINE (for any non-configuration error), reconnection attempts will be made.
+Once the connection is successful, the thing will go ONLINE.
 
 ### Ignore these configuration options
 

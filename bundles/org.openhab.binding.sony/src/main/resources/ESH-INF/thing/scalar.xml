@@ -1149,8 +1149,8 @@
 
 	<channel-type id="scalarwebavcontrolinpstatusicon" advanced="true">
 		<item-type>String</item-type>
-		<label>Input Icon</label>
-		<description>Icon meta data representing the input</description>
+		<label>Input Icon Type</label>
+		<description>Icon meta data type representing the input</description>
 		<state readOnly="true" />
 	</channel-type>
 
