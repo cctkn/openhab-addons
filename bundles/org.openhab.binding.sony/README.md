@@ -47,7 +47,7 @@ Please note that the IRCC service is fully undocumented and much of the work tha
 
 If you have a device that is reporting one of the "???" versions above, please post on the forum and I can give you directions on how we can document (and fix any issues) with those versions.
 
-Please note that Sony has begun transitioning many of it's products over the the Scalar API and the latest firmware updates have begun to disable this service.
+Please note that Sony has begun transitioning many of their products over to the Scalar API and the latest firmware updates have begun to disable this service.
 
 For specifics - see [IRCC](README-IRCC.md)
 
@@ -190,7 +190,7 @@ If you have used a preshared key - simply choose a new key (this may affect othe
 Any service can be setup by using just an IP address (or host name) - example: `192.168.1.104` in the deviceAddress field in configuration.
 However, doing this will make certain assumptions about the device (ie path to services, port numbers, etc) that may not be correct for your device (should work for about 95% of the devices however).
 
-If you plan on setting your device up in a .things file, I recommend autodiscoverying it first and copy the URL to your things file.
+If you plan on setting your device up in a .things file, I recommend autodiscovering it first and copy the URL to your things file.
 
 There is one situation where you MUST use an IP address - if your device switches discovery ports commonly - then you must use a static IP address/host name.
 

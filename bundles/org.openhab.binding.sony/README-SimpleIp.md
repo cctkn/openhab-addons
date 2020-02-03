@@ -115,8 +115,6 @@ sitemap demo label="Main Menu"
         Switch item=Bravia_Pip
         Switch item=Bravia_TogglePip mappings=[ON="Toggle"]
         Switch item=Bravia_TogglePipPosition mappings=[ON="Toggle"]
-        Text item=Bravia_BroadcastAddress
-        Text item=Bravia_MacAddress
     }
 }
 ```

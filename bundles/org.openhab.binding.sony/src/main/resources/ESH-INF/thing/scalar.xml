@@ -253,7 +253,7 @@
 	</channel-type>
 
 	<channel-type id="scalarsystemstoragefreecapacitymb" advanced="true">
-		<item-type>Integer</item-type>
+		<item-type>Number</item-type>
 		<label>Storage Free Capacity</label>
 		<description>The storage free capacity (in MB)</description>
 		<state readOnly="true" />
@@ -323,7 +323,7 @@
 	</channel-type>
 
 	<channel-type id="scalarsystemstoragelun" advanced="true">
-		<item-type>Integer</item-type>
+		<item-type>Number</item-type>
 		<label>Storage LUN</label>
 		<description>The storage logical unit number</description>
 		<state readOnly="true" />
@@ -365,21 +365,21 @@
 	</channel-type>
 
 	<channel-type id="scalarsystemstoragesystemareacapacitymb" advanced="true">
-		<item-type>Integer</item-type>
+		<item-type>Number</item-type>
 		<label>Storage System Capacity</label>
 		<description>The storage system capacity (in MB)</description>
 		<state readOnly="true" />
 	</channel-type>
 
 	<channel-type id="scalarsystemstoragetimesectofinalize" advanced="true">
-		<item-type>Integer</item-type>
+		<item-type>Number</item-type>
 		<label>Storage Time to Finalize</label>
 		<description>The time (in seconds) to finalize</description>
 		<state readOnly="true" />
 	</channel-type>
 
 	<channel-type id="scalarsystemstoragetimesectogetcontents" advanced="true">
-		<item-type>Integer</item-type>
+		<item-type>Number</item-type>
 		<label>Storage Time to Get Contents</label>
 		<description>The time (in seconds) to get storage contents</description>
 		<state readOnly="true" />
@@ -414,7 +414,7 @@
 	</channel-type>
 
 	<channel-type id="scalarsystemstoragewholecapacitymb" advanced="true">
-		<item-type>Integer</item-type>
+		<item-type>Number</item-type>
 		<label>Storage Whole Capacity</label>
 		<description>The storage whole capacity (in MB)</description>
 		<state readOnly="true" />

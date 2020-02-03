@@ -12,7 +12,6 @@
  */
 package org.openhab.binding.sony.internal.dial.models;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -84,8 +83,8 @@ public class DialRoot {
      */
     public List<DialDeviceInfo> getDevices() {
         final RootDevice dev = device;
-        return Collections
-                .unmodifiableList(dev == null || dev.deviceInfos == null ? new ArrayList<>() : dev.deviceInfos);
+        return dev == null || dev.deviceInfos == null ? Collections.emptyList()
+                : Collections.unmodifiableList(dev.deviceInfos);
     }
 
     /**

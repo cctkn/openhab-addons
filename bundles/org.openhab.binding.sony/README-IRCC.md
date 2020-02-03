@@ -36,13 +36,13 @@ Please note that if you device supports WOL, the device will be woken when the o
 
 The "power" channel will:
 
-1) ON - attempt to wake the device via WOL (if support) or attempt to send the power ON IRCC command (if support).
+1) ON - attempt to wake the device via WOL (if supported) or attempt to send the power ON IRCC command (if supported).
 If the device supports neither, then the "ON" side of the channel will not work and you'll need to rely on some other means to turn the device on
 2) OFF - will turn the device off via the power IRCC command.
 The binding will attempt to use the discrete POWER OFF command first and if not supported, the POWER toggle command will be used instead (assuming the device is on).
 
 Please note that the initial/current status of the "power" channel is dependent on the IRCC version.
-Version 1.3 will detected and generally be correct.
+Version 1.3 will detect and generally be correct.
 Version 1.0-1.2 is unknown.
 Version "Not Specified" cannot determine the status.
 

@@ -146,7 +146,7 @@ The following channels are for the audio service. The audio service provides man
 
 1.  Volume will be scaled to the device's range
 
-The {id} is the unqiue id of the volume from the device.
+The {id} is the unique id of the volume from the device.
 For TVs, there generally be a 'speaker' or 'main' and a 'headphone'.
 For a multi-zone AVR, there will be a volume/mute for each zone (extoutput-zone1, extoutput-zone2, etc).
 
@@ -321,7 +321,7 @@ Example: this channel will contain `meta:hdmi` for an HDMI icon or `meta:video` 
 Generally, if this is blank - the input is not selected.
 If not blank, the input is selected.
 If the input has some type of content, the status will be 'true' or 'active'.
-If the input is selected but the feeding device is off (or is not outputing any content), the status generally will be 'false' or 'inactive'.
+If the input is selected but the feeding device is off (or is not outputting any content), the status generally will be 'false' or 'inactive'.
 
 #### Terminal Sources
 
@@ -466,7 +466,7 @@ Please note the following acyronyms are used:
 2. The only command supported is "select" to start playing the content
 3. Generally these flags contain either "true" or "false".
 They are not switches since sony defined the item as strings and there may potentially be other values I'm unaware of.
-4. You can set the visibility of the content to the various guides avaiable and this generally only applies to TV/Radio stations (where you can 'surf' through them)
+4. You can set the visibility of the content to the various guides available and this generally only applies to TV/Radio stations (where you can 'surf' through them)
 
 ### Browser Channels (service ID of "browser")
 
@@ -556,14 +556,14 @@ The system service allows management of general system settings.
 | st_usbdevicetype-{src}          | R (5)      | String         | The storage USB device type                           |
 | st_volumelabel-{src}            | R (5)      | String         | The storage label                                     |
 
-1. Set's the LED status - generally "Off", "Low" or "High" (there may be others specific to your device like "AutoBrightnessAdjust")
-2. Set's the power savings mode - generally "Off", "Low" or "High" (there may be others specific to your device)
+1. Sets the LED status - generally "Off", "Low" or "High" (there may be others specific to your device like "AutoBrightnessAdjust")
+2. Sets the power savings mode - generally "Off", "Low" or "High" (there may be others specific to your device)
 3. Sending 'on' to this channel will reboot the device
 4. Sends an IRCC command to the device.
 This can either be the raw IRCC command (AAAAAwAAHFoAAAAYAw==) or can be a name (`Home`) that is transformed by the transformation file
 5.  These channels will be repeated by every storage source (ie source for a scheme of ```storage```).
 Example: if you have a ```USB1``` and ```CD``` storage sources, you'd have a ```st_uri-usb1``` and a ```st_uri-cd``` channel.
-Please note that, on many devices, the storage information is not reliable and a bit quirkly (the st_mounted status shows unmounted even though the storage is mounted).
+Please note that, on many devices, the storage information is not reliable and a bit quirky (the st_mounted status shows unmounted even though the storage is mounted).
 However, the st_mounted will reliably change when a source is physically mounted/unmounted from the unit.
 Just the initial status will likely be incorrect.
 
@@ -578,7 +578,7 @@ The video service allows management of the video (screen) itself.
 | bannermode           | RW         | String    | The banner mode (demo)                              |
 | multiscreenmode      | RW         | String    | The multiscreen mode (pip)                          |
 | pipsubscreenposition | RW         | String    | The pip screen position                             |
-| pipsubscreenposition | RW         | String    | The pip screen position                             |
+| scenesetting         | RW         | String    | The sceen settings                                  |
 
 
 The values of these channels are pretty much unknown and you'll need to experiment with your device if you wish to use them.
@@ -703,8 +703,8 @@ The only exception to this is that the application channels (netflix, youtube, e
 
 ### GITHUB Information
 
-While the local support will work, there are a number of downside to it.
-Everyone would have to do this, updates to the thing type will be nearly impossible (because everyone would have to make local changes to JSON - yuck!) and this doesn't help me diagnosis issues with the device (since everything is local).
+While the local support will work, there are a number of downsides to it.
+Everyone would have to do this, updates to the thing type will be nearly impossible (because everyone would have to make local changes to JSON - yuck!) and this doesn't help me diagnose issues with the device (since everything is local).
 
 Because of this - in addition to writing things locally, the addon will query GITHUB for thing types and use thing types defined there if found.
 Likewise it will upload device thing types/capabilities to allow for quicker diagnosis of new/updated capabilities as sony releases them.
@@ -739,7 +739,7 @@ sony.sources:local=false
 sony.sources:github=false
 ```
 
-Setting either value to anthing but 'false' will result in that provider being activated.
+Setting either value to anything but 'false' will result in that provider being activated.
 Please note that disabling will disable the ability to use custom thing types for your devices.
 
 ### Sony Support pages
