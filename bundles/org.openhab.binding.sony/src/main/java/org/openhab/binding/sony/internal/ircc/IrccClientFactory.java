@@ -92,7 +92,13 @@ public class IrccClientFactory {
         if (StringUtils.isEmpty(irccUrl.getPath())) {
             return getDefaultClient(irccUrl);
         } else {
-            return queryIrccClient(irccUrl);
+            try {
+                final IrccClient client = queryIrccClient(irccUrl);
+                return client == null ? getDefaultClient(irccUrl) : client;
+            } catch (final IOException | URISyntaxException e) {
+                logger.debug("Exception occurred querying IRCC client - trying default client: {}", e.getMessage(), e);
+                return getDefaultClient(irccUrl);
+            }
         }
     }
 
@@ -213,14 +219,20 @@ public class IrccClientFactory {
                     continue;
                 }
 
-                logger.debug("Querying IRCC client {} and found service: {}/{}", irccUrl, serviceId, service);
+                logger.debug("Querying IRCC client {} and found service: {} -- {}", irccUrl, serviceId, service);
                 services.put(serviceId, service);
 
                 final URL scpdUrl = service.getScpdUrl(irccUrl);
                 if (scpdUrl != null) {
-                    logger.debug("Querying IRCC client {}/{} and getting SCPD: {}", irccUrl, serviceId, scpdUrl);
+                    logger.debug("Querying IRCC client {} -- {} and getting SCPD: {}", irccUrl, serviceId, scpdUrl);
                     final HttpResponse spcdResponse = transport.executeGet(scpdUrl.toExternalForm());
-                    if (spcdResponse.getHttpCode() != HttpStatus.OK_200) {
+
+                    final int httpCode = spcdResponse.getHttpCode();
+                    if (httpCode == HttpStatus.NOT_FOUND_404) {
+                        logger.debug("Querying IRCC client {} -- {} -- {} -- wasn't found - skipping", irccUrl,
+                                serviceId, scpdUrl);
+                        continue;
+                    } else if (spcdResponse.getHttpCode() != HttpStatus.OK_200) {
                         throw spcdResponse.createException();
                     }
 
@@ -230,8 +242,8 @@ public class IrccClientFactory {
                         logger.debug("spcd url '{}' didn't contain a valid response (and is being ignored): {}",
                                 scpdUrl, spcdResponse);
                     } else {
-                        logger.debug("Querying IRCC client {}/{} and adding SCPD: {}/{}", irccUrl, serviceId, scpdUrl,
-                                scpd);
+                        logger.debug("Querying IRCC client {} -- {} and adding SCPD: {} -- {}", irccUrl, serviceId,
+                                scpdUrl, scpd);
                         scpdByService.put(serviceId, scpd);
                     }
                 }
@@ -260,29 +272,39 @@ public class IrccClientFactory {
                         throw new IOException(
                                 "IRCC Actions response (" + actionsUrl + ")  was not valid: " + actionXml);
                     }
-                    logger.debug("Querying IRCC client {} and found action: {}/{}", irccUrl, actionsUrl, actionList);
+                    logger.debug("Querying IRCC client {} and found action: {} -- {}", irccUrl, actionsUrl, actionList);
                     actionsList = actionList;
                 } else {
-                    throw actionsResp.createException();
+                    logger.debug("Querying IRCC client {} for actions url {} -- got error {} and defaulting to none",
+                            irccUrl, actionsUrl, actionsResp.getHttpCode());
+                    actionsList = new IrccActionList();
                 }
 
                 final String sysUrl = actionsList.getUrlForAction(IrccClient.AN_GETSYSTEMINFORMATION);
                 if (sysUrl == null || StringUtils.isEmpty(sysUrl)) {
-                    throw new NotImplementedException(IrccClient.AN_GETSYSTEMINFORMATION + " is not supported");
-                }
-
-                logger.debug("Querying IRCC client {} and getting system information: {}", irccUrl, sysUrl);
-                final HttpResponse sysResp = transport.executeGet(sysUrl);
-                if (sysResp.getHttpCode() == HttpStatus.OK_200) {
-                    final String sysXml = sysResp.getContent();
-                    final IrccSystemInformation sys = IrccXmlReader.SYSINFO.fromXML(sysXml);
-                    if (sys == null) {
-                        throw new IOException("IRCC systems info response (" + sysUrl + ")  was not valid: " + sysXml);
-                    }
-                    logger.debug("Querying IRCC client {} and found system information: {}/{}", irccUrl, sysUrl, sys);
-                    sysInfo = sys;
+                    logger.debug("Querying IRCC client {} but found no system information actions URL: {} - defaulting",
+                            irccUrl, actionsList);
+                    sysInfo = new IrccSystemInformation();
                 } else {
-                    throw sysResp.createException();
+                    logger.debug("Querying IRCC client {} and getting system information: {}", irccUrl, sysUrl);
+                    final HttpResponse sysResp = transport.executeGet(sysUrl);
+                    if (sysResp.getHttpCode() == HttpStatus.OK_200) {
+                        final String sysXml = sysResp.getContent();
+                        final IrccSystemInformation sys = IrccXmlReader.SYSINFO.fromXML(sysXml);
+                        if (sys == null) {
+                            throw new IOException(
+                                    "IRCC systems info response (" + sysUrl + ")  was not valid: " + sysXml);
+                        }
+                        logger.debug("Querying IRCC client {} and found system information: {} -- {}", irccUrl, sysUrl,
+                                sys);
+                        sysInfo = sys;
+                    } else {
+                        logger.debug(
+                                "Querying IRCC client {} for sysinfo url {} -- got error {} and defaulting to none",
+                                irccUrl, sysUrl, sysResp.getHttpCode());
+                        sysInfo = new IrccSystemInformation();
+                        throw sysResp.createException();
+                    }
                 }
             }
 
@@ -303,7 +325,7 @@ public class IrccClientFactory {
                         throw new IOException(
                                 "IRCC systems info response (" + remoteCommandsUrl + ")  was not valid: " + rcXml);
                     }
-                    logger.debug("Querying IRCC client {} and getting remote commands: {}/{}", irccUrl,
+                    logger.debug("Querying IRCC client {} and getting remote commands: {} -- {}", irccUrl,
                             remoteCommandsUrl, rcCmds);
                     remoteCommands = rcCmds;
                 } else {
