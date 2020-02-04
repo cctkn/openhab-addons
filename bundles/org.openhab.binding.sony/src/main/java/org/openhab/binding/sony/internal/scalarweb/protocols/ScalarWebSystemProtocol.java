@@ -964,38 +964,43 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
     protected void eventReceived(final ScalarWebEvent event) throws IOException {
         Objects.requireNonNull(event, "event cannot be null");
 
-        switch (event.getMethod()) {
-            case ScalarWebEvent.NOTIFYPOWERSTATUS:
-                final String powerVersion = getVersion(ScalarWebMethod.GETPOWERSTATUS);
-                if (VersionUtilities.equals(powerVersion, ScalarWebMethod.V1_0)) {
-                    notifyPowerStatus(event.as(PowerStatusResult_1_0.class));
-                } else {
-                    notifyPowerStatus(event.as(PowerStatusResult_1_1.class));
-                }
+        final @Nullable String mtd = event.getMethod();
+        if (mtd == null || StringUtils.isEmpty(mtd)) {
+            logger.debug("Unhandled event received (no method): {}", event);
+        } else {
+            switch (mtd) {
+                case ScalarWebEvent.NOTIFYPOWERSTATUS:
+                    final String powerVersion = getVersion(ScalarWebMethod.GETPOWERSTATUS);
+                    if (VersionUtilities.equals(powerVersion, ScalarWebMethod.V1_0)) {
+                        notifyPowerStatus(event.as(PowerStatusResult_1_0.class));
+                    } else {
+                        notifyPowerStatus(event.as(PowerStatusResult_1_1.class));
+                    }
 
-                break;
+                    break;
 
-            case ScalarWebEvent.NOTIFYSWUPDATEINFO:
-                notifySoftwareUpdate(event.as(SoftwareUpdate.class));
-                break;
+                case ScalarWebEvent.NOTIFYSWUPDATEINFO:
+                    notifySoftwareUpdate(event.as(SoftwareUpdate.class));
+                    break;
 
-            case ScalarWebEvent.NOTIFYSETTINGSUPDATE:
-                notifySettingUpdate(event.as(NotifySettingUpdate.class));
-                break;
+                case ScalarWebEvent.NOTIFYSETTINGSUPDATE:
+                    notifySettingUpdate(event.as(NotifySettingUpdate.class));
+                    break;
 
-            case ScalarWebEvent.NOTIFYSTORAGESTATUS:
-                final String storVersion = getVersion(ScalarWebMethod.GETSTORAGELIST);
-                if (VersionUtilities.equals(storVersion, ScalarWebMethod.V1_1)) {
-                    notifyStorageStatus(event.as(StorageListItem_1_1.class));
-                } else {
-                    notifyStorageStatus(event.as(StorageListItem_1_2.class));
-                }
+                case ScalarWebEvent.NOTIFYSTORAGESTATUS:
+                    final String storVersion = getVersion(ScalarWebMethod.GETSTORAGELIST);
+                    if (VersionUtilities.equals(storVersion, ScalarWebMethod.V1_1)) {
+                        notifyStorageStatus(event.as(StorageListItem_1_1.class));
+                    } else {
+                        notifyStorageStatus(event.as(StorageListItem_1_2.class));
+                    }
 
-                break;
+                    break;
 
-            default:
-                logger.debug("Unhandled event received: {}", event);
-                break;
+                default:
+                    logger.debug("Unhandled event received: {}", event);
+                    break;
+            }
         }
     }
 

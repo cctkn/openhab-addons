@@ -69,6 +69,12 @@ public class PlayingContentInfoResult_1_0 {
     private @Nullable String uri;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public PlayingContentInfoResult_1_0() {
+    }
+
+    /**
      * Gets the BIVL asset id
      *
      * @return the BIVL asset id

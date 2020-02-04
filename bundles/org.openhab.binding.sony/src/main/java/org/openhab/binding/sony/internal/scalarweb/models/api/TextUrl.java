@@ -24,7 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class TextUrl {
     /** The url */
-    private final @Nullable String url;
+    private @Nullable String url;
 
     /** The title of the page (result only) */
     private @Nullable String title;
@@ -34,6 +34,12 @@ public class TextUrl {
 
     /** The favorite icon (result only) */
     private @Nullable String favicon;
+
+    /**
+     * Constructor used for deserialization only
+     */
+    public TextUrl() {
+    }
 
     /**
      * Instantiates a new URL request

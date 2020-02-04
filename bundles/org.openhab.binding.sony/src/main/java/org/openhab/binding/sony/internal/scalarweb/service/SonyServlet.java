@@ -106,7 +106,6 @@ public class SonyServlet extends HttpServlet {
         } catch (ServletException | NamespaceException e) {
             logger.debug("Exception starting status servlet: {}", e.getMessage(), e);
         }
-
     }
 
     @Deactivate
@@ -176,7 +175,7 @@ public class SonyServlet extends HttpServlet {
                             StringUtils.defaultIfEmpty(result.getDeviceErrorDesc(), "failure"))));
                 } else {
                     final JsonArray ja = result.getResults();
-                    final String resString = gson.toJson(ja);
+                    final String resString = ja == null ? null : gson.toJson(ja);
                     write(resp, gson.toJson(new CommandResponse(StringUtils.defaultIfEmpty(resString, "Success"))));
                 }
             }

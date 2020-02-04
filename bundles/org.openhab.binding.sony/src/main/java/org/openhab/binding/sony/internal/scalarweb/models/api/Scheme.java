@@ -35,6 +35,12 @@ public class Scheme {
     private @Nullable String scheme;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public Scheme() {
+    }
+
+    /**
      * Gets the scheme identifier
      *
      * @return the scheme identifier

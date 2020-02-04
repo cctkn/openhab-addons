@@ -46,7 +46,6 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * </pre>
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 @XStreamAlias("actionList")
@@ -105,7 +104,6 @@ public class IrccActionList {
      * private since the xstream reader needs access to the annotations
      *
      * @author Tim Roberts - Initial contribution
-     *
      */
     @NonNullByDefault
     @XStreamAlias("action")

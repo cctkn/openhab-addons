@@ -121,6 +121,9 @@ public class SocketChannelSession implements SocketSession {
         dispatchingThread = new Thread(new Dispatcher());
         responseThread = new Thread(new ResponseReader());
 
+        dispatchingThread.setDaemon(true);
+        responseThread.setDaemon(true);
+
         dispatchingThread.start();
         responseThread.start();
     }

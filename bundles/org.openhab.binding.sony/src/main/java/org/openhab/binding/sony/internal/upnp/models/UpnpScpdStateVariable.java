@@ -30,8 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * }
  * </pre>
  *
- * @author Tim Roberts - Initial Contribution
- *
+ * @author Tim Roberts - Initial contribution
  */
 @NonNullByDefault
 @XStreamAlias("stateVariable")

@@ -16,7 +16,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * This class represents the request for the power sync (CEC) mode and is used for deserialization/serialization only
+ * This class represents the request for the power sync (CEC) mode and is used for serialization only
  *
  * @author Tim Roberts - Initial contribution
  */

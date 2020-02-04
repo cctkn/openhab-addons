@@ -23,5 +23,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public class RecordingInfo {
-
+    /**
+     * Constructor used for deserialization only
+     */
+    public RecordingInfo() {
+    }
 }

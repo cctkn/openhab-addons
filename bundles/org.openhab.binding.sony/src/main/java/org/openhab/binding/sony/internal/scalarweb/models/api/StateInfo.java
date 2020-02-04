@@ -33,6 +33,12 @@ public class StateInfo {
     private @Nullable String supplement;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public StateInfo() {
+    }
+
+    /**
      * Returns the current state
      * 
      * @return the current state

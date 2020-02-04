@@ -67,7 +67,6 @@ import org.xml.sax.SAXException;
  * openhab and the webscalar system.
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {

@@ -186,7 +186,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </pre>
  * 
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 @XStreamAlias("device")

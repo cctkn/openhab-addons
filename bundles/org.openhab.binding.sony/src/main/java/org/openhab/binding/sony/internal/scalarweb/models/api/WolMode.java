@@ -23,7 +23,13 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class WolMode {
     /** Whether enabled or not */
-    private final @Nullable Boolean enabled;
+    private @Nullable Boolean enabled;
+
+    /**
+     * Constructor used for deserialization only
+     */
+    public WolMode() {
+    }
 
     /**
      * Constructs the WOL mode
@@ -47,5 +53,4 @@ public class WolMode {
     public String toString() {
         return "WolMode [enabled=" + enabled + "]";
     }
-
 }

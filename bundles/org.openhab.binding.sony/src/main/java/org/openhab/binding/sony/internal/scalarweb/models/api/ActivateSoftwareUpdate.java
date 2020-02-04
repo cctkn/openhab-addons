@@ -21,5 +21,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public class ActivateSoftwareUpdate {
-
+    /**
+     * Constructor used for serialization/deserialization
+     */
+    public ActivateSoftwareUpdate() {
+    }
 }

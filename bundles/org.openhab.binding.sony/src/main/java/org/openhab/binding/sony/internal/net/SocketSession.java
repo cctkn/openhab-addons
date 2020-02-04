@@ -21,7 +21,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * communications with the underlying device and provide message back via the {@link SocketSessionListener}
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 public interface SocketSession {

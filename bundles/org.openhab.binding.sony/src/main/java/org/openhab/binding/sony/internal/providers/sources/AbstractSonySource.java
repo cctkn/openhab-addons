@@ -493,7 +493,6 @@ public abstract class AbstractSonySource implements SonySource {
         } finally {
             readLock.unlock();
         }
-
     }
 
     /**

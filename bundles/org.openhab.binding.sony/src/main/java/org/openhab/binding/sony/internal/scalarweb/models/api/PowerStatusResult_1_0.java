@@ -35,6 +35,12 @@ public class PowerStatusResult_1_0 {
     private @Nullable String status;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public PowerStatusResult_1_0() {
+    }
+
+    /**
      * Gets the power status
      *
      * @return true if on, false otherwise

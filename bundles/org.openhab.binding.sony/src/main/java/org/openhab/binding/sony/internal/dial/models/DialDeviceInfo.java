@@ -76,7 +76,6 @@ public class DialDeviceInfo {
      *
      * @return a possibly null, possibly empty device id
      */
-
     public @Nullable String getDeviceId() {
         return deviceId;
     }

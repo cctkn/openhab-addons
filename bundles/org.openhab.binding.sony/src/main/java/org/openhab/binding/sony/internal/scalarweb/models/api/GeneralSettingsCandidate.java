@@ -47,6 +47,12 @@ public class GeneralSettingsCandidate {
     private @Nullable String value;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public GeneralSettingsCandidate() {
+    }
+
+    /**
      * Whether the candidate is available
      * 
      * @return true if available, false otherwise

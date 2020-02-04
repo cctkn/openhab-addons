@@ -385,5 +385,4 @@ public class SonyHttpTransport extends AbstractSonyTransport {
 
         return (TransportOption[]) ArrayUtils.add(options, option);
     }
-
 }

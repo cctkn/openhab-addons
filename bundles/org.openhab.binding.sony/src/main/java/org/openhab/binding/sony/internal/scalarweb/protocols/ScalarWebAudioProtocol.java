@@ -394,26 +394,32 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
     @Override
     protected void eventReceived(final ScalarWebEvent event) throws IOException {
         Objects.requireNonNull(event, "event cannot be null");
-        switch (event.getMethod()) {
-            case ScalarWebEvent.NOTIFYVOLUMEINFORMATION:
-                final String version = getVersion(ScalarWebMethod.GETVOLUMEINFORMATION);
-                final Set<ScalarWebChannel> channels = getChannelTracker().getLinkedChannelsForCategory(VOLUME, MUTE);
+        final @Nullable String mtd = event.getMethod();
+        if (mtd == null || StringUtils.isEmpty(mtd)) {
+            logger.debug("Unhandled event received (no method): {}", event);
+        } else {
+            switch (mtd) {
+                case ScalarWebEvent.NOTIFYVOLUMEINFORMATION:
+                    final String version = getVersion(ScalarWebMethod.GETVOLUMEINFORMATION);
+                    final Set<ScalarWebChannel> channels = getChannelTracker().getLinkedChannelsForCategory(VOLUME,
+                            MUTE);
 
-                if (VersionUtilities.equals(version, ScalarWebMethod.V1_0)) {
-                    final VolumeInformation_1_0 vi = event.as(VolumeInformation_1_0.class);
-                    notifyVolumeInformation(vi, channels);
-                } else if (VersionUtilities.equals(version, ScalarWebMethod.V1_1)) {
-                    final VolumeInformation_1_1 vi = event.as(VolumeInformation_1_1.class);
-                    notifyVolumeInformation(vi, channels);
-                } else {
-                    logger.debug("Unknown {} method version: {}", ScalarWebEvent.NOTIFYVOLUMEINFORMATION, version);
-                }
+                    if (VersionUtilities.equals(version, ScalarWebMethod.V1_0)) {
+                        final VolumeInformation_1_0 vi = event.as(VolumeInformation_1_0.class);
+                        notifyVolumeInformation(vi, channels);
+                    } else if (VersionUtilities.equals(version, ScalarWebMethod.V1_1)) {
+                        final VolumeInformation_1_1 vi = event.as(VolumeInformation_1_1.class);
+                        notifyVolumeInformation(vi, channels);
+                    } else {
+                        logger.debug("Unknown {} method version: {}", ScalarWebEvent.NOTIFYVOLUMEINFORMATION, version);
+                    }
 
-                break;
+                    break;
 
-            default:
-                logger.debug("Unhandled event received: {}", event);
-                break;
+                default:
+                    logger.debug("Unhandled event received (unknown method): {}", event);
+                    break;
+            }
         }
     }
 

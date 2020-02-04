@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
  * openhab and the simple IP system.
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {

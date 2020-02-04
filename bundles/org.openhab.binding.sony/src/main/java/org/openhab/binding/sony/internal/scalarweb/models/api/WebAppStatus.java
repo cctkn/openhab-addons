@@ -29,6 +29,12 @@ public class WebAppStatus {
     private @Nullable Boolean active;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public WebAppStatus() {
+    }
+
+    /**
      * Gets the url of the application
      *
      * @return the url of the application

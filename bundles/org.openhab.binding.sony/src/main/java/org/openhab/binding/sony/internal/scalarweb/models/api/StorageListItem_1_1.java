@@ -71,6 +71,12 @@ public class StorageListItem_1_1 {
     private @Nullable String error;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public StorageListItem_1_1() {
+    }
+
+    /**
      * Gets the storage URI
      * 
      * @return the uri

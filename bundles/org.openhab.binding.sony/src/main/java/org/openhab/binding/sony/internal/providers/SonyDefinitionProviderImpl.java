@@ -285,7 +285,6 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
                     }
                     return bld.build().toStateDescription();
                 }
-
             }
         }
         return originalStateDescription;

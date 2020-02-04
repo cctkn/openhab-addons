@@ -30,6 +30,12 @@ public class BrowserBookmark {
     private @Nullable String title;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public BrowserBookmark() {
+    }
+
+    /**
      * Gets the bookmark url
      *
      * @return the bookmark url
@@ -51,5 +57,4 @@ public class BrowserBookmark {
     public String toString() {
         return "BrowserBookmark [url=" + url + ", title=" + title + "]";
     }
-
 }

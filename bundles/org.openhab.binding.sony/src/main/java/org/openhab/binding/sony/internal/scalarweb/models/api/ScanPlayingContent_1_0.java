@@ -17,7 +17,7 @@ import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * This class represents the scan direction and is used for serialization/deserialization
+ * This class represents the scan direction and is used for serialization
  * 
  * @author Tim Roberts - Initial contribution
  */

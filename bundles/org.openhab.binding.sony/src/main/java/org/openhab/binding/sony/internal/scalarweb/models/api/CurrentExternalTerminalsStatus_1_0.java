@@ -42,18 +42,33 @@ public class CurrentExternalTerminalsStatus_1_0 {
     private @Nullable String label;
 
     /** The meta identifying information on the terminal */
-    private final @Nullable String meta;
+    private @Nullable String meta;
 
     /** The outputs associated with this terminal (usually an input) */
     private @Nullable String @Nullable [] outputs;
 
     /** The title (name) of the terminal */
-    private final @Nullable String title;
+    private @Nullable String title;
 
     /** The uri identifying the terminal */
-    private final @Nullable String uri;
+    private @Nullable String uri;
 
+    /**
+     * Constructor used for deserialization only
+     */
+    public CurrentExternalTerminalsStatus_1_0() {
+    }
+
+    /**
+     * Constructs the external status from the uri/title
+     * 
+     * @param uri a non-null, non-empty URI
+     * @param title a non-null, non-empty title
+     */
     public CurrentExternalTerminalsStatus_1_0(final String uri, final String title) {
+        Validate.notEmpty(uri, "uri cannot be empty");
+        Validate.notEmpty(title, "title cannot be empty");
+
         this.uri = uri;
         this.title = title;
         this.meta = META_ZONEOUTPUT;

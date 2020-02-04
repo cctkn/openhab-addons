@@ -240,15 +240,19 @@ public class SonyWebSocketTransport extends AbstractSonyTransport {
                     if (json.has("id")) {
                         final ScalarWebResult result = gson.fromJson(json, ScalarWebResult.class);
                         final Integer resultId = result.getId();
-                        final CompletableFuture<TransportResult> future = futures.get(resultId);
-                        if (future != null) {
-                            logger.debug("Response received from server: {}", message);
-                            futures.remove(resultId);
-                            future.complete(new TransportResultScalarWebResult(result));
+                        if (resultId == null) {
+                            logger.debug("Response from server has an unknown id: {}", message);
                         } else {
-                            logger.debug(
-                                    "Response received from server but a waiting command wasn't found - ignored: {}",
-                                    message);
+                            final CompletableFuture<TransportResult> future = futures.get(resultId);
+                            if (future != null) {
+                                logger.debug("Response received from server: {}", message);
+                                futures.remove(resultId);
+                                future.complete(new TransportResultScalarWebResult(result));
+                            } else {
+                                logger.debug(
+                                        "Response received from server but a waiting command wasn't found - ignored: {}",
+                                        message);
+                            }
                         }
                     } else {
                         final ScalarWebEvent event = gson.fromJson(json, ScalarWebEvent.class);

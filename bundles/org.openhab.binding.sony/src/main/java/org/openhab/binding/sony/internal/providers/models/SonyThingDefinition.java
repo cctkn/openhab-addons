@@ -43,7 +43,6 @@ import org.eclipse.jdt.annotation.Nullable;
  * deserialization (which can provide null/empty variables)
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 public class SonyThingDefinition {
@@ -53,25 +52,31 @@ public class SonyThingDefinition {
     }.getType();
 
     /** The associated service (scalar, etc) */
-    private final @Nullable String service;
+    private @Nullable String service;
 
     /** The associated configuration uri */
-    private final @Nullable String configUri;
+    private @Nullable String configUri;
 
     /** The associated model name */
-    private final @Nullable String modelName;
+    private @Nullable String modelName;
 
     /** The label for the thing type */
-    private final @Nullable String label;
+    private @Nullable String label;
 
     /** The description for the thing type */
-    private final @Nullable String description;
+    private @Nullable String description;
 
     /** The channel group id to label for any channel groups */
-    private final @Nullable Map<@Nullable String, @Nullable String> channelGroups;
+    private @Nullable Map<@Nullable String, @Nullable String> channelGroups;
 
     /** The channel definitions for the thing type */
-    private final @Nullable List<@Nullable SonyThingChannelDefinition> channels;
+    private @Nullable List<@Nullable SonyThingChannelDefinition> channels;
+
+    /**
+     * Empty constructor used for deserialization
+     */
+    public SonyThingDefinition() {
+    }
 
     /**
      * Constructs the definition from the passed arguments

@@ -29,6 +29,12 @@ public class SystemSupportedFunction {
     private @Nullable String value;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public SystemSupportedFunction() {
+    }
+
+    /**
      * Gets the function
      *
      * @return the function
@@ -50,5 +56,4 @@ public class SystemSupportedFunction {
     public String toString() {
         return "SystemSupportedFunction [option=" + option + ", value=" + value + "]";
     }
-
 }

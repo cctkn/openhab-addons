@@ -18,7 +18,7 @@ import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * This class represents whether the audio is muted or not and is used for serialzation/deserialization
+ * This class represents whether the audio is muted or not and is used for serialzation
  *
  * Versions:
  * <ol>

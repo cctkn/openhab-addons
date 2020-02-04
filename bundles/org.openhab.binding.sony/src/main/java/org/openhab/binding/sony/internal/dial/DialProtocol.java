@@ -27,7 +27,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.RawType;
-import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.types.UnDefType;
 import org.openhab.binding.sony.internal.AccessResult;
@@ -259,7 +258,7 @@ class DialProtocol<T extends ThingCallback<String>> implements AutoCloseable {
         Validate.notEmpty(applId, "applId cannot be empty");
 
         final DialApp app = getDialApp(applId);
-        callback.stateChanged(channelId, new StringType(app == null ? "(Unknown)" : app.getName()));
+        callback.stateChanged(channelId, SonyUtil.newStringType(app == null ? null : app.getName()));
     }
 
     /**
@@ -276,7 +275,7 @@ class DialProtocol<T extends ThingCallback<String>> implements AutoCloseable {
         final String url = app == null ? null : app.getIconUrl();
 
         final RawType rawType = NetUtil.getRawType(transport, url);
-        callback.stateChanged(channelId, rawType == null ?UnDefType.UNDEF : rawType);
+        callback.stateChanged(channelId, rawType == null ? UnDefType.UNDEF : rawType);
     }
 
     /**

@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.sony.internal.scalarweb.gson.ScalarWebEventDeserializer;
 
 import com.google.gson.JsonArray;
@@ -44,13 +45,19 @@ public class ScalarWebEvent extends AbstractScalarResponse {
     public static final String NOTIFYSETTINGSUPDATE = "notifySettingsUpdate";
 
     /** The method name for the event */
-    private final String method;
+    private @Nullable String method;
 
     /** The parameters for the event */
-    private final JsonArray params;
+    private @Nullable JsonArray params;
 
     /** The event version */
-    private final String version;
+    private @Nullable String version;
+
+    /**
+     * Empty constructor used for deserialization
+     */
+    public ScalarWebEvent() {
+    }
 
     /**
      * Instantiates a new scalar web event
@@ -74,7 +81,7 @@ public class ScalarWebEvent extends AbstractScalarResponse {
      *
      * @return the method name
      */
-    public String getMethod() {
+    public @Nullable String getMethod() {
         return method;
     }
 
@@ -83,12 +90,12 @@ public class ScalarWebEvent extends AbstractScalarResponse {
      *
      * @return the version
      */
-    public String getVersion() {
+    public @Nullable String getVersion() {
         return version;
     }
 
     @Override
-    protected JsonArray getPayload() {
+    protected @Nullable JsonArray getPayload() {
         return params;
     }
 

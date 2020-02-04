@@ -48,6 +48,12 @@ public class NetworkSetting {
     private @Nullable List<@Nullable String> dns;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public NetworkSetting() {
+    }
+
+    /**
      * Gets the network interface name
      *
      * @return the network interface name

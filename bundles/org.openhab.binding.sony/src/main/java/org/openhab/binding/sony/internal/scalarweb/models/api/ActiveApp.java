@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * This class represents the activate application and is used for serialization/deserialization only
+ * This class represents the activate application and is used for serialization only
  *
  * @author Tim Roberts - Initial contribution
  */

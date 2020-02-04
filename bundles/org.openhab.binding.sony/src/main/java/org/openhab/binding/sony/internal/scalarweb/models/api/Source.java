@@ -53,6 +53,12 @@ public class Source {
     private @Nullable String @Nullable [] outputs;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public Source() {
+    }
+
+    /**
      * Gets the source meta information
      * 
      * @return the source meta information

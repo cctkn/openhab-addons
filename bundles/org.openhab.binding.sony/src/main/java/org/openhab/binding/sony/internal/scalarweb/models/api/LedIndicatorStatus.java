@@ -25,10 +25,16 @@ import org.eclipse.jdt.annotation.Nullable;
 public class LedIndicatorStatus {
 
     /** The mode */
-    private final @Nullable String mode;
+    private @Nullable String mode;
 
     /** The status */
-    private final @Nullable String status;
+    private @Nullable String status;
+
+    /**
+     * Constructor used for deserialization only
+     */
+    public LedIndicatorStatus() {
+    }
 
     /**
      * Instantiates a new led indicator status.

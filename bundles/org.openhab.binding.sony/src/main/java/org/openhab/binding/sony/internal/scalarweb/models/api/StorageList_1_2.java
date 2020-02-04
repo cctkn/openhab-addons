@@ -28,6 +28,12 @@ public class StorageList_1_2 {
     private @Nullable List<@Nullable StorageListItem_1_2> items;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public StorageList_1_2() {
+    }
+
+    /**
      * Gets the list of storage items
      * 
      * @return the list of storage items

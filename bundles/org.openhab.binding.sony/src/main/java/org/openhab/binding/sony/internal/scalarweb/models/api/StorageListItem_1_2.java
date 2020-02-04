@@ -116,6 +116,12 @@ public class StorageListItem_1_2 {
     private @Nullable Integer wholeCapacityMB;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public StorageListItem_1_2() {
+    }
+
+    /**
      * Gets the storage device name
      * 
      * @return the storage device name

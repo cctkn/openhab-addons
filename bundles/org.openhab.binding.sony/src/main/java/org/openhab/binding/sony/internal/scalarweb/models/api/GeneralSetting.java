@@ -83,6 +83,12 @@ public class GeneralSetting {
     private @Nullable List<@Nullable GeneralSettingsCandidate> candidate;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public GeneralSetting() {
+    }
+
+    /**
      * Constructs a setting form the parameters
      * 
      * @param target a non-null, non-empty target

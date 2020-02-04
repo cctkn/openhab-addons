@@ -23,5 +23,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public class Speed {
-
+    /**
+     * Constructor used for deserialization only
+     */
+    public Speed() {
+    }
 }

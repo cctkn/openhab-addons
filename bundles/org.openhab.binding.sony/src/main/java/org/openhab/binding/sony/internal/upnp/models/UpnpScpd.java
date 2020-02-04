@@ -95,8 +95,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * }
  * </pre>
  *
- * @author Tim Roberts - Initial Contribution
- *
+ * @author Tim Roberts - Initial contribution
  */
 @NonNullByDefault
 @XStreamAlias("scpd")

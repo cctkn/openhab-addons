@@ -15,7 +15,7 @@ package org.openhab.binding.sony.internal.scalarweb.models.api;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * This class represents the audio volume and is used for serialization/deserialization
+ * This class represents the audio volume and is used for serialization
  *
  * Versions:
  * <ol>

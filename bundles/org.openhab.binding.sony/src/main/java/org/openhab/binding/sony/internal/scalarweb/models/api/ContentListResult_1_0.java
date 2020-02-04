@@ -69,6 +69,12 @@ public class ContentListResult_1_0 {
     private @Nullable String uri;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public ContentListResult_1_0() {
+    }
+
+    /**
      * Gets the channel name
      * 
      * @return the channel name
@@ -212,5 +218,4 @@ public class ContentListResult_1_0 {
                 + programNum + ", startDateTime=" + startDateTime + ", title=" + title + ", tripletStr=" + tripletStr
                 + ", uri=" + uri + "]";
     }
-
 }

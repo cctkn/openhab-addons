@@ -124,6 +124,12 @@ public class PlayingContentInfoResult_1_2 extends PlayingContentInfoResult_1_0 {
     private @Nullable VideoInfo videoInfo;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public PlayingContentInfoResult_1_2() {
+    }
+
+    /**
      * Gets the album name
      * 
      * @return the album name

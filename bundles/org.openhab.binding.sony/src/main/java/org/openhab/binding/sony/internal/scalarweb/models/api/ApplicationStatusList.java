@@ -46,6 +46,12 @@ public class ApplicationStatusList {
     private @Nullable String status;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public ApplicationStatusList() {
+    }
+
+    /**
      * Gets the application name
      *
      * @return the application name

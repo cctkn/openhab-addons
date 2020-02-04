@@ -35,6 +35,12 @@ public class SoftwareUpdateInfo {
     private @Nullable String updatableVersion;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public SoftwareUpdateInfo() {
+    }
+
+    /**
      * Get's the estimated time to updated
      * 
      * @return the estimated time to updated

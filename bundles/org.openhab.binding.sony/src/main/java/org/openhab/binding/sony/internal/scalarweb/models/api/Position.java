@@ -14,16 +14,24 @@ package org.openhab.binding.sony.internal.scalarweb.models.api;
 
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * This class represents the request to set the picture-in-picture (PIP) location and is used for serialization only
+ * This class represents the request to set the picture-in-picture (PIP) location and is used for
+ * deserialization/serialization
  *
  * @author Tim Roberts - Initial contribution
  */
 @NonNullByDefault
 public class Position {
     /** The PIP position */
-    private final String position;
+    private @Nullable String position;
+
+    /**
+     * Constructor used for deserialization only
+     */
+    public Position() {
+    }
 
     /**
      * Instantiates a new position
@@ -40,7 +48,7 @@ public class Position {
      *
      * @return the position
      */
-    public String getPosition() {
+    public @Nullable String getPosition() {
         return position;
     }
 

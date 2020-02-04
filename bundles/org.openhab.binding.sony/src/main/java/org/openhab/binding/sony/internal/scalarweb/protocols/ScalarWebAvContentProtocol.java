@@ -1152,30 +1152,36 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
     @Override
     protected void eventReceived(final ScalarWebEvent event) throws IOException {
         Objects.requireNonNull(event, "event cannot be null");
-        switch (event.getMethod()) {
-            case ScalarWebEvent.NOTIFYPLAYINGCONTENTINFO:
-                final String version = getVersion(ScalarWebMethod.GETPLAYINGCONTENTINFO);
-                if (VersionUtilities.equals(version, ScalarWebMethod.V1_0, ScalarWebMethod.V1_1)) {
-                    notifyPlayingContentInfo(event.as(PlayingContentInfoResult_1_0.class), getIdForOutput(MAINOUTPUT));
-                } else {
-                    final PlayingContentInfoResult_1_2 res = event.as(PlayingContentInfoResult_1_2.class);
-                    final String output = res.getOutput(MAINOUTPUT);
-                    notifyPlayingContentInfo(res, getIdForOutput(output));
-                }
+        final @Nullable String mtd = event.getMethod();
+        if (mtd == null || StringUtils.isEmpty(mtd)) {
+            logger.debug("Unhandled event received (no method): {}", event);
+        } else {
+            switch (mtd) {
+                case ScalarWebEvent.NOTIFYPLAYINGCONTENTINFO:
+                    final String version = getVersion(ScalarWebMethod.GETPLAYINGCONTENTINFO);
+                    if (VersionUtilities.equals(version, ScalarWebMethod.V1_0, ScalarWebMethod.V1_1)) {
+                        notifyPlayingContentInfo(event.as(PlayingContentInfoResult_1_0.class),
+                                getIdForOutput(MAINOUTPUT));
+                    } else {
+                        final PlayingContentInfoResult_1_2 res = event.as(PlayingContentInfoResult_1_2.class);
+                        final String output = res.getOutput(MAINOUTPUT);
+                        notifyPlayingContentInfo(res, getIdForOutput(output));
+                    }
 
-                break;
+                    break;
 
-            case ScalarWebEvent.NOTIFYAVAILABLEPLAYBACKFUNCTION:
-                // TODO
-                break;
+                case ScalarWebEvent.NOTIFYAVAILABLEPLAYBACKFUNCTION:
+                    // TODO
+                    break;
 
-            case ScalarWebEvent.NOTIFYEXTERNALTERMINALSTATUS:
-                notifyCurrentTerminalStatus(event.as(CurrentExternalTerminalsStatus_1_0.class));
-                break;
+                case ScalarWebEvent.NOTIFYEXTERNALTERMINALSTATUS:
+                    notifyCurrentTerminalStatus(event.as(CurrentExternalTerminalsStatus_1_0.class));
+                    break;
 
-            default:
-                logger.debug("Unhandled event received: {}", event);
-                break;
+                default:
+                    logger.debug("Unhandled event received: {}", event);
+                    break;
+            }
         }
     }
 
@@ -3118,7 +3124,6 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         public int getIdx() {
             return idx;
         }
-
     }
 
     /**
@@ -3161,7 +3166,6 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         public int getPreset() {
             return preset;
         }
-
     }
 
     /**

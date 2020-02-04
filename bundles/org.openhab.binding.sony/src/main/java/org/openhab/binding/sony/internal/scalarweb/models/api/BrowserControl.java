@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * This class represents the browser control and is used for deserialization only
+ * This class represents the browser control and is used for serialization only
  *
  * @author Tim Roberts - Initial contribution
  */
@@ -50,5 +50,4 @@ public class BrowserControl {
     public String toString() {
         return "BrowserControl [control=" + control + "]";
     }
-
 }

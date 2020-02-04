@@ -37,22 +37,28 @@ public class SonyThingStateDefinition {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The stepping */
-    private final @Nullable BigDecimal step;
+    private @Nullable BigDecimal step;
 
     /** The minimum */
-    private final @Nullable BigDecimal minimum;
+    private @Nullable BigDecimal minimum;
 
     /** The maximum */
-    private final @Nullable BigDecimal maximum;
+    private @Nullable BigDecimal maximum;
 
     /** Any pattern to apply */
-    private final @Nullable String pattern;
+    private @Nullable String pattern;
 
     /** Whether it is readonly or not */
-    private final @Nullable Boolean readonly;
+    private @Nullable Boolean readonly;
 
     /** The channel options */
-    private final @Nullable Map<@Nullable String, @Nullable String> options;
+    private @Nullable Map<@Nullable String, @Nullable String> options;
+
+    /**
+     * Empty constructor used for deserialization
+     */
+    public SonyThingStateDefinition() {
+    }
 
     /**
      * Constructs the thing state definition from the state description

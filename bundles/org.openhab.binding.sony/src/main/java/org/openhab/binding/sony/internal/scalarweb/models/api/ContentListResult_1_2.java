@@ -128,6 +128,12 @@ public class ContentListResult_1_2 {
     private @Nullable String visibility;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public ContentListResult_1_2() {
+    }
+
+    /**
      * Gets the audio channel
      *
      * @return the audio channel

@@ -25,7 +25,13 @@ import org.eclipse.jdt.annotation.Nullable;
 public class Mode {
 
     /** The mode */
-    private final @Nullable String mode;
+    private @Nullable String mode;
+
+    /**
+     * Constructor used for deserialization only
+     */
+    public Mode() {
+    }
 
     /**
      * Instantiates a new mode.

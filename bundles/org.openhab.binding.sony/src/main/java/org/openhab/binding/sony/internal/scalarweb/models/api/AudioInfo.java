@@ -32,6 +32,12 @@ public class AudioInfo {
     private @Nullable String frequency;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public AudioInfo() {
+    }
+
+    /**
      * Returns the audio channel
      * 
      * @return the audio channel

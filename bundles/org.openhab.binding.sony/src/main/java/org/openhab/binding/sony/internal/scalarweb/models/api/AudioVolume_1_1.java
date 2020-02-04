@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * This class represents the audio volume and is used for serialization/deserialization
+ * This class represents the audio volume and is used for serialization
  *
  * Versions:
  * <ol>

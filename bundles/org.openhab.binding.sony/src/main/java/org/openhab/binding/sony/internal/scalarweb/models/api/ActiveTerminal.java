@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * Sets the active terminal (the power status of a zone) and is used for serialization only
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 public class ActiveTerminal {

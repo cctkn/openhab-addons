@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.google.gson.JsonSyntaxException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.config.core.ConfigConstants;
@@ -185,8 +186,13 @@ public class SonyFolderSource extends AbstractSonySource {
     public void writeDeviceCapabilities(final SonyDeviceCapability deviceCapability) {
         Objects.requireNonNull(deviceCapability, "deviceCapability cannot be null");
 
-        final File file = new File(
-                folderDefCapability + File.separator + deviceCapability.getModelName() + "." + JSONEXT);
+        final String modelName = deviceCapability.getModelName();
+        if (modelName == null || StringUtils.isEmpty(modelName)) {
+            logger.debug("Cannot write device capabilities because it has no model name: {}", deviceCapability);
+            return;
+        }
+
+        final File file = new File(folderDefCapability + File.separator + modelName + "." + JSONEXT);
         if (file.exists()) {
             logger.debug("File for thing definition already exists (write ignored): {}", file);
             return;

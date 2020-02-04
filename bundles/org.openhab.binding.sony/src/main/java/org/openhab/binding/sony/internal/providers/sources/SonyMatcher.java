@@ -36,7 +36,6 @@ import org.openhab.binding.sony.internal.scalarweb.models.ScalarWebMethod;
  * and additive properties (like something new in an array or list) are what is checked.
  * 
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 class SonyMatcher {

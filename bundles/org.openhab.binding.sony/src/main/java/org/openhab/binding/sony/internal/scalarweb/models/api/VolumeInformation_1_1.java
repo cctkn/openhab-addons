@@ -45,6 +45,12 @@ public class VolumeInformation_1_1 {
     private @Nullable Integer minVolume;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public VolumeInformation_1_1() {
+    }
+
+    /**
      * Gets the output of the volume
      *
      * @return the output of the volume

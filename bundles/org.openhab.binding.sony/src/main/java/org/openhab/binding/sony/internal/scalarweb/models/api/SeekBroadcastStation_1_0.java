@@ -15,7 +15,7 @@ package org.openhab.binding.sony.internal.scalarweb.models.api;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * This class represents a broadcast seek
+ * This class represents a broadcast seek and is used for serialization only
  *
  * @author Tim Roberts - Initial contribution
  */

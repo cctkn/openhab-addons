@@ -42,6 +42,12 @@ public class CommandRequest {
     private @Nullable String parms;
 
     /**
+     * Empty constructor used for deserialization
+     */
+    public CommandRequest() {
+    }
+
+    /**
      * Gets the base URL
      * 
      * @return the base URL

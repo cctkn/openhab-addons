@@ -36,10 +36,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.smarthome.config.core.ConfigConstants;
 import org.eclipse.smarthome.core.library.types.DateTimeType;
-import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.RawType;
-import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.transform.TransformationException;
@@ -377,16 +375,16 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                 final String dur = viewing.getItemValue(IrccStatusItem.DURATION);
 
                 callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_ID),
-                        id == null ? UnDefType.NULL : new StringType(id));
+                        SonyUtil.newStringType(id));
                 callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_SOURCE),
-                        source == null ? UnDefType.NULL : new StringType(source));
+                        SonyUtil.newStringType(source));
                 callback.stateChanged(
                         SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_SOURCE2),
-                        source == null ? UnDefType.NULL : new StringType(source2));
+                        SonyUtil.newStringType(source2));
                 callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_CLASS),
-                        clazz == null ? UnDefType.NULL : new StringType(clazz));
+                        SonyUtil.newStringType(clazz));
                 callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_TITLE),
-                        title == null ? UnDefType.NULL : new StringType(title));
+                        SonyUtil.newStringType(title));
                 if (StringUtils.isEmpty(dur)) {
                     callback.stateChanged(
                             SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_DURATION),
@@ -395,7 +393,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                     try {
                         callback.stateChanged(
                                 SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_DURATION),
-                                new DecimalType(Integer.parseInt(dur)));
+                                SonyUtil.newDecimalType(Integer.parseInt(dur)));
                     } catch (final NumberFormatException e) {
                         logger.warn("Could not convert {} into an integer", dur);
                         callback.stateChanged(
@@ -479,7 +477,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                 logger.debug("IRCC get text response ({}) was not valid: {}", getTextUrl, irccTextXml);
             } else {
                 callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_TEXT),
-                        new StringType(irccText.getText()));
+                        SonyUtil.newStringType(irccText.getText()));
             }
         } else if (resp.getHttpCode() == HttpStatus.NOT_ACCEPTABLE_406) {
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_TEXT),
@@ -513,7 +511,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
 
             final String url = irccContent.getUrl();
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_CONTENTURL),
-                    url == null ? UnDefType.NULL : new StringType(url));
+                    SonyUtil.newStringType(url));
 
             final IrccContentInformation ici = irccContent.getContentInformation();
             if (ici == null) {
@@ -522,7 +520,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
             } else {
                 final String urlTitle = ici.getInfoItemValue(IrccContentInformation.TITLE);
                 callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_TITLE),
-                        urlTitle == null ? UnDefType.NULL : new StringType(urlTitle));
+                        SonyUtil.newStringType(urlTitle));
             }
         } else if (resp.getHttpCode() == HttpStatus.NOT_ACCEPTABLE_406) {
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_CONTENTURL),
@@ -578,25 +576,25 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
             contentId.set(id);
 
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_ID),
-                    id == null ? UnDefType.NULL : new StringType(id));
+                    SonyUtil.newStringType(id));
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_TITLE),
-                    title == null ? UnDefType.NULL : new StringType(title));
+                    SonyUtil.newStringType(title));
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_CLASS),
-                    clazz == null ? UnDefType.NULL : new StringType(clazz));
+                    SonyUtil.newStringType(clazz));
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_SOURCE),
-                    source == null ? UnDefType.NULL : new StringType(source));
+                    SonyUtil.newStringType(source));
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_MEDIATYPE),
-                    mediaType == null ? UnDefType.NULL : new StringType(mediaType));
+                    SonyUtil.newStringType(mediaType));
             callback.stateChanged(
                     SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_MEDIAFORMAT),
-                    mediaFormat == null ? UnDefType.NULL : new StringType(mediaFormat));
+                    SonyUtil.newStringType(mediaFormat));
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_EDITION),
-                    edition == null ? UnDefType.NULL : new StringType(edition));
+                    SonyUtil.newStringType(edition));
             callback.stateChanged(
                     SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DESCRIPTION),
-                    description == null ? UnDefType.NULL : new StringType(description));
+                    SonyUtil.newStringType(description));
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_GENRE),
-                    genre == null ? UnDefType.NULL : new StringType(genre));
+                    SonyUtil.newStringType(genre));
 
             if (StringUtils.isEmpty(dur)) {
                 callback.stateChanged(
@@ -606,7 +604,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                 try {
                     callback.stateChanged(
                             SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DURATION),
-                            new DecimalType(Integer.parseInt(dur)));
+                            SonyUtil.newDecimalType(Integer.parseInt(dur)));
                 } catch (final NumberFormatException e) {
                     logger.warn("Could not convert {} into an integer", dur);
                     callback.stateChanged(
@@ -616,7 +614,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
             }
 
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_RATING),
-                    rating == null ? UnDefType.NULL : new StringType(rating));
+                    SonyUtil.newStringType(rating));
 
             if (daterelease == null || StringUtils.isEmpty(daterelease)) {
                 callback.stateChanged(
@@ -636,12 +634,12 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
             }
 
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DIRECTOR),
-                    director == null ? UnDefType.NULL : new StringType(director));
+                    SonyUtil.newStringType(director));
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_PRODUCER),
-                    producer == null ? UnDefType.NULL : new StringType(producer));
+                    SonyUtil.newStringType(producer));
             callback.stateChanged(
                     SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_SCREENWRITER),
-                    screen == null ? UnDefType.NULL : new StringType(screen));
+                    SonyUtil.newStringType(screen));
 
             if (StringUtils.isEmpty(iconData)) {
                 callback.stateChanged(

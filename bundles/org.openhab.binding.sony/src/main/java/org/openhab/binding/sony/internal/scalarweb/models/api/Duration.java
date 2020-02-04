@@ -29,6 +29,12 @@ public class Duration {
     private @Nullable Integer millseconds;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public Duration() {
+    }
+
+    /**
      * Gets the duration in seconds
      * 
      * @return duration in seconds

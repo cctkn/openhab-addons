@@ -33,6 +33,12 @@ public class SoftwareUpdate {
     private @Nullable List<@Nullable SoftwareUpdateInfo> swInfo;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public SoftwareUpdate() {
+    }
+
+    /**
      * Get's the updateable status
      * 
      * @return the updateable statuc

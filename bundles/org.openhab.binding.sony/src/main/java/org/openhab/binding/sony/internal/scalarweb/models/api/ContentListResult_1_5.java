@@ -254,6 +254,12 @@ public class ContentListResult_1_5 {
     private @Nullable Visibility visibility;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public ContentListResult_1_5() {
+    }
+
+    /**
      * Gets the album name
      * 
      * @return the album name

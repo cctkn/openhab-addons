@@ -936,7 +936,6 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                 }
                 break;
         }
-
     }
 
     /**

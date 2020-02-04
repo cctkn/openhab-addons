@@ -27,6 +27,12 @@ public class PipSubScreenPosition {
     private @Nullable String position;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public PipSubScreenPosition() {
+    }
+
+    /**
      * Gets the PIP screen position
      *
      * @return the PIP screen position

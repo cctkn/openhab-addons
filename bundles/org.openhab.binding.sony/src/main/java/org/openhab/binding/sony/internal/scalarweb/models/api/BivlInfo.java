@@ -32,6 +32,12 @@ public class BivlInfo {
     private @Nullable String provider;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public BivlInfo() {
+    }
+
+    /**
      * Returns the service ID
      * 
      * @return possibly null, possibly empty service id

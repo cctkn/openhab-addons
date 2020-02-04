@@ -20,8 +20,8 @@ import java.util.Objects;
 
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.types.Command;
+import org.openhab.binding.sony.internal.SonyUtil;
 import org.openhab.binding.sony.internal.ThingCallback;
 import org.openhab.binding.sony.internal.scalarweb.ScalarWebChannel;
 import org.openhab.binding.sony.internal.scalarweb.ScalarWebChannelDescriptor;
@@ -134,7 +134,6 @@ class ScalarWebVideoScreenProtocol<T extends ThingCallback<String>> extends Abst
         if (tracker.isCategoryLinked(SCENESETTING)) {
             refreshSceneSetting();
         }
-
     }
 
     @Override
@@ -166,7 +165,6 @@ class ScalarWebVideoScreenProtocol<T extends ThingCallback<String>> extends Abst
                 logger.debug("Unknown refresh channel: {}", channel);
                 break;
         }
-
     }
 
     /**
@@ -175,7 +173,7 @@ class ScalarWebVideoScreenProtocol<T extends ThingCallback<String>> extends Abst
     private void refreshAudioSource() {
         try {
             final Screen screen = execute(ScalarWebMethod.GETAUDIOSOURCESCREEN).as(Screen.class);
-            stateChanged(AUDIOSOURCE, new StringType(screen.getScreen()));
+            stateChanged(AUDIOSOURCE, SonyUtil.newStringType(screen.getScreen()));
         } catch (final IOException e) {
             logger.debug("Exception getting the audio source screen: {}", e.getMessage());
         }
@@ -187,7 +185,7 @@ class ScalarWebVideoScreenProtocol<T extends ThingCallback<String>> extends Abst
     private void refreshBannerMode() {
         try {
             final CurrentValue cv = execute(ScalarWebMethod.GETBANNERMODE).as(CurrentValue.class);
-            stateChanged(BANNERMODE, new StringType(cv.getCurrentValue()));
+            stateChanged(BANNERMODE, SonyUtil.newStringType(cv.getCurrentValue()));
         } catch (final IOException e) {
             logger.debug("Exception getting the banner mode: {}", e.getMessage());
         }
@@ -199,7 +197,7 @@ class ScalarWebVideoScreenProtocol<T extends ThingCallback<String>> extends Abst
     private void refreshMultiScreenMode() {
         try {
             final Mode mode = execute(ScalarWebMethod.GETMULTISCREENMODE).as(Mode.class);
-            stateChanged(MULTISCREENMODE, new StringType(mode.getMode()));
+            stateChanged(MULTISCREENMODE, SonyUtil.newStringType(mode.getMode()));
         } catch (final IOException e) {
             logger.debug("Exception getting the multi screen mode: {}", e.getMessage());
         }
@@ -211,7 +209,7 @@ class ScalarWebVideoScreenProtocol<T extends ThingCallback<String>> extends Abst
     private void refreshPipPosition() {
         try {
             final Position position = execute(ScalarWebMethod.GETPIPSUBSCREENPOSITION).as(Position.class);
-            stateChanged(PIPSUBSCREENPOSITION, new StringType(position.getPosition()));
+            stateChanged(PIPSUBSCREENPOSITION, SonyUtil.newStringType(position.getPosition()));
         } catch (final IOException e) {
             logger.debug("Exception getting the PIP position: {}", e.getMessage());
         }
@@ -223,7 +221,7 @@ class ScalarWebVideoScreenProtocol<T extends ThingCallback<String>> extends Abst
     private void refreshSceneSetting() {
         try {
             final CurrentValue cv = execute(ScalarWebMethod.GETSCENESETTING).as(CurrentValue.class);
-            stateChanged(SCENESETTING, new StringType(cv.getCurrentValue()));
+            stateChanged(SCENESETTING, SonyUtil.newStringType(cv.getCurrentValue()));
         } catch (final IOException e) {
             logger.debug("Exception getting the scene screen: {}", e.getMessage());
         }

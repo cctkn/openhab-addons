@@ -26,6 +26,12 @@ public class CurrentValue {
     private @Nullable String currentValue;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public CurrentValue() {
+    }
+
+    /**
      * Gets the current value
      *
      * @return the current value

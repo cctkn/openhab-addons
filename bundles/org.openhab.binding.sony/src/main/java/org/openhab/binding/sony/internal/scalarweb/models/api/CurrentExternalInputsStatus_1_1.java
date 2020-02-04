@@ -27,6 +27,13 @@ public class CurrentExternalInputsStatus_1_1 extends CurrentExternalInputsStatus
     private @Nullable String status;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public CurrentExternalInputsStatus_1_1() {
+        super();
+    }
+
+    /**
      * Gets the status of the input
      *
      * @return the status of the input

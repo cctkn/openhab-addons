@@ -18,6 +18,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.http.HttpStatus;
 import org.openhab.binding.sony.internal.net.HttpResponse;
 import org.openhab.binding.sony.internal.scalarweb.gson.ScalarWebResultDeserializer;
@@ -35,18 +36,24 @@ import com.google.gson.annotations.SerializedName;
 @NonNullByDefault
 public class ScalarWebResult extends AbstractScalarResponse {
     /** The unique request identifier */
-    private final int id;
+    private @Nullable Integer id;
 
     /** The related httpResponse */
-    private final HttpResponse httpResponse;
+    private @Nullable HttpResponse httpResponse;
 
     /** The results of the request */
-    @SerializedName(value="results", alternate = {"result"})
-    private final JsonArray results;
+    @SerializedName(value = "results", alternate = { "result" })
+    private @Nullable JsonArray results;
 
     /** The any errors that occurred */
-    @SerializedName(value="errors", alternate = {"error"})
-    private final JsonArray errors;
+    @SerializedName(value = "errors", alternate = { "error" })
+    private @Nullable JsonArray errors;
+
+    /**
+     * Empty constructor for deserialization
+     */
+    public ScalarWebResult() {
+    }
 
     /**
      * Instantiates a new scalar web result from the specified response
@@ -77,7 +84,6 @@ public class ScalarWebResult extends AbstractScalarResponse {
         this(new HttpResponse(httpCode, reason));
     }
 
-
     /**
      * Instantiates a new scalar web result.
      *
@@ -98,7 +104,6 @@ public class ScalarWebResult extends AbstractScalarResponse {
         } else {
             this.httpResponse = new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500, getDeviceErrorDesc());
         }
-
     }
 
     /**
@@ -129,7 +134,7 @@ public class ScalarWebResult extends AbstractScalarResponse {
      *
      * @return the unique request identifier
      */
-    public int getId() {
+    public @Nullable Integer getId() {
         return id;
     }
 
@@ -138,7 +143,7 @@ public class ScalarWebResult extends AbstractScalarResponse {
      *
      * @return the results (possibly empty)
      */
-    public JsonArray getResults() {
+    public @Nullable JsonArray getResults() {
         return results;
     }
 
@@ -157,8 +162,7 @@ public class ScalarWebResult extends AbstractScalarResponse {
      * @return true if there are errors, false otherwise
      */
     public boolean isError() {
-        final JsonArray localErrors = errors;
-        return !isBlank(localErrors);
+        return !isBlank(errors);
     }
 
     /**
@@ -167,7 +171,17 @@ public class ScalarWebResult extends AbstractScalarResponse {
      * @return the non-null http response
      */
     public HttpResponse getHttpResponse() {
-        return httpResponse;
+        final HttpResponse localHttpResponse = httpResponse;
+
+        if (localHttpResponse == null) {
+            if (isBlank(errors)) {
+                return new HttpResponse(HttpStatus.OK_200, "OK");
+            } else {
+                return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500, getDeviceErrorDesc());
+            }
+        } else {
+            return localHttpResponse;
+        }
     }
 
     /**
@@ -195,12 +209,15 @@ public class ScalarWebResult extends AbstractScalarResponse {
      * @return a non-null, possibly empty (if no errors) error description
      */
     public String getDeviceErrorDesc() {
+        final JsonArray localErrors = errors;
         final StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < errors.size(); i++) {
-            if (i > 0) {
-                sb.append(", ");
+        if (localErrors != null) {
+            for (int i = 0; i < localErrors.size(); i++) {
+                if (i > 0) {
+                    sb.append(", ");
+                }
+                sb.append(localErrors.get(i).getAsString());
             }
-            sb.append(errors.get(i).getAsString());
         }
         return sb.toString();
     }
@@ -224,7 +241,7 @@ public class ScalarWebResult extends AbstractScalarResponse {
     }
 
     @Override
-    protected JsonArray getPayload() {
+    protected @Nullable JsonArray getPayload() {
         return results;
     }
 
@@ -240,10 +257,10 @@ public class ScalarWebResult extends AbstractScalarResponse {
 
         if (localErrors.size() > 0) {
             sb.append(", Error: ");
-            sb.append(localErrors.toString());
+            sb.append(localErrors == null ? "(null)" : localErrors.toString());
         } else {
             sb.append(", Results: ");
-            sb.append(localResults.toString());
+            sb.append(localResults == null ? "(null)" : localResults.toString());
         }
 
         return sb.toString();

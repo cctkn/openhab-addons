@@ -21,7 +21,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public class Enabled {
-
     /** Whether enabling is enabled */
     private final boolean enabled;
 

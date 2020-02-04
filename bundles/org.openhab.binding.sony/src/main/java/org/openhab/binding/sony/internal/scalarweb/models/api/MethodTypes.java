@@ -91,7 +91,6 @@ public class MethodTypes {
             } else {
                 throw new JsonParseException("MethodTypes had a non-array element: " + elm);
             }
-
         }
 
         methods = Collections.unmodifiableList(myMethods);

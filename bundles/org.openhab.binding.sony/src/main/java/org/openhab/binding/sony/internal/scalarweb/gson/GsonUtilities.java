@@ -137,6 +137,5 @@ public class GsonUtilities {
                     || (checkDeserialize ? field.getAnnotation(Expose.class).deserialize()
                             : field.getAnnotation(Expose.class).serialize()));
         }
-
     }
 }

@@ -26,6 +26,12 @@ public class VideoInfo {
     private @Nullable String codec;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public VideoInfo() {
+    }
+
+    /**
      * Returns the video codec
      * 
      * @return the video codec

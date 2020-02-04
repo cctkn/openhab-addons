@@ -42,6 +42,12 @@ public class NotifySettingUpdate {
     private @Nullable NotifySettingUpdateApiMapping apiMappingUpdate;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public NotifySettingUpdate() {
+    }
+
+    /**
      * Whether the setting is currently available
      * 
      * @return true if available, false otherwise

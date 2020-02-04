@@ -29,6 +29,12 @@ public class BroadcastFreq {
     private @Nullable String band;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public BroadcastFreq() {
+    }
+
+    /**
      * Returns the broadcast frequency
      * 
      * @return possibly null broadcast frequency

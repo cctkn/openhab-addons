@@ -70,6 +70,12 @@ public class NotifySettingUpdateApiMapping {
     private @Nullable NotifySettingUpdateApi setApi;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public NotifySettingUpdateApiMapping() {
+    }
+
+    /**
      * Gets the current setting value
      * 
      * @return the curent setting value

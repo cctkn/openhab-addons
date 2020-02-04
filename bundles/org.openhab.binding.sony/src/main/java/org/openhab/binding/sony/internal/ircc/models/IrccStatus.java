@@ -40,7 +40,6 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * </pre>
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 @XStreamAlias("status")

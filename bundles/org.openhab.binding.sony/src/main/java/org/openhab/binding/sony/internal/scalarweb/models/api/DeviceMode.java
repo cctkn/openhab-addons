@@ -26,6 +26,12 @@ public class DeviceMode {
     private boolean isOn;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public DeviceMode() {
+    }
+
+    /**
      * Checks if the device is on or not
      *
      * @return true, if on - false otherwise

@@ -26,6 +26,12 @@ public class TextFormResult {
     private @Nullable String text;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public TextFormResult() {
+    }
+
+    /**
      * Gets the current text
      *
      * @return the current text

@@ -29,7 +29,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * </pre>
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 @XStreamAlias("statusItem")

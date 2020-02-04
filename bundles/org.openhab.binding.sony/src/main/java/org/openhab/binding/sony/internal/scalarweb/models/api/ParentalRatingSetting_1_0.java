@@ -50,6 +50,12 @@ public class ParentalRatingSetting_1_0 {
     private @Nullable Boolean unratedLock;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public ParentalRatingSetting_1_0() {
+    }
+
+    /**
      * Gets the rating age limit
      *
      * @return the rating age limit

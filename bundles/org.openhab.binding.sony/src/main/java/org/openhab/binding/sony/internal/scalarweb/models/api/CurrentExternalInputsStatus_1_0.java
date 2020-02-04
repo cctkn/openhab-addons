@@ -41,6 +41,12 @@ public class CurrentExternalInputsStatus_1_0 {
     private @Nullable String icon;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public CurrentExternalInputsStatus_1_0() {
+    }
+
+    /**
      * Gets the uri of the input
      *
      * @return the uri of the input

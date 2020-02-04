@@ -27,6 +27,12 @@ public class AudioSourceScreen {
     private @Nullable String screen;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public AudioSourceScreen() {
+    }
+
+    /**
      * Gets the screen
      *
      * @return the screen

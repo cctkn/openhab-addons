@@ -35,6 +35,12 @@ public class DabInfo {
     private @Nullable String serviceLabel;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public DabInfo() {
+    }
+
+    /**
      * Returns the DAB component label
      * 
      * @return the component label

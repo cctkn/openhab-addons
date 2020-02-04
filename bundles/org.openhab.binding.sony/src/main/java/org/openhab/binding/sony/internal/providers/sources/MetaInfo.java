@@ -25,7 +25,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * another) and is used for deserialization only
  * 
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 class MetaInfo {
@@ -53,7 +52,6 @@ class MetaInfo {
         this.ignoreChannelId = Collections.emptyList();
         this.modelNameConvert = Collections.emptyList();
         this.channelIdConvert = Collections.emptyList();
-
     }
 
     /**

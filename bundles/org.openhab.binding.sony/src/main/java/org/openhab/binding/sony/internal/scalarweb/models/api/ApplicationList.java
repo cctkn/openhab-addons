@@ -22,7 +22,6 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @NonNullByDefault
 public class ApplicationList {
-
     /** The application title */
     private @Nullable String title;
 
@@ -34,6 +33,12 @@ public class ApplicationList {
 
     /** The application data */
     private @Nullable String data;
+
+    /**
+     * Constructor used for deserialization only
+     */
+    public ApplicationList() {
+    }
 
     /**
      * Gets the application title

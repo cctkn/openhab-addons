@@ -24,7 +24,13 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class Screen {
     /** The screen identifier */
-    private final String screen;
+    private @Nullable String screen;
+
+    /**
+     * Constructor used for deserialization only
+     */
+    public Screen() {
+    }
 
     /**
      * Instantiates a new screen request

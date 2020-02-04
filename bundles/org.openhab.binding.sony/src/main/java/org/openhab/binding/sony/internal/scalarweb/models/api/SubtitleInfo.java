@@ -29,6 +29,12 @@ public class SubtitleInfo {
     private @Nullable String title;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public SubtitleInfo() {
+    }
+
+    /**
      * Gets the subtitle language
      * 
      * @return the subtitle language
@@ -50,5 +56,4 @@ public class SubtitleInfo {
     public String toString() {
         return "SubtitleInfo [langauge=" + langauge + ", title=" + title + "]";
     }
-
 }

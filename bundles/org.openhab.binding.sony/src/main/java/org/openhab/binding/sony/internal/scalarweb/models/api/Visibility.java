@@ -32,6 +32,12 @@ public class Visibility {
     private @Nullable String visibility;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public Visibility() {
+    }
+
+    /**
      * Gets the EPG visibility
      * 
      * @return the EPG visibility

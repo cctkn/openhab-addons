@@ -29,6 +29,12 @@ public class PowerStatusResult_1_1 extends PowerStatusResult_1_0 {
     private @Nullable String standByDetail;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public PowerStatusResult_1_1() {
+    }
+
+    /**
      * Gets the power status
      *
      * @return true if on, false otherwise

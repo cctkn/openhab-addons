@@ -422,7 +422,6 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
         } catch (final IOException e) {
             logger.debug("Exception getting application status list: {}", e.getMessage());
         }
-
     }
 
     /**

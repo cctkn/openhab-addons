@@ -19,6 +19,8 @@ import java.util.Objects;
 
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.binding.sony.internal.SonyUtil;
 import org.openhab.binding.sony.internal.scalarweb.models.ScalarWebMethod;
 
 /**
@@ -30,19 +32,25 @@ import org.openhab.binding.sony.internal.scalarweb.models.ScalarWebMethod;
 @NonNullByDefault
 public class SonyServiceCapability {
     /** The service name */
-    private final String serviceName;
+    private @Nullable String serviceName;
 
     /** The service version */
-    private final String version;
+    private @Nullable String version;
 
     /** The transport used for this service */
-    private final String transport;
+    private @Nullable String transport;
 
     /** The methods defined for the service */
-    private final List<ScalarWebMethod> methods;
+    private @Nullable List<@Nullable ScalarWebMethod> methods;
 
     /** The notifications that can be sent from the service */
-    private final List<ScalarWebMethod> notifications;
+    private @Nullable List<@Nullable ScalarWebMethod> notifications;
+
+    /**
+     * Empty constructor for deserialization
+     */
+    public SonyServiceCapability() {
+    }
 
     /**
      * Constructs the capability from the parameters
@@ -71,27 +79,27 @@ public class SonyServiceCapability {
     /**
      * Returns the service name for this capability
      * 
-     * @return a non-null, non-empty service name
+     * @return a possibly null, possibly empty service name
      */
-    public String getServiceName() {
+    public @Nullable String getServiceName() {
         return serviceName;
     }
 
     /**
      * Returns the service version for this capability
      * 
-     * @return a non-null, non-empty service version
+     * @return a possibly null, possibly empty service version
      */
-    public String getVersion() {
+    public @Nullable String getVersion() {
         return version;
     }
 
     /**
      * Returns the transport to use with this capability
      * 
-     * @return a non-null, non-empty transport to use
+     * @return a possibly null, possibly empty transport to use
      */
-    public String getTransport() {
+    public @Nullable String getTransport() {
         return transport;
     }
 
@@ -101,7 +109,7 @@ public class SonyServiceCapability {
      * @return a non-null, but possibly empty list of methods
      */
     public List<ScalarWebMethod> getMethods() {
-        return Collections.unmodifiableList(methods);
+        return Collections.unmodifiableList(SonyUtil.convertNull(methods));
     }
 
     /**
@@ -110,7 +118,7 @@ public class SonyServiceCapability {
      * @return a non-null, but possibly empty list of notifications
      */
     public List<ScalarWebMethod> getNotifications() {
-        return Collections.unmodifiableList(notifications);
+        return Collections.unmodifiableList(SonyUtil.convertNull(notifications));
     }
 
     @Override

@@ -54,6 +54,12 @@ public class SystemInformation {
     private @Nullable String cid;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public SystemInformation() {
+    }
+
+    /**
      * Gets the product
      *
      * @return the product
@@ -149,5 +155,4 @@ public class SystemInformation {
                 + model + ", serial=" + serial + ", macAddr=" + macAddr + ", name=" + name + ", generation="
                 + generation + ", area=" + area + ", cid=" + cid + "]";
     }
-
 }

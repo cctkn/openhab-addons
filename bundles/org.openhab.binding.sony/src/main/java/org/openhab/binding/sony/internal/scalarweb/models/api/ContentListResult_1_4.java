@@ -166,7 +166,14 @@ public class ContentListResult_1_4 {
     private @Nullable String visibility;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public ContentListResult_1_4() {
+    }
+
+    /**
      * Gets the album name
+     * 
      * @return the album name
      */
     public @Nullable String getAlbumName() {
@@ -175,6 +182,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the artist
+     * 
      * @return the artist
      */
     public @Nullable String getArtist() {
@@ -183,6 +191,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the audio information
+     * 
      * @return the audio information
      */
     public @Nullable AudioInfo @Nullable [] getAudioInfo() {
@@ -191,6 +200,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the broadcast frequency
+     * 
      * @return the broadcast frequency
      */
     public @Nullable Integer getBroadcastFreq() {
@@ -199,6 +209,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the broadcast frequency band
+     * 
      * @return the broadcast frequency band
      */
     public @Nullable String getBroadcastFreqBand() {
@@ -207,6 +218,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the channel name
+     * 
      * @return the channel name
      */
     public @Nullable String getChannelName() {
@@ -215,6 +227,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the channel surfing visibility
+     * 
      * @return the channel surfing visibility
      */
     public @Nullable String getChannelSurfingVisibility() {
@@ -223,6 +236,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the chapter count
+     * 
      * @return the chapter count
      */
     public @Nullable Integer getChapterCount() {
@@ -231,6 +245,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the content information
+     * 
      * @return the content information
      */
     public @Nullable ContentInfo getContent() {
@@ -239,6 +254,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the content kind
+     * 
      * @return the content kind
      */
     public @Nullable String getContentKind() {
@@ -247,6 +263,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the content type
+     * 
      * @return the content type
      */
     public @Nullable String getContentType() {
@@ -255,6 +272,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the create time
+     * 
      * @return the create time
      */
     public @Nullable String getCreatedTime() {
@@ -263,6 +281,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the direct remote number
+     * 
      * @return the direct remote number
      */
     public @Nullable Integer getDirectRemoteNum() {
@@ -271,6 +290,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the display number
+     * 
      * @return the display number
      */
     public @Nullable String getDispNum() {
@@ -279,6 +299,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the duration in milliseconds
+     * 
      * @return the duration in milliseconds
      */
     public @Nullable Double getDurationMSec() {
@@ -287,6 +308,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the EPG visibility
+     * 
      * @return the EPG visibility
      */
     public @Nullable String getEpgVisibility() {
@@ -295,6 +317,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the file number
+     * 
      * @return the file number
      */
     public @Nullable String getFileNo() {
@@ -303,6 +326,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the file size in bytes
+     * 
      * @return the file size in bytes
      */
     public @Nullable Integer getFileSizeByte() {
@@ -311,6 +335,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the folder number
+     * 
      * @return the folder number
      */
     public @Nullable String getFolderNo() {
@@ -319,6 +344,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the genre
+     * 
      * @return the genre
      */
     public @Nullable String getGenre() {
@@ -327,6 +353,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the index
+     * 
      * @return the index
      */
     public @Nullable Integer getIndex() {
@@ -335,6 +362,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the 3D setting
+     * 
      * @return the 3D setting
      */
     public @Nullable String is3D() {
@@ -343,6 +371,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Whether the content was already played
+     * 
      * @return whether the content was already played
      */
     public @Nullable String isAlreadyPlayed() {
@@ -351,6 +380,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Whether the content is browseable
+     * 
      * @return whether the content is browseable
      */
     public @Nullable String isBrowsable() {
@@ -359,6 +389,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Whether the content is playable
+     * 
      * @return whether the content is playable
      */
     public @Nullable String isPlayable() {
@@ -367,6 +398,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Whether the content is protected
+     * 
      * @return whether the content is protected
      */
     public @Nullable String isProtected() {
@@ -375,6 +407,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the original display number
+     * 
      * @return the original display number
      */
     public @Nullable String getOriginalDispNum() {
@@ -383,6 +416,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the parental information
+     * 
      * @return the parental information
      */
     public @Nullable ParentalInfo @Nullable [] getParentalInfo() {
@@ -391,6 +425,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the parent index
+     * 
      * @return the parent index
      */
     public @Nullable Integer getParentIndex() {
@@ -399,6 +434,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the parent URI
+     * 
      * @return the parent URI
      */
     public @Nullable String getParentUri() {
@@ -407,6 +443,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the content path
+     * 
      * @return the content path
      */
     public @Nullable String getPath() {
@@ -415,6 +452,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the play list name
+     * 
      * @return the play list name
      */
     public @Nullable String getPlaylistName() {
@@ -423,6 +461,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the podcast name
+     * 
      * @return the podcast name
      */
     public @Nullable String getPodcastName() {
@@ -431,6 +470,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the product ID
+     * 
      * @return the product ID
      */
     public @Nullable String getProductID() {
@@ -439,6 +479,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the program media type
+     * 
      * @return the program media type
      */
     public @Nullable String getProgramMediaType() {
@@ -447,6 +488,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the program number
+     * 
      * @return the program number
      */
     public @Nullable Integer getProgramNum() {
@@ -455,6 +497,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the remote play type
+     * 
      * @return the remote play type
      */
     public @Nullable String getRemotePlayType() {
@@ -463,6 +506,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the size in MB
+     * 
      * @return the size in MB
      */
     public @Nullable Integer getSizeMB() {
@@ -471,6 +515,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the start date/time
+     * 
      * @return the start date/time
      */
     public @Nullable String getStartDateTime() {
@@ -479,6 +524,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the storage URI
+     * 
      * @return the storage URI
      */
     public @Nullable String getStorageUri() {
@@ -487,6 +533,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the subtitle information
+     * 
      * @return the subtitle information
      */
     public @Nullable SubtitleInfo @Nullable [] getSubtitleInfo() {
@@ -495,6 +542,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the content title
+     * 
      * @return the content title
      */
     public @Nullable String getTitle() {
@@ -503,6 +551,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the channel triplet string
+     * 
      * @return the channel triplet string
      */
     public @Nullable String getTripletStr() {
@@ -511,6 +560,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the content URI
+     * 
      * @return the contentURI
      */
     public @Nullable String getUri() {
@@ -519,6 +569,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the content user flag
+     * 
      * @return the content user flag
      */
     public @Nullable Boolean getUserContentFlag() {
@@ -527,6 +578,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the video information
+     * 
      * @return the video information
      */
     public @Nullable VideoInfo getVideoInfo() {
@@ -535,6 +587,7 @@ public class ContentListResult_1_4 {
 
     /**
      * Gets the content visibility
+     * 
      * @return the content visibility
      */
     public @Nullable String getVisibility() {

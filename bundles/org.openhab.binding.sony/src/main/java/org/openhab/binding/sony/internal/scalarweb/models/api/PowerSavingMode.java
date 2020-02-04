@@ -24,7 +24,13 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public class PowerSavingMode {
     /** The power savings mode */
-    private final @Nullable String mode;
+    private @Nullable String mode;
+
+    /**
+     * Constructor used for deserialization only
+     */
+    public PowerSavingMode() {
+    }
 
     /**
      * Instantiates a new power saving mode.

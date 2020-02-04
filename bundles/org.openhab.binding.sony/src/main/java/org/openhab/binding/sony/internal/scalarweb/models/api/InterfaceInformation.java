@@ -39,6 +39,12 @@ public class InterfaceInformation {
     private @Nullable String interfaceVersion;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public InterfaceInformation() {
+    }
+
+    /**
      * Gets the product category
      *
      * @return the product category

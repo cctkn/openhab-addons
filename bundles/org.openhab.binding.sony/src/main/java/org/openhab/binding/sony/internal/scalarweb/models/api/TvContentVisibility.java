@@ -17,14 +17,14 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * This class represents the TV content visibility and is used for serialization/deserialization only
+ * This class represents the TV content visibility and is used for serialization only
  *
  * @author Tim Roberts - Initial contribution
  */
 @NonNullByDefault
 public class TvContentVisibility {
     /** The uri of the content */
-    private final @Nullable String uri;
+    private final String uri;
 
     /** The epg visibility */
     private final @Nullable String epgVisibility;
@@ -57,7 +57,7 @@ public class TvContentVisibility {
      *
      * @return the uri
      */
-    public @Nullable String getUri() {
+    public String getUri() {
         return uri;
     }
 
@@ -93,5 +93,4 @@ public class TvContentVisibility {
         return "TvContentVisibility [uri=" + uri + ", epgVisibility=" + epgVisibility + ", channelSurfingVisibility="
                 + channelSurfingVisibility + ", visibility=" + visibility + "]";
     }
-
 }

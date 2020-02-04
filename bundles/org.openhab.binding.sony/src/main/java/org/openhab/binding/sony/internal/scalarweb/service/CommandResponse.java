@@ -27,7 +27,6 @@ public class CommandResponse {
     private final boolean success;
 
     /** The optional message if not successful */
-
     private final @Nullable String message;
 
     /** The optional message if not successful */
@@ -35,6 +34,7 @@ public class CommandResponse {
 
     /**
      * Constructs a successful result with the results
+     * 
      * @param results a non-null, non-empty results string
      */
     public CommandResponse(String results) {
@@ -46,6 +46,7 @@ public class CommandResponse {
 
     /**
      * Constructs a (generally unsuccessful) result with the message
+     * 
      * @param success true if success, false otherwise
      * @param message a non-null, non-empty message
      */

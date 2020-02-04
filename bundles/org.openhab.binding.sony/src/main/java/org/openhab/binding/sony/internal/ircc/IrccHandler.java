@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
  * and the ircc system.
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 public class IrccHandler extends AbstractThingHandler<IrccConfig> {

@@ -32,6 +32,12 @@ public class ParentalInfo {
     private @Nullable String country;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public ParentalInfo() {
+    }
+
+    /**
      * Gets the content rating
      * 
      * @return the content rating

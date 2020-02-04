@@ -38,7 +38,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * </pre>
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 @XStreamAlias("X_IRCCCode")

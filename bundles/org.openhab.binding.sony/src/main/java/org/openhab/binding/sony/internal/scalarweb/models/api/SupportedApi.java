@@ -39,7 +39,12 @@ import org.slf4j.Logger;
 
 /**
  * This class represents all the supported APIs that a service provides and is used for serialization and
- * deserialization via {@link SupportedApiDeserializer}
+ * deserialization via {@link SupportedApiDeserializer}.
+ * 
+ * Note: if a service name is unknown/illegal (such as
+ * <av:X_ScalarWebAPI_ServiceType>dial/dd.xml</av:X_ScalarWebAPI_ServiceType>), we need to catch
+ * IllegalArgumentException (which is thrown in the 'as' methods) to prevent the illegal service from keeping the thing
+ * from going online.
  *
  * @author Tim Roberts - Initial contribution
  */
@@ -180,7 +185,7 @@ public class SupportedApi {
         try {
             return service.execute(ScalarWebMethod.GETSUPPORTEDAPIINFO, new SupportedApiServices(serviceName))
                     .as(SupportedApi.class);
-        } catch (final IOException e) {
+        } catch (final IOException | IllegalArgumentException e) {
             logger.trace("Exception getting supported api info: {}", e.getMessage(), e);
             return null;
         }
@@ -216,7 +221,7 @@ public class SupportedApi {
                         ScalarWebMethod.GETMETHODTYPES, ScalarWebMethod.V1_0, apiVersion)).as(MethodTypes.class);
                 methods.addAll(mtdResults.getMethods());
             }
-        } catch (final IOException e) {
+        } catch (final IOException | IllegalArgumentException e) {
             logger.debug("Could not retrieve methods: {}", e.getMessage(), e);
         }
 
@@ -252,7 +257,7 @@ public class SupportedApi {
                             ? null
                             : new SupportedApiInfo(name, Arrays.asList(new SupportedApiVersionInfo(version)));
                 }).filter(n -> n != null).forEachOrdered(notifications::add);
-            } catch (final IOException e) {
+            } catch (final IOException | IllegalArgumentException e) {
                 logger.debug("Exception getting notifications for service {}: {}", serviceName, e.getMessage());
             }
         } else {

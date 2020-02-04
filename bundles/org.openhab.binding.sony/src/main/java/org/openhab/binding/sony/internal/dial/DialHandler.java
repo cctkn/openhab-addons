@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
  * and a DIAL system.
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 public class DialHandler extends AbstractThingHandler<DialConfig> {

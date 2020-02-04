@@ -23,5 +23,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public class PlaylistInfo {
-
+    /**
+     * Constructor used for deserialization only
+     */
+    public PlaylistInfo() {
+    }
 }

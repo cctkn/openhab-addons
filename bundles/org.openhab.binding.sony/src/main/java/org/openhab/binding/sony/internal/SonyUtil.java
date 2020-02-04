@@ -227,7 +227,7 @@ public class SonyUtil {
 
         final int initialScale = scaledValue.scale();
         final BigDecimal min = minimum == null ? BigDecimal.ZERO : minimum;
-        final BigDecimal max = maximum == null ? BigDecimal.valueOf(100) : maximum;
+        final BigDecimal max = maximum == null ? BIGDECIMAL_HUNDRED : maximum;
 
         if (min.compareTo(max) > 0) {
             return min;

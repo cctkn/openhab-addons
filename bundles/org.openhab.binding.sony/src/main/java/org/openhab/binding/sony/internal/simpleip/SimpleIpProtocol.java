@@ -61,8 +61,6 @@ import org.slf4j.LoggerFactory;
  * Additional documentation: https://pro-bravia.sony.net/develop/integrate/ssip/overview/
  *
  * @author Tim Roberts - Initial contribution
- *
- *
  */
 @NonNullByDefault
 class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
@@ -292,7 +290,6 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                     } else {
                         SimpleIpProtocol.this.responseException(e);
                     }
-
                 }
             });
         } catch (final IOException e) {
@@ -736,7 +733,6 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                 logger.warn("Unknown notification: {}", response);
             }
         }
-
     }
 
     /**
@@ -910,12 +906,12 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
 
         if (RSP_ERROR.equals(parms)) {
             logger.debug("{} command failed: {}", CHANNEL, parms);
-            callback.stateChanged(SimpleIpConstants.CHANNEL_CHANNEL, new StringType(""));
+            callback.stateChanged(SimpleIpConstants.CHANNEL_CHANNEL, StringType.EMPTY);
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", CHANNEL, parms);
         } else if (RSP_NOSUCHTHING.equals(parms)) {
             logger.debug("{} command invalid: {}", CHANNEL, parms);
-            callback.stateChanged(SimpleIpConstants.CHANNEL_CHANNEL, new StringType(""));
+            callback.stateChanged(SimpleIpConstants.CHANNEL_CHANNEL, StringType.EMPTY);
         } else {
             logger.warn("Unknown {} response: {}", CHANNEL, parms);
         }
@@ -931,7 +927,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
 
         if (RSP_ERROR.equals(parms)) {
             logger.debug("{} command failed: {}", CHANNEL, parms);
-            callback.stateChanged(SimpleIpConstants.CHANNEL_CHANNEL, new StringType(""));
+            callback.stateChanged(SimpleIpConstants.CHANNEL_CHANNEL, StringType.EMPTY);
         } else {
             try {
                 final int idx = parms.indexOf('.');
@@ -960,12 +956,12 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
 
         if (RSP_ERROR.equals(parms)) {
             logger.debug("{} command failed: {}", TRIPLET_CHANNEL, parms);
-            callback.stateChanged(SimpleIpConstants.CHANNEL_TRIPLETCHANNEL, new StringType(""));
+            callback.stateChanged(SimpleIpConstants.CHANNEL_TRIPLETCHANNEL, StringType.EMPTY);
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", TRIPLET_CHANNEL, parms);
         } else if (RSP_NOSUCHTHING.equals(parms)) {
             logger.debug("{} command invalid: {}", TRIPLET_CHANNEL, parms);
-            callback.stateChanged(SimpleIpConstants.CHANNEL_TRIPLETCHANNEL, new StringType(""));
+            callback.stateChanged(SimpleIpConstants.CHANNEL_TRIPLETCHANNEL, StringType.EMPTY);
         } else {
             logger.warn("Unknown {} response: {}", TRIPLET_CHANNEL, parms);
         }
@@ -980,7 +976,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         Objects.requireNonNull(parms, "parms cannot be null");
 
         if (RSP_ERROR.equals(parms)) {
-            callback.stateChanged(SimpleIpConstants.CHANNEL_TRIPLETCHANNEL, new StringType(""));
+            callback.stateChanged(SimpleIpConstants.CHANNEL_TRIPLETCHANNEL, StringType.EMPTY);
         } else {
             if (parms.length() >= 12) {
                 try {
@@ -1032,7 +1028,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
 
         if (RSP_ERROR.equals(parms)) {
             logger.debug("{} command failed: {}", INPUT_SOURCE, parms);
-            callback.stateChanged(SimpleIpConstants.CHANNEL_INPUTSOURCE, new StringType(""));
+            callback.stateChanged(SimpleIpConstants.CHANNEL_INPUTSOURCE, StringType.EMPTY);
         } else {
             final int del = parms.indexOf('#');
             if (del >= 0) {

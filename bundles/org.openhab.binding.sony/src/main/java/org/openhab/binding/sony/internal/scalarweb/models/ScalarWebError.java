@@ -20,7 +20,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * https://developer.sony.com/develop/audio-control-api/api-references/error-codes
  *
  * @author Tim Roberts - Initial contribution
- *
  */
 @NonNullByDefault
 public class ScalarWebError {

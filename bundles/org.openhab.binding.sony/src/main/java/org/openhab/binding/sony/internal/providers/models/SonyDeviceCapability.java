@@ -20,6 +20,8 @@ import java.util.Objects;
 
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.openhab.binding.sony.internal.SonyUtil;
 
 /**
  * The class represents a sony device capability. The capability describes the device and then describes the services
@@ -30,13 +32,19 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public class SonyDeviceCapability {
     /** The model name of the device */
-    private final String modelName;
+    private @Nullable String modelName;
 
     /** The base URL to the device */
-    private final URL baseURL;
+    private @Nullable URL baseURL;
 
     /** A list of service capabilities */
-    private final List<SonyServiceCapability> services;
+    private @Nullable List<@Nullable SonyServiceCapability> services;
+
+    /**
+     * Empty constructor for deserialization
+     */
+    public SonyDeviceCapability() {
+    }
 
     /**
      * Constructs the capability from the parameters
@@ -58,9 +66,9 @@ public class SonyDeviceCapability {
     /**
      * Returns the model name of the device
      *
-     * @return a non-null, non-empty model name
+     * @return the possibly null, possibly empty model name
      */
-    public String getModelName() {
+    public @Nullable String getModelName() {
         return modelName;
     }
 
@@ -70,7 +78,7 @@ public class SonyDeviceCapability {
      * @return a non-null, possibly empy list of service capabilities
      */
     public List<SonyServiceCapability> getServices() {
-        return Collections.unmodifiableList(services);
+        return Collections.unmodifiableList(SonyUtil.convertNull(services));
     }
 
     @Override

@@ -30,6 +30,12 @@ public class NotifySettingUpdateApi {
     private @Nullable String version;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public NotifySettingUpdateApi() {
+    }
+
+    /**
      * Get's the API name
      * 
      * @return the API name

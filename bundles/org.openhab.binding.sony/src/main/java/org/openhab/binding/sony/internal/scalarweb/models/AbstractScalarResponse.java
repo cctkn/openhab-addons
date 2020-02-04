@@ -41,7 +41,7 @@ public abstract class AbstractScalarResponse {
      * 
      * @return a non-null json array
      */
-    protected abstract JsonArray getPayload();
+    protected abstract @Nullable JsonArray getPayload();
 
     /**
      * Converts this generic response into the specified type

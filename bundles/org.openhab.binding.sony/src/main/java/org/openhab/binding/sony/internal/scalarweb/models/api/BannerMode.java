@@ -27,6 +27,12 @@ public class BannerMode {
     private @Nullable String currentValue;
 
     /**
+     * Constructor used for deserialization only
+     */
+    public BannerMode() {
+    }
+
+    /**
      * Gets the current value of the banner mode
      *
      * @return the current value of the banner mode
