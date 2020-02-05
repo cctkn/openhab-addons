@@ -155,7 +155,7 @@ public class SonyFolderSource extends AbstractSonySource {
                     }
                 }
             } catch (JsonSyntaxException | IOException e) {
-                logger.info("Watcher encountered an exception: {}", e.getMessage(), e);
+                logger.debug("Watcher encountered an exception: {}", e.getMessage(), e);
             } catch (final InterruptedException e) {
                 logger.debug("Watcher was interrupted");
             }

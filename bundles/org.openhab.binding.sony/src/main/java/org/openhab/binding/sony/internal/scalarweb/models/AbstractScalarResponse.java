@@ -92,8 +92,7 @@ public abstract class AbstractScalarResponse {
             throw new IllegalArgumentException(
                     "Cannot convert ScalarWebResult to " + clazz + " with results: " + localResults, e);
 
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new IllegalArgumentException(
                     "Cannot convert ScalarWebResult to " + clazz + " for reason: " + e.getMessage(), e);
         }

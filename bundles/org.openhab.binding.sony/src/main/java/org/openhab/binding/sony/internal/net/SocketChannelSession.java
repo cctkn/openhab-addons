@@ -24,6 +24,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -59,6 +61,9 @@ public class SocketChannelSession implements SocketSession {
 
     /** The {@link SocketSessionListener} that the {@link #dispatchingThread} will call. */
     private final List<SocketSessionListener> sessionListeners = new CopyOnWriteArrayList<>();
+
+    /** Lock controlling access to dispatching/response threads */
+    private final Lock threadLock = new ReentrantLock();
 
     /** The thread dispatching responses - will be null if not connected. */
     private @Nullable Thread dispatchingThread = null;
@@ -106,26 +111,31 @@ public class SocketChannelSession implements SocketSession {
 
     @Override
     public void connect(final int timeout) throws IOException {
-        disconnect();
+        threadLock.lock();
+        try {
+            disconnect();
 
-        final SocketChannel channel = SocketChannel.open();
-        channel.configureBlocking(true);
+            final SocketChannel channel = SocketChannel.open();
+            channel.configureBlocking(true);
 
-        logger.debug("Connecting to {}:{}", host, port);
-        channel.socket().connect(new InetSocketAddress(host, port), timeout);
+            logger.debug("Connecting to {}:{}", host, port);
+            channel.socket().connect(new InetSocketAddress(host, port), timeout);
 
-        socketChannel.set(channel);
+            socketChannel.set(channel);
 
-        responses.clear();
+            responses.clear();
 
-        dispatchingThread = new Thread(new Dispatcher());
-        responseThread = new Thread(new ResponseReader());
+            dispatchingThread = new Thread(new Dispatcher());
+            responseThread = new Thread(new ResponseReader());
 
-        dispatchingThread.setDaemon(true);
-        responseThread.setDaemon(true);
+            dispatchingThread.setDaemon(true);
+            responseThread.setDaemon(true);
 
-        dispatchingThread.start();
-        responseThread.start();
+            dispatchingThread.start();
+            responseThread.start();
+        } finally {
+            threadLock.unlock();
+        }
     }
 
     @Override
@@ -136,13 +146,18 @@ public class SocketChannelSession implements SocketSession {
             final SocketChannel channel = socketChannel.getAndSet(null);
             channel.close();
 
-            if (dispatchingThread != null) {
-                dispatchingThread.interrupt();
-                dispatchingThread = null;
-            }
+            threadLock.lock();
+            try {
+                if (dispatchingThread != null) {
+                    dispatchingThread.interrupt();
+                    dispatchingThread = null;
+                }
 
-            responseThread.interrupt();
-            responseThread = null;
+                responseThread.interrupt();
+                responseThread = null;
+            } finally {
+                threadLock.unlock();
+            }
 
             responses.clear();
         }
@@ -234,12 +249,12 @@ public class SocketChannelSession implements SocketSession {
 
                 } catch (final InterruptedException e) {
                     // Ending thread execution
-                    Thread.currentThread().interrupt();
+                    Thread.currentThread().interrupt(); // sets isInterrupted field
                 } catch (final AsynchronousCloseException e) {
                     // socket was closed by another thread but interrupt our loop anyway
                     Thread.currentThread().interrupt();
                 } catch (final IOException e) {
-                    // set before pushing the response since we'll likely call back our stop
+                    // set before pushing the response since we'll likely call back our disconnect
                     Thread.currentThread().interrupt();
 
                     try {
@@ -250,6 +265,7 @@ public class SocketChannelSession implements SocketSession {
                     }
                 }
             }
+            logger.debug("Response thread ending");
         }
     }
 
@@ -297,12 +313,13 @@ public class SocketChannelSession implements SocketSession {
                     }
                 } catch (final InterruptedException e) {
                     // Ending thread execution
-                    Thread.currentThread().interrupt();
+                    Thread.currentThread().interrupt(); // sets isInterrupted field
                 } catch (final Exception e) {
                     logger.debug("Uncaught exception {}", e.getMessage(), e);
                     Thread.currentThread().interrupt();
                 }
             }
+            logger.debug("Dispatch thread ending");
         }
     }
 }

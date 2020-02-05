@@ -259,10 +259,6 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
             return ScalarWebResult.createNotImplemented(mthd);
         }
         final Object parms = getParms.getParms(version);
-        // if (parms == null) {
-        // logger.debug("Unhandled version {} for method {} - ignoring", version, mthd);
-        // return ScalarWebResult.createNotImplemented(mthd);
-        // }
         return execute(mthd, parms == null ? new Object[0] : parms);
     }
 
@@ -553,7 +549,7 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                 // If all three aren't true - revert to an enum target
                 // If they are true - save the actual value used for the boolean (on/off or true/false or yes/no)
                 if (StringUtils.equals(settingType, GeneralSetting.BOOLEANTARGET) && candidates.size() > 0) {
-                    if (candidates.size() > 2) {
+                    if (candidates.size() != 2) {
                         settingType = GeneralSetting.ENUMTARGET;
                     } else {
                         final @Nullable String value1 = candidates.get(0).getValue();
