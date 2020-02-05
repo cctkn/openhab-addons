@@ -297,10 +297,6 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
             return ScalarWebResult.createNotImplemented(mthd);
         }
         final Object parms = getParms.getParms(version);
-        // if (parms == null) {
-        // logger.debug("Unhandled version {} for method {} - ignoring", version, mthd);
-        // return ScalarWebResult.createNotImplemented(mthd);
-        // }
         return handleExecute(mthd, parms == null ? new Object[0] : parms);
     }
 
@@ -633,9 +629,12 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                             if (min != null || max != null || step != null) {
                                 final List<StateOption> options = new ArrayList<>();
                                 if (set.isUiPicker()) {
-                                    final int imin = min == null ? 0 : min.intValue();
-                                    final int imax = max == null ? 100 : max.intValue();
-                                    final int istep = step == null ? 1 : step.intValue();
+                                    final int imin = min == null || min.isInfinite() || min.isNaN() ? 0
+                                            : min.intValue();
+                                    final int imax = max == null || max.isInfinite() || max.isNaN() ? 100
+                                            : max.intValue();
+                                    final int istep = step == null || step.isInfinite() || step.isNaN() ? 1
+                                            : step.intValue();
                                     for (int p = imin; p <= imax; p += (istep == 0 ? 1 : istep)) {
                                         final String opt = Double.toString(p);
                                         options.add(new StateOption(opt, opt));
@@ -793,7 +792,8 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                         final BigDecimal min = sd == null ? BigDecimal.ZERO : sd.getMinimum();
                         final BigDecimal max = sd == null ? SonyUtil.BIGDECIMAL_HUNDRED : sd.getMaximum();
                         try {
-                            final BigDecimal currVal = new BigDecimal(currentValue == null ? "0" : currentValue);
+                            final BigDecimal currVal = currentValue == null ? BigDecimal.ZERO
+                                    : new BigDecimal(currentValue);
                             final BigDecimal val = SonyUtil.scale(currVal, min, max);
                             chl.addProperty(PROP_CURRVALUE, currVal.toString());
 
