@@ -178,7 +178,7 @@ public class NetUtil {
         final InetAddress address = InetAddress.getByName(ipAddress);
 
         final byte[] addrBytes = address.getAddress();
-        addrBytes[addrBytes.length - 1] = (byte) 255;
+        addrBytes[addrBytes.length - 1] = (byte) 0xff;
         final InetAddress broadcast = InetAddress.getByAddress(addrBytes);
 
         final DatagramPacket packet = new DatagramPacket(bytes, bytes.length, broadcast, 9);

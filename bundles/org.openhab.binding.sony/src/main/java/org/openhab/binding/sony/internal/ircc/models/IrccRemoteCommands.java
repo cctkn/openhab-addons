@@ -313,6 +313,7 @@ public class IrccRemoteCommands {
                 return cmd;
             } else if (StringUtils.containsIgnoreCase(name, "power")) {
                 powerCmd = cmd;
+                break;
             }
         }
 
@@ -353,6 +354,7 @@ public class IrccRemoteCommands {
                 return cmd;
             } else if (StringUtils.containsIgnoreCase(name, "power")) {
                 powerCmd = cmd;
+                break;
             }
         }
 

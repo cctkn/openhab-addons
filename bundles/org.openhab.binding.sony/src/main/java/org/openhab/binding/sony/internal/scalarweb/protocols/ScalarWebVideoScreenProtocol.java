@@ -80,14 +80,14 @@ class ScalarWebVideoScreenProtocol<T extends ThingCallback<String>> extends Abst
             execute(ScalarWebMethod.GETAUDIOSOURCESCREEN);
             descriptors.add(createDescriptor(createChannel(AUDIOSOURCE), "String", "scalarvideoscreenaudiosource"));
         } catch (final IOException e) {
-            logger.info("Exception getting audio source screen: {}", e.getMessage());
+            logger.debug("Exception getting audio source screen: {}", e.getMessage());
         }
 
         try {
             execute(ScalarWebMethod.GETBANNERMODE);
             descriptors.add(createDescriptor(createChannel(BANNERMODE), "String", "scalarvideoscreenbannermode"));
         } catch (final IOException e) {
-            logger.info("Exception getting banner mode: {}", e.getMessage());
+            logger.debug("Exception getting banner mode: {}", e.getMessage());
         }
 
         try {
@@ -95,7 +95,7 @@ class ScalarWebVideoScreenProtocol<T extends ThingCallback<String>> extends Abst
             descriptors.add(
                     createDescriptor(createChannel(MULTISCREENMODE), "String", "scalarvideoscreenmultiscreenmode"));
         } catch (final IOException e) {
-            logger.info("Exception getting multiscreen mode: {}", e.getMessage());
+            logger.debug("Exception getting multiscreen mode: {}", e.getMessage());
         }
 
         try {
@@ -103,7 +103,7 @@ class ScalarWebVideoScreenProtocol<T extends ThingCallback<String>> extends Abst
             descriptors.add(createDescriptor(createChannel(PIPSUBSCREENPOSITION), "String",
                     "scalarvideoscreenpipsubscreenposition"));
         } catch (final IOException e) {
-            logger.info("Exception getting pip subscreen position: {}", e.getMessage());
+            logger.debug("Exception getting pip subscreen position: {}", e.getMessage());
         }
 
         // scenesetting shows notimplemented when not in TWIN view mode - so just assume it has it.

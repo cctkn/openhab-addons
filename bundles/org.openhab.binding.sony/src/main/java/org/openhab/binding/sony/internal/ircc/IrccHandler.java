@@ -248,7 +248,7 @@ public class IrccHandler extends AbstractThingHandler<IrccConfig> {
             return;
         }
 
-        logger.info("Attempting connection to IRCC device...");
+        logger.debug("Attempting connection to IRCC device...");
         try {
             SonyUtil.checkInterrupt();
             final IrccProtocol<ThingCallback<String>> localProtocolHandler = new IrccProtocol<>(config,

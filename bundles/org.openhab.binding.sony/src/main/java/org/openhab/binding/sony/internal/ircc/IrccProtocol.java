@@ -266,7 +266,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                     + TransformationService.TRANSFORM_FOLDER_NAME + File.separator + cmdMap;
             final Path file = Paths.get(filePath);
             if (file.toFile().exists()) {
-                logger.info("Command map already defined - ignoring: {}", file);
+                logger.debug("Command map already defined - ignoring: {}", file);
                 return;
             }
 
@@ -279,7 +279,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
             Collections.sort(lines, String.CASE_INSENSITIVE_ORDER);
 
             if (!lines.isEmpty()) {
-                logger.info("Writing remote commands to {}", file);
+                logger.debug("Writing remote commands to {}", file);
                 Files.write(file, lines, Charset.forName("UTF-8"));
             }
         }
@@ -679,7 +679,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
         } else {
             final IrccRemoteCommand cmd = cmds.getPowerOff();
             if (cmd == null) {
-                logger.info("No power off (or power toggle) remote command was found");
+                logger.debug("No power off (or power toggle) remote command was found");
             } else {
                 sendIrccCommand(cmd.getCmd());
             }

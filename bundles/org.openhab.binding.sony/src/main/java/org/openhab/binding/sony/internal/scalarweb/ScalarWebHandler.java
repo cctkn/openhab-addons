@@ -205,7 +205,7 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
             return;
         }
 
-        logger.info("Attempting connection to Scalar Web device...");
+        logger.debug("Attempting connection to Scalar Web device...");
         try {
             SonyUtil.checkInterrupt();
 

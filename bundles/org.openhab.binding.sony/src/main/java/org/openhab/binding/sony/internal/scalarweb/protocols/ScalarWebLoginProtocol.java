@@ -362,7 +362,7 @@ public class ScalarWebLoginProtocol<T extends ThingCallback<String>> {
                     + TransformationService.TRANSFORM_FOLDER_NAME + File.separator + cmdMap;
             final Path file = Paths.get(filePath);
             if (file.toFile().exists()) {
-                logger.info("Command map already defined - ignoring: {}", file);
+                logger.debug("Command map already defined - ignoring: {}", file);
                 return;
             }
 
@@ -407,11 +407,11 @@ public class ScalarWebLoginProtocol<T extends ThingCallback<String>> {
                 Collections.sort(lines, String.CASE_INSENSITIVE_ORDER);
 
                 if (!lines.isEmpty()) {
-                    logger.info("Writing remote commands to {}", file);
+                    logger.debug("Writing remote commands to {}", file);
                     Files.write(file, lines, Charset.forName("UTF-8"));
                 }
             } catch (final IOException e) {
-                logger.info("Remote commands are undefined: {}", e.getMessage());
+                logger.debug("Remote commands are undefined: {}", e.getMessage());
             }
         }
     }

@@ -205,11 +205,11 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                     + TransformationService.TRANSFORM_FOLDER_NAME + File.separator + cmdMap;
             final Path file = Paths.get(filePath);
             if (file.toFile().exists()) {
-                logger.info("Command map already defined - ignoring: {}", file);
+                logger.debug("Command map already defined - ignoring: {}", file);
                 return;
             }
 
-            logger.info("Writing remote commands to {}", file);
+            logger.debug("Writing remote commands to {}", file);
             Files.write(file, getDefaultCommands(), Charset.forName("UTF-8"));
         }
     }

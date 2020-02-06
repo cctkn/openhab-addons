@@ -44,7 +44,7 @@ public class CurrentExternalInputsStatus_1_1 extends CurrentExternalInputsStatus
 
     @Override
     public String toString() {
-        return "CurrentExternalInputsStatus_1_0 [uri=" + getUri() + ", title=" + getTitle() + ", connection="
+        return "CurrentExternalInputsStatus_1_1 [uri=" + getUri() + ", title=" + getTitle() + ", connection="
                 + isConnection() + ", label=" + getLabel() + ", icon=" + getIcon() + ", status=" + status + "]";
     }
 }

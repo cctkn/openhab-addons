@@ -1427,7 +1427,6 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             }
         }
 
-        // if (sources.isEmpty()) {
         stateSources.values().stream().flatMap(e -> e.stream()).forEach(src -> {
             final String uri = src.getSource();
             if (uri != null && StringUtils.isNotEmpty(uri)) {
@@ -1442,7 +1441,6 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                 }
             }
         });
-        // }
 
         for (final CurrentExternalTerminalsStatus_1_0 term : getTerminalStatuses()) {
             if (term.isOutput()) {
@@ -2495,7 +2493,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                     }
                 });
             } else {
-                logger.debug("{} command not an StringType: {}", PL_PRESET, command);
+                logger.debug("{} command not an DecimalType: {}", PL_PRESET, command);
             }
         } else if (StringUtils.startsWith(channel.getCategory(), TERM)) {
             final String uri = channel.getPathPart(0);
@@ -2528,7 +2526,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                         stateContent.set(new ContentState(command.toString(), "", 0));
                         getContext().getScheduler().execute(() -> refreshContent());
                     } else {
-                        logger.debug("{} command not an OnOffType: {}", CN_PARENTURI, command);
+                        logger.debug("{} command not an StringType: {}", CN_PARENTURI, command);
                     }
                     break;
                 }
@@ -2538,7 +2536,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                                 ((DecimalType) command).intValue()));
                         getContext().getScheduler().execute(() -> refreshContent());
                     } else {
-                        logger.debug("{} command not an OnOffType: {}", CN_INDEX, command);
+                        logger.debug("{} command not an DecimalType: {}", CN_INDEX, command);
                     }
                     break;
                 }
@@ -3065,7 +3063,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * Helper class to track the current content state (uris and index)
      */
     @NonNullByDefault
-    private class ContentState {
+    private static class ContentState {
         /** The parent uri */
         private final String parentUri;
 
@@ -3130,7 +3128,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * This class represets the current playing state
      */
     @NonNullByDefault
-    private class PlayingState {
+    private static class PlayingState {
         /** The playing URI */
         private final String uri;
 
@@ -3172,7 +3170,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      * A helper class to store the input source attributes
      */
     @NonNullByDefault
-    private class InputSource {
+    private static class InputSource {
         /** The URI of the input */
         private final String uri;
 

@@ -155,7 +155,7 @@ public class DialHandler extends AbstractThingHandler<DialConfig> {
             return;
         }
 
-        logger.info("Attempting connection to DIAL device...");
+        logger.debug("Attempting connection to DIAL device...");
         try {
             SonyUtil.checkInterrupt();
             final DialProtocol<ThingCallback<String>> localProtocolHandler = new DialProtocol<>(config,

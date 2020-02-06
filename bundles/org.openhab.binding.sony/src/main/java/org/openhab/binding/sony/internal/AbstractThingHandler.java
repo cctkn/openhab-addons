@@ -139,7 +139,7 @@ public abstract class AbstractThingHandler<C extends AbstractConfig> extends Bas
         final Integer refresh = config.getRefresh();
 
         if (refresh != null && refresh > 0) {
-            logger.info("Starting state polling every {} seconds", refresh);
+            logger.debug("Starting state polling every {} seconds", refresh);
             SonyUtil.cancel(refreshState.getAndSet(this.scheduler.scheduleWithFixedDelay(() -> {
                 // throw exceptions to prevent future tasks under these circumstances
                 if (isRemoved()) {
@@ -166,7 +166,7 @@ public abstract class AbstractThingHandler<C extends AbstractConfig> extends Bas
         } else
 
         {
-            logger.info("Refresh not a positive number - polling has been disabled");
+            logger.debug("Refresh not a positive number - polling has been disabled");
         }
     }
 
@@ -189,7 +189,7 @@ public abstract class AbstractThingHandler<C extends AbstractConfig> extends Bas
                 }
             }, retryPolling, TimeUnit.SECONDS)));
         } else {
-            logger.info("Retry connection has been disabled via configuration setting");
+            logger.debug("Retry connection has been disabled via configuration setting");
         }
     }
 

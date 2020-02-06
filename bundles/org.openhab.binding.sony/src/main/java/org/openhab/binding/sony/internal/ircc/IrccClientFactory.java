@@ -213,7 +213,7 @@ public class IrccClientFactory {
                 final String serviceId = service.getServiceId();
 
                 if (serviceId == null || StringUtils.isEmpty(serviceId)) {
-                    logger.info("Querying IRCC client {} and found a service with no service id - ignoring: {}",
+                    logger.debug("Querying IRCC client {} and found a service with no service id - ignoring: {}",
                             irccUrl, service);
                     continue;
                 }

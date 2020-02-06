@@ -176,7 +176,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                 execute(ScalarWebMethod.GETCURRENTTIME);
                 descriptors.add(createDescriptor(createChannel(CURRENTTIME), "DateTime", "scalarsystemcurrenttime"));
             } catch (final IOException e) {
-                logger.info("Exception getting current time: {}", e.getMessage());
+                logger.debug("Exception getting current time: {}", e.getMessage());
             }
         }
 
@@ -185,7 +185,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                 execute(ScalarWebMethod.GETSYSTEMINFORMATION);
                 descriptors.add(createDescriptor(createChannel(LANGUAGE), "String", "scalarsystemlanguage"));
             } catch (final IOException e) {
-                logger.info("Exception getting system information: {}", e.getMessage());
+                logger.debug("Exception getting system information: {}", e.getMessage());
             }
         }
 
@@ -195,7 +195,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                 descriptors.add(createDescriptor(createChannel(LEDINDICATORSTATUS), "String",
                         "scalarsystemledindicatorstatus"));
             } catch (final IOException e) {
-                logger.info("Exception getting led indicator status: {}", e.getMessage());
+                logger.debug("Exception getting led indicator status: {}", e.getMessage());
             }
         }
 
@@ -205,7 +205,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                 descriptors
                         .add(createDescriptor(createChannel(POWERSAVINGMODE), "String", "scalarsystempowersavingmode"));
             } catch (final IOException e) {
-                logger.info("Exception getting power savings mode: {}", e.getMessage());
+                logger.debug("Exception getting power savings mode: {}", e.getMessage());
             }
         }
 
@@ -214,7 +214,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                 execute(ScalarWebMethod.GETPOWERSTATUS);
                 descriptors.add(createDescriptor(createChannel(POWERSTATUS), "Switch", "scalarsystempowerstatus"));
             } catch (final IOException e) {
-                logger.info("Exception getting power status: {}", e.getMessage());
+                logger.debug("Exception getting power status: {}", e.getMessage());
             }
         }
 
@@ -223,7 +223,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                 execute(ScalarWebMethod.GETWOLMODE);
                 descriptors.add(createDescriptor(createChannel(WOLMODE), "Switch", "scalarsystemwolmode"));
             } catch (final IOException e) {
-                logger.info("Exception getting wol mode: {}", e.getMessage());
+                logger.debug("Exception getting wol mode: {}", e.getMessage());
             }
         }
 
@@ -232,7 +232,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                 execute(ScalarWebMethod.GETPOSTALCODE);
                 descriptors.add(createDescriptor(createChannel(POSTALCODE), "String", "scalarsystempostalcode"));
             } catch (final IOException e) {
-                logger.info("Exception getting postal code: {}", e.getMessage());
+                logger.debug("Exception getting postal code: {}", e.getMessage());
             }
         }
 

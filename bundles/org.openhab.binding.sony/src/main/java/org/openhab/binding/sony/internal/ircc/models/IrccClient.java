@@ -209,17 +209,17 @@ public class IrccClient {
         final UpnpService service = services.get(serviceId);
 
         if (service == null) {
-            logger.info("Unable to getSOAP for service id {} - service not found", serviceId);
+            logger.debug("Unable to getSOAP for service id {} - service not found", serviceId);
             return null;
         }
         final UpnpScpd scpd = scpdByService.get(serviceId);
         if (scpd == null) {
-            logger.info("Unable to getSOAP for service id {} - scpd not found", serviceId);
+            logger.debug("Unable to getSOAP for service id {} - scpd not found", serviceId);
             return null;
         }
         final String serviceType = service.getServiceType();
         if (serviceType == null || StringUtils.isEmpty(serviceType)) {
-            logger.info("Unable to getSOAP for service id {} - serviceType was empty", serviceId);
+            logger.debug("Unable to getSOAP for service id {} - serviceType was empty", serviceId);
             return null;
         }
         return scpd.getSoap(serviceType, actionName, parms);

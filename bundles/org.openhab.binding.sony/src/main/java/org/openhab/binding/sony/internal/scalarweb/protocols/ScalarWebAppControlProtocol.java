@@ -185,7 +185,7 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
                         "Indicator " + title, "Indicator for " + title));
             }
         } catch (final IOException e) {
-            logger.info("Exception getting application status list: {}", e.getMessage());
+            logger.debug("Exception getting application status list: {}", e.getMessage());
         }
 
         // Haven't figured out encryption yet - assume non-encryption format
@@ -198,14 +198,14 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
         // } else if (VersionUtilities.equals(textFormVersion, ScalarWebMethod.V1_1)) {
         // final String localPubKey = pubKey;
         // if (localPubKey == null || StringUtils.isEmpty(localPubKey)) {
-        // logger.info("Can't get text form - no public key");
+        // logger.debug("Can't get text form - no public key");
         // } else {
         // execute(ScalarWebMethod.GETTEXTFORM, new TextFormRequest_1_1(localPubKey, null));
         // descriptors.add(createDescriptor(createChannel(TEXTFORM), "String", "scalarappcontroltextform"));
         // }
         // }
         // } catch (final IOException e) {
-        // logger.info("Exception getting text form: {}", e.getMessage());
+        // logger.debug("Exception getting text form: {}", e.getMessage());
         // }
 
         return descriptors;

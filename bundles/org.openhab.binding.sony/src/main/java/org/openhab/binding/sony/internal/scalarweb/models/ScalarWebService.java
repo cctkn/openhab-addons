@@ -69,6 +69,25 @@ public class ScalarWebService implements AutoCloseable {
     public static final String NOTIFICATION = "notification";
     public static final String RECORDING = "recording";
 
+    // The various know services to their labels
+    private static final Map<String, String> SERVICELABELS = Collections.unmodifiableMap(new HashMap<String, String>() {
+        private static final long serialVersionUID = 5934100497468165317L;
+        {
+            put(ACCESSCONTROL, labelFor(ACCESSCONTROL));
+            put(APPCONTROL, labelFor(APPCONTROL));
+            put(AUDIO, labelFor(AUDIO));
+            put(AVCONTENT, labelFor(AVCONTENT));
+            put(BROWSER, labelFor(BROWSER));
+            put(CEC, labelFor(CEC));
+            put(CONTENTSHARE, labelFor(CONTENTSHARE));
+            put(ENCRYPTION, labelFor(ENCRYPTION));
+            put(GUIDE, labelFor(GUIDE));
+            put(ILLUMINATION, labelFor(ILLUMINATION));
+            put(SYSTEM, labelFor(SYSTEM));
+            put(VIDEOSCREEN, labelFor(VIDEOSCREEN));
+        }
+    });
+
     /** The service name */
     private final String serviceName;
 
@@ -357,23 +376,7 @@ public class ScalarWebService implements AutoCloseable {
      * @return a non-null, non-empty map of service names to service labels
      */
     public static Map<String, String> getServiceLabels() {
-        return Collections.unmodifiableMap(new HashMap<String, String>() {
-            private static final long serialVersionUID = 5934100497468165317L;
-            {
-                put(ACCESSCONTROL, labelFor(ACCESSCONTROL));
-                put(APPCONTROL, labelFor(APPCONTROL));
-                put(AUDIO, labelFor(AUDIO));
-                put(AVCONTENT, labelFor(AVCONTENT));
-                put(BROWSER, labelFor(BROWSER));
-                put(CEC, labelFor(CEC));
-                put(CONTENTSHARE, labelFor(CONTENTSHARE));
-                put(ENCRYPTION, labelFor(ENCRYPTION));
-                put(GUIDE, labelFor(GUIDE));
-                put(ILLUMINATION, labelFor(ILLUMINATION));
-                put(SYSTEM, labelFor(SYSTEM));
-                put(VIDEOSCREEN, labelFor(VIDEOSCREEN));
-            }
-        });
+        return SERVICELABELS;
     }
 
     @Override
