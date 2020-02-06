@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -479,10 +480,8 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                 callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_TEXT),
                         SonyUtil.newStringType(irccText.getText()));
             }
-        } else if (resp.getHttpCode() == HttpStatus.NOT_ACCEPTABLE_406) {
-            callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_TEXT),
-                    UnDefType.UNDEF);
-        } else if (resp.getHttpCode() == HttpStatus.SERVICE_UNAVAILABLE_503) {
+        } else if (resp.getHttpCode() == HttpStatus.NOT_ACCEPTABLE_406
+                || resp.getHttpCode() == HttpStatus.SERVICE_UNAVAILABLE_503) {
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_TEXT),
                     UnDefType.UNDEF);
         } else {
@@ -522,12 +521,8 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                 callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_TITLE),
                         SonyUtil.newStringType(urlTitle));
             }
-        } else if (resp.getHttpCode() == HttpStatus.NOT_ACCEPTABLE_406) {
-            callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_CONTENTURL),
-                    UnDefType.UNDEF);
-            callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_TITLE),
-                    UnDefType.UNDEF);
-        } else if (resp.getHttpCode() == HttpStatus.SERVICE_UNAVAILABLE_503) {
+        } else if (resp.getHttpCode() == HttpStatus.NOT_ACCEPTABLE_406
+                || resp.getHttpCode() == HttpStatus.SERVICE_UNAVAILABLE_503) {
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_CONTENTURL),
                     UnDefType.UNDEF);
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_TITLE),
@@ -646,7 +641,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                         SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_ICONDATA),
                         UnDefType.NULL);
             } else {
-                final byte[] rawBytes = java.util.Base64.getDecoder().decode(iconData);
+                final byte[] rawBytes = Base64.getDecoder().decode(iconData);
                 callback.stateChanged(
                         SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_ICONDATA),
                         new RawType(rawBytes, RawType.DEFAULT_MIME_TYPE));
