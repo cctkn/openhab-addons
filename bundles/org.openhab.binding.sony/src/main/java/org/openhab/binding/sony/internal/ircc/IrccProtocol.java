@@ -647,10 +647,8 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                         new RawType(rawBytes, RawType.DEFAULT_MIME_TYPE));
             }
 
-        } else if (resp.getHttpCode() == HttpStatus.NOT_ACCEPTABLE_406) {
-            callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_CONTENTURL),
-                    UnDefType.UNDEF);
-        } else if (resp.getHttpCode() == HttpStatus.SERVICE_UNAVAILABLE_503) {
+        } else if (resp.getHttpCode() == HttpStatus.NOT_ACCEPTABLE_406
+                || resp.getHttpCode() == HttpStatus.SERVICE_UNAVAILABLE_503) {
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_CONTENTURL),
                     UnDefType.UNDEF);
         } else {
