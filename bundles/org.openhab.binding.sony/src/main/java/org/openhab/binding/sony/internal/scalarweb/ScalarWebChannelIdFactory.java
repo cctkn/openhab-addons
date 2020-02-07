@@ -42,9 +42,9 @@ public class ScalarWebChannelIdFactory {
     public String createChannelId(final String serviceName, final String id) {
         String channelId = serviceName + SEPARATOR + id;
 
-        final int idx = 0;
+        int idx = 0;
         while (channelIds.contains(channelId)) {
-            channelId = serviceName + SEPARATOR + id + "-" + idx;
+            channelId = serviceName + SEPARATOR + id + "-" + (++idx);
         }
 
         channelIds.add(channelId);

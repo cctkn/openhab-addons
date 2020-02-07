@@ -22,6 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.http.HttpStatus;
 import org.openhab.binding.sony.internal.net.HttpResponse;
 import org.openhab.binding.sony.internal.scalarweb.gson.GsonUtilities;
@@ -46,7 +47,6 @@ import org.xml.sax.SAXException;
  */
 @NonNullByDefault
 public class ScalarWebClientFactory {
-
     /** The logger */
     private final Logger logger = LoggerFactory.getLogger(ScalarWebClientFactory.class);
 
@@ -123,38 +123,45 @@ public class ScalarWebClientFactory {
         Objects.requireNonNull(scalarWebUrl, "scalarWebUrl cannot be null");
         Objects.requireNonNull(context, "context cannot be null");
 
-        final URL homeAudioUrl = new URL(scalarWebUrl.getProtocol(), scalarWebUrl.getHost(), HOME_AUDIO_PORT,
-                LIKELY_GUIDE_PATH);
-        logger.debug("Testing Default Scalar Web client to see if it's a home audio device (AVR/Soundbar): {}",
-                homeAudioUrl);
-        try (SonyTransport transport = SonyTransportFactory.createHttpTransport(homeAudioUrl,
-                GsonUtilities.getApiGson())) {
-            final ScalarWebResult homeAudioRes = transport
-                    .execute(new ScalarWebRequest(1, ScalarWebMethod.GETVERSIONS, ScalarWebMethod.V1_0));
-            if (homeAudioRes.getHttpResponse().getHttpCode() == HttpStatus.OK_200) {
-                final URL baseUrl = new URL(scalarWebUrl.getProtocol(), scalarWebUrl.getHost(), HOME_AUDIO_PORT,
-                        LIKELY_PATH);
-                return new ScalarWebClient(new ScalarWebDeviceManager(baseUrl, context));
-            }
+        final ScalarWebClient homeClient = tryDefaultClientUrl(scalarWebUrl, HOME_AUDIO_PORT, context);
+        if (homeClient != null) {
+            return homeClient;
         }
 
-        final URL personalAudioUrl = new URL(scalarWebUrl.getProtocol(), scalarWebUrl.getHost(), PERSONAL_AUDIO_PORT,
-                LIKELY_GUIDE_PATH);
-        logger.debug("Testing Default Scalar Web client to see if it's a personal audio device (Wireless speaker): {}",
-                homeAudioUrl);
-        try (SonyTransport transport = SonyTransportFactory.createHttpTransport(personalAudioUrl,
-                GsonUtilities.getApiGson())) {
-            final ScalarWebResult personalAudioRes = transport
-                    .execute(new ScalarWebRequest(1, ScalarWebMethod.GETVERSIONS, ScalarWebMethod.V1_0));
-            if (personalAudioRes.getHttpResponse().getHttpCode() == HttpStatus.OK_200) {
-                final URL baseUrl = new URL(scalarWebUrl.getProtocol(), scalarWebUrl.getHost(), PERSONAL_AUDIO_PORT,
-                        LIKELY_PATH);
-                return new ScalarWebClient(new ScalarWebDeviceManager(baseUrl, context));
-            }
+        final ScalarWebClient personalClient = tryDefaultClientUrl(scalarWebUrl, PERSONAL_AUDIO_PORT, context);
+        if (personalClient != null) {
+            return personalClient;
         }
 
         final URL baseUrl = new URL(scalarWebUrl.getProtocol(), scalarWebUrl.getHost(), LIKELY_PORT, LIKELY_PATH);
         return new ScalarWebClient(new ScalarWebDeviceManager(baseUrl, context));
+    }
+
+    /**
+     * Helper method to try a specific port for our scalar url
+     * 
+     * @param scalarWebUrl a non-null scalar url
+     * @param port a > 0 port number
+     * @param context a non-null context
+     * @return the scalar web client (if found) or null if not
+     * @throws URISyntaxException if a uri syntax is invalid
+     * @throws DOMException if a dom exception occurs
+     * @throws IOException if an IO exception occurs
+     */
+    private @Nullable ScalarWebClient tryDefaultClientUrl(URL scalarWebUrl, int port, final ScalarWebContext context)
+            throws URISyntaxException, DOMException, IOException {
+        final URL likelyUrl = new URL(scalarWebUrl.getProtocol(), scalarWebUrl.getHost(), port, LIKELY_GUIDE_PATH);
+        logger.debug("Testing Default Scalar Web client: {}", likelyUrl);
+        try (SonyTransport transport = SonyTransportFactory.createHttpTransport(likelyUrl,
+                GsonUtilities.getApiGson())) {
+            final ScalarWebResult res = transport
+                    .execute(new ScalarWebRequest(1, ScalarWebMethod.GETVERSIONS, ScalarWebMethod.V1_0));
+            if (res.getHttpResponse().getHttpCode() == HttpStatus.OK_200) {
+                final URL baseUrl = new URL(scalarWebUrl.getProtocol(), scalarWebUrl.getHost(), port, LIKELY_PATH);
+                return new ScalarWebClient(new ScalarWebDeviceManager(baseUrl, context));
+            }
+        }
+        return null;
     }
 
     /**
