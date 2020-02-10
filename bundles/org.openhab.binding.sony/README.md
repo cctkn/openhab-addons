@@ -1,6 +1,6 @@
 # Sony Binding
 
-This binding is for Sony IP based product line including TVs, AVRs, Blurays, Soundbars and Wireless Speakers.
+This binding is for Sony IP based product line including TVs, BDVs, AVRs, Blurays, Soundbars and Wireless Speakers.
 
 ## Supported Things
 
