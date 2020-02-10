@@ -1210,7 +1210,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         if (RSP_ERROR.equals(parms)) {
             logger.debug("{} command failed: {}", PICTURE_IN_PICTURE, parms);
         } else if (RSP_SUCCESS.equals(parms)) {
-            logger.debug("{} command succeeded: {}", PICTURE_IN_PICTURE, parms);
+            logger.trace("{} command succeeded: {}", PICTURE_IN_PICTURE, parms);
         } else {
             logger.warn("Unknown {} response: {}", PICTURE_IN_PICTURE, parms);
         }

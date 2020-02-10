@@ -60,8 +60,6 @@ public class IrccXmlReader<T> {
             new Class[] { IrccStatusList.class, IrccStatus.class, IrccStatusItem.class });
 
     static final IrccXmlReader<IrccText> TEXT = new IrccXmlReader<>(new Class[] { IrccText.class });
-    // static final IrccXmlReader<IrccText> TEXT = new IrccXmlReader<>(new Class[] { IrccText.class },
-    // new IrccText.IrccTextConverter());
     static final IrccXmlReader<IrccContentUrl> CONTENTURL = new IrccXmlReader<>(new Class[] { IrccContentUrl.class });
 
     /**

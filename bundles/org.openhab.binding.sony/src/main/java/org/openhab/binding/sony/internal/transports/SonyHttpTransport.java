@@ -156,20 +156,7 @@ public class SonyHttpTransport extends AbstractSonyTransport {
      */
     public HttpResponse executeGet(final String url, final TransportOption... options) {
         Validate.notEmpty(url, "url cannot be empty");
-        try {
-            final TransportResult result = execute(new TransportPayloadHttp(url),
-                    append(options, TransportOptionMethod.GET)).get(SonyBindingConstants.RSP_WAIT_TIMEOUTSECONDS,
-                            TimeUnit.SECONDS);
-            if (result instanceof TransportResultHttpResponse) {
-                return ((TransportResultHttpResponse) result).getResponse();
-            } else {
-                return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500, "Execution of " + url
-                        + " didn't return a TransportResultHttpResponse: " + result.getClass().getName());
-            }
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500,
-                    "Execution of " + url + " threw an exception: " + e.getMessage());
-        }
+        return execute(url, append(options, TransportOptionMethod.GET));
     }
 
     /**
@@ -183,20 +170,7 @@ public class SonyHttpTransport extends AbstractSonyTransport {
      */
     public HttpResponse executeDelete(final String url, final TransportOption... options) {
         Validate.notEmpty(url, "url cannot be empty");
-        try {
-            final TransportResult result = execute(new TransportPayloadHttp(url),
-                    append(options, TransportOptionMethod.DELETE)).get(SonyBindingConstants.RSP_WAIT_TIMEOUTSECONDS,
-                            TimeUnit.SECONDS);
-            if (result instanceof TransportResultHttpResponse) {
-                return ((TransportResultHttpResponse) result).getResponse();
-            } else {
-                return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500, "Execution of " + url
-                        + " didn't return a TransportResultHttpResponse: " + result.getClass().getName());
-            }
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500,
-                    "Execution of " + url + " threw an exception: " + e.getMessage());
-        }
+        return execute(url, append(options, TransportOptionMethod.DELETE));
     }
 
     /**
@@ -213,21 +187,7 @@ public class SonyHttpTransport extends AbstractSonyTransport {
         Validate.notEmpty(url, "url cannot be empty");
         Validate.notEmpty(payload, "payload cannot be empty");
 
-        try {
-            final TransportResult result = execute(new TransportPayloadHttp(url, payload),
-                    append(options, TransportOptionMethod.POST_JSON)).get(SonyBindingConstants.RSP_WAIT_TIMEOUTSECONDS,
-                            TimeUnit.SECONDS);
-            if (result instanceof TransportResultHttpResponse) {
-                return ((TransportResultHttpResponse) result).getResponse();
-            } else {
-                return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500, "Execution of " + payload
-                        + " didn't return a TransportResultHttpResponse: " + result.getClass().getName());
-            }
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500,
-                    "Execution of " + payload + " threw an exception: " + e.getMessage());
-
-        }
+        return execute(url, new TransportPayloadHttp(url, payload), append(options, TransportOptionMethod.POST_JSON));
     }
 
     /**
@@ -244,20 +204,46 @@ public class SonyHttpTransport extends AbstractSonyTransport {
         Validate.notEmpty(url, "url cannot be empty");
         Objects.requireNonNull(payload, "payload cannot be null");
 
+        return execute(url, new TransportPayloadHttp(url, payload), append(options, TransportOptionMethod.POST_XML));
+    }
+
+    /**
+     * Execute the give URL with the specified options
+     * 
+     * @param url a non-null, non-empty string url to execute
+     * @param options any transport options to use
+     * @return a non-null {@link HttpResponse}
+     */
+    private HttpResponse execute(final String url, final TransportOption... options) {
+        Validate.notEmpty(url, "url cannot be empty");
+        return execute(url, new TransportPayloadHttp(url), options);
+    }
+
+    /**
+     * Execute the give URL with the specified options
+     * 
+     * @param url a non-null, non-empty string url to execute
+     * @param payload a non-null, possibly empty string payload to send
+     * @param options any transport options to use
+     * @return a non-null {@link HttpResponse}
+     */
+    private HttpResponse execute(final String url, final TransportPayloadHttp payload,
+            final TransportOption... options) {
+        Validate.notEmpty(url, "url cannot be empty");
+        Objects.requireNonNull(payload, "payload cannot be null");
+
         try {
-            final TransportResult result = execute(new TransportPayloadHttp(url, payload),
-                    append(options, TransportOptionMethod.POST_XML)).get(SonyBindingConstants.RSP_WAIT_TIMEOUTSECONDS,
-                            TimeUnit.SECONDS);
+            final TransportResult result = execute(payload, options).get(SonyBindingConstants.RSP_WAIT_TIMEOUTSECONDS,
+                    TimeUnit.SECONDS);
             if (result instanceof TransportResultHttpResponse) {
                 return ((TransportResultHttpResponse) result).getResponse();
             } else {
-                return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500, "Execution of " + payload
+                return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500, "Execution of " + url
                         + " didn't return a TransportResultHttpResponse: " + result.getClass().getName());
             }
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR_500,
-                    "Execution of " + payload + " threw an exception: " + e.getMessage());
-
+                    "Execution of " + url + " threw an exception: " + e.getMessage());
         }
     }
 

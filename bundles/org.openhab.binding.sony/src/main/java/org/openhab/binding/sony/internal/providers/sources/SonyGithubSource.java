@@ -182,9 +182,16 @@ public class SonyGithubSource extends AbstractSonySource {
     private final Gson gson;
 
     /** Funtional interface for determining if an issue is a match */
+    @FunctionalInterface
     @NonNullByDefault
     private interface IssueCallback {
         boolean isMatch(String body) throws JsonSyntaxException;
+    }
+
+    @FunctionalInterface
+    @NonNullByDefault
+    static interface ObjCallback<T> {
+        boolean isMatch(T foundObj);
     }
 
     /**
@@ -284,40 +291,18 @@ public class SonyGithubSource extends AbstractSonySource {
         }
 
         try {
-            boolean found = false;
-            for (int i = 0; i < 100; i++) {
-                final String fileName = URLEncoder.encode(modelName + (i == 0 ? "" : ("-" + i)) + ".json", "UTF-8");
-                final HttpResponse defResp = transport.executeGet(apiDefThingTypes + "/" + fileName, GITHUB_RAWHEADER);
+            final boolean found = findModelName(modelName, apiDefThingTypes, SonyThingDefinition.class,
+                    old -> SonyMatcher.matches(thingTypeDefinition, old, metaInfo));
 
-                if (defResp.getHttpCode() == HttpStatus.OK_200) {
-                    final SonyThingDefinition oldDef = gson.fromJson(defResp.getContent(), SonyThingDefinition.class);
-                    found = SonyMatcher.matches(thingTypeDefinition, oldDef, metaInfo);
-                    break;
-                } else if (defResp.getHttpCode() == HttpStatus.NOT_FOUND_404) {
-                    break;
-                }
-            }
             if (!found && BooleanUtils.isFalse(findIssue(apiOpenHABIssues, b -> {
                 final SonyThingDefinition issueDef = gson.fromJson(b.replaceAll(GITHUB_CODEFENCE, ""),
                         SonyThingDefinition.class);
                 return SonyMatcher.matches(thingTypeDefinition, issueDef, metaInfo);
             }, labelThingType))) {
-                final String body = GITHUB_CODEFENCE + gson.toJson(thingTypeDefinition) + GITHUB_CODEFENCE;
-                final JsonObject jo = new JsonObject();
-                jo.addProperty("title", String.format(issueThingType, modelName));
-                jo.addProperty("body", body);
-
-                final JsonArray ja = new JsonArray();
-                ja.add(labelThingType);
-                jo.add("labels", ja);
-
-                final HttpResponse resp = transport.executePostJson(apiOpenHABIssues, gson.toJson(jo),
-                        GITHUB_RAWHEADER);
-                if (resp.getHttpCode() != HttpStatus.CREATED_201) {
-                    logger.debug("Error posting service change: {} \r\n{}", resp, body);
-                }
+                postIssue(apiOpenHABIssues, String.format(issueThingType, modelName), thingTypeDefinition,
+                        labelThingType);
             }
-        } catch (IOException | JsonSyntaxException e) {
+        } catch (final JsonSyntaxException e) {
             logger.debug("Exception writing thing defintion: {}", e.getMessage(), e);
         }
     }
@@ -363,43 +348,18 @@ public class SonyGithubSource extends AbstractSonySource {
         // Will check modelName.json, modelName-1.json, etc up to a max -100
         // ----
         try {
-            boolean found = false;
-            for (int i = 0; i < 100; i++) {
-                final String fileName = URLEncoder.encode(modelName + (i == 0 ? "" : ("-" + i)) + ".json", "UTF-8");
-                final HttpResponse defResp = transport.executeGet(apiDefCapabilities + "/" + fileName,
-                        GITHUB_RAWHEADER);
-
-                if (defResp.getHttpCode() == HttpStatus.OK_200) {
-                    final SonyDeviceCapability oldCap = gson.fromJson(defResp.getContent(), SonyDeviceCapability.class);
-                    found = SonyMatcher.matches(deviceCapability, oldCap);
-                    break;
-                } else if (defResp.getHttpCode() == HttpStatus.NOT_FOUND_404) {
-                    found = false;
-                    break;
-                }
-            }
+            final boolean found = findModelName(modelName, apiDefCapabilities, SonyDeviceCapability.class,
+                    old -> SonyMatcher.matches(deviceCapability, old));
 
             if (!found && BooleanUtils.isFalse(findIssue(apiOpenHABIssues, b -> {
                 final SonyDeviceCapability issueCap = gson.fromJson(b.replaceAll(GITHUB_CODEFENCE, ""),
                         SonyDeviceCapability.class);
                 return SonyMatcher.matches(deviceCapability, issueCap);
             }, labelCapability))) {
-                final String body = GITHUB_CODEFENCE + gson.toJson(deviceCapability) + GITHUB_CODEFENCE;
-                final JsonObject jo = new JsonObject();
-                jo.addProperty("title", String.format(issueCapability, modelName));
-                jo.addProperty("body", body);
-
-                final JsonArray ja = new JsonArray();
-                ja.add(labelCapability);
-                jo.add("labels", ja);
-
-                final HttpResponse resp = transport.executePostJson(apiOpenHABIssues, gson.toJson(jo),
-                        GITHUB_RAWHEADER);
-                if (resp.getHttpCode() != HttpStatus.CREATED_201) {
-                    logger.debug("Error posting service change: {} \r\n{}", resp, body);
-                }
+                postIssue(apiOpenHABIssues, String.format(issueCapability, modelName), deviceCapability,
+                        labelCapability);
             }
-        } catch (UnsupportedEncodingException | JsonSyntaxException e) {
+        } catch (final JsonSyntaxException e) {
             logger.debug("Exception writing device capabilities: {}", e.getMessage(), e);
         }
 
@@ -411,7 +371,7 @@ public class SonyGithubSource extends AbstractSonySource {
         try {
             final List<SonyServiceCapability> masterCapabilities = getMasterDefinitions();
 
-            for (SonyServiceCapability deviceService : deviceCapability.getServices()) {
+            for (final SonyServiceCapability deviceService : deviceCapability.getServices()) {
                 // Get all service version for the name
                 final List<SonyServiceCapability> masterServices = masterCapabilities.stream()
                         .filter(s -> StringUtils.equalsIgnoreCase(deviceService.getServiceName(), s.getServiceName()))
@@ -425,23 +385,9 @@ public class SonyGithubSource extends AbstractSonySource {
                                     SonyServiceCapability.class);
                             return SonyMatcher.matches(deviceService, issueSrv);
                         }, labelOpenHAB, labelApi, labelService))) {
-                    final String body = GITHUB_CODEFENCE + gson.toJson(deviceService) + GITHUB_CODEFENCE;
-                    final JsonObject jo = new JsonObject();
-                    jo.addProperty("title",
-                            String.format(issueService, deviceService.getServiceName(), deviceService.getVersion()));
-                    jo.addProperty("body", body);
-
-                    final JsonArray ja = new JsonArray();
-                    ja.add(labelOpenHAB);
-                    ja.add(labelApi);
-                    ja.add(labelService);
-                    jo.add("labels", ja);
-
-                    final HttpResponse resp = transport.executePostJson(apiDevIssues, gson.toJson(jo),
-                            GITHUB_RAWHEADER);
-                    if (resp.getHttpCode() != HttpStatus.CREATED_201) {
-                        logger.debug("Error posting service change: {} \r\n{}", resp, body);
-                    }
+                    postIssue(apiDevIssues,
+                            String.format(issueService, deviceService.getServiceName(), deviceService.getVersion()),
+                            deviceService, labelOpenHAB, labelApi, labelService);
                 }
 
                 // Get all the various methods for the service name (across all service
@@ -463,23 +409,10 @@ public class SonyGithubSource extends AbstractSonySource {
                                         ScalarWebMethod.class);
                                 return SonyMatcher.matches(mth, issueMth);
                             }, labelOpenHAB, labelApi, labelMethod))) {
-                        final String body = GITHUB_CODEFENCE + gson.toJson(mth) + GITHUB_CODEFENCE;
-                        final JsonObject jo = new JsonObject();
-                        jo.addProperty("title", String.format(issueMethod, deviceService.getServiceName(),
-                                deviceService.getVersion(), mth.getMethodName(), mth.getVersion()));
-                        jo.addProperty("body", body);
-
-                        final JsonArray ja = new JsonArray();
-                        ja.add(labelOpenHAB);
-                        ja.add(labelApi);
-                        ja.add(labelMethod);
-                        jo.add("labels", ja);
-
-                        final HttpResponse resp = transport.executePostJson(apiDevIssues, gson.toJson(jo),
-                                GITHUB_RAWHEADER);
-                        if (resp.getHttpCode() != HttpStatus.CREATED_201) {
-                            logger.debug("Error posting service change: {} \r\n{}", resp, body);
-                        }
+                        postIssue(apiDevIssues,
+                                String.format(issueMethod, deviceService.getServiceName(), deviceService.getVersion(),
+                                        mth.getMethodName(), mth.getVersion()),
+                                mth, labelOpenHAB, labelApi, labelMethod);
                     }
                 }
             }
@@ -786,6 +719,77 @@ public class SonyGithubSource extends AbstractSonySource {
     }
 
     /**
+     * Helper method to determine if the model name already existing in a github url
+     * 
+     * @param modelName a non-null, non-empty model name
+     * @param apiUrl a non-null, non-empty API url
+     * @param toMatch a non-null class used to deserialize objects from the apiUrl
+     * @param callback a non-null callback to determine if there was a match
+     * @return true if a matching model name was found, false if not
+     */
+    private <T> boolean findModelName(final String modelName, final String apiUrl, final Class<T> toMatch,
+            final ObjCallback<T> callback) {
+        Validate.notEmpty(modelName, "modelName cannot be empty");
+        Validate.notEmpty(apiUrl, "apiUrl cannot be empty");
+        Objects.requireNonNull(toMatch, "toMatch cannot be null");
+        Objects.requireNonNull(callback, "callback cannot be null");
+
+        for (int i = 0; i < 100; i++) {
+            String fileName;
+            try {
+                fileName = URLEncoder.encode(modelName + (i == 0 ? "" : ("-" + i)) + ".json", "UTF-8");
+            } catch (final UnsupportedEncodingException e) {
+                logger.debug("UnsupportedEncodingException for modelName {}", modelName, e);
+                continue;
+            }
+
+            final HttpResponse defResp = transport.executeGet(apiUrl + "/" + fileName, GITHUB_RAWHEADER);
+
+            if (defResp.getHttpCode() == HttpStatus.OK_200) {
+                final T old = (T) gson.fromJson(defResp.getContent(), toMatch);
+                if (callback.isMatch(old)) {
+                    return true;
+                }
+            } else if (defResp.getHttpCode() == HttpStatus.NOT_FOUND_404) {
+                break;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Helper method to post an issue to github
+     * 
+     * @param apiIssues a non-null, non-empty isssues API URL
+     * @param title a non-null, non-empty title to use
+     * @param toPost a non-null object to post
+     * @param labels a list of labels to use
+     */
+    private void postIssue(final String apiIssues, final String title, final Object toPost, final String... labels) {
+        Validate.notEmpty(apiIssues, "apiIssues cannot be empty");
+        Validate.notEmpty(title, "title cannot be empty");
+        Objects.requireNonNull(toPost, "toPost cannot be null");
+
+        final String body = GITHUB_CODEFENCE + gson.toJson(toPost) + GITHUB_CODEFENCE;
+        final JsonObject jo = new JsonObject();
+        jo.addProperty("title", title);
+        jo.addProperty("body", body);
+
+        final JsonArray ja = new JsonArray();
+        for (final String label : labels) {
+            if (StringUtils.isNotEmpty(label)) {
+                ja.add(label);
+            }
+        }
+        jo.add("labels", ja);
+
+        final HttpResponse resp = transport.executePostJson(apiIssues, gson.toJson(jo), GITHUB_RAWHEADER);
+        if (resp.getHttpCode() != HttpStatus.CREATED_201) {
+            logger.debug("Error posting issue to {}: {}\n{}", apiIssues, resp, body);
+        }
+    }
+
+    /**
      * Helper method to get all thing definitions for a given name if they have been modified by some date
      * 
      * @param name the non-null, non-empty name
@@ -825,7 +829,7 @@ public class SonyGithubSource extends AbstractSonySource {
                         return new ModifiedThingDefinitions(lastModifiedTime,
                                 Collections.singletonList(gson.fromJson(def, SonyThingDefinition.class)));
                     }
-                } catch (JsonSyntaxException e) {
+                } catch (final JsonSyntaxException e) {
                     logger.debug("JsonSyntaxException when trying to parse filecontents for {}: {}", name,
                             e.getMessage());
                 }
@@ -930,7 +934,7 @@ public class SonyGithubSource extends AbstractSonySource {
      * Helper class representing a resource of definitions from a given modified date
      */
     @NonNullByDefault
-    class ModifiedThingDefinitions {
+    static class ModifiedThingDefinitions {
         /** The last modified date (or null if unknown) */
         private final @Nullable Long modified;
 

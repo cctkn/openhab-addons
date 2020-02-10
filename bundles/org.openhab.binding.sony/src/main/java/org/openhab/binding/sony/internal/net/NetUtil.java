@@ -25,6 +25,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Base64;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
@@ -71,7 +72,7 @@ public class NetUtil {
     public static Header createAuthHeader(final String accessCode) {
         Validate.notEmpty(accessCode, "accessCode cannot be empty");
 
-        final String authCode = java.util.Base64.getEncoder()
+        final String authCode = Base64.getEncoder()
                 .encodeToString((":" + StringUtils.leftPad(accessCode, 4, "0")).getBytes());
         return new Header("Authorization", "Basic " + authCode);
     }

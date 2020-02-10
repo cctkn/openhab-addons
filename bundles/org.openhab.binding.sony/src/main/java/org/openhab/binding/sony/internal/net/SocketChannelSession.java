@@ -144,7 +144,9 @@ public class SocketChannelSession implements SocketSession {
             logger.debug("Disconnecting from {}:{}", host, port);
 
             final SocketChannel channel = socketChannel.getAndSet(null);
-            channel.close();
+            if (channel != null) {
+                channel.close();
+            }
 
             threadLock.lock();
             try {
@@ -153,8 +155,10 @@ public class SocketChannelSession implements SocketSession {
                     dispatchingThread = null;
                 }
 
-                responseThread.interrupt();
-                responseThread = null;
+                if (responseThread != null) {
+                    responseThread.interrupt();
+                    responseThread = null;
+                }
             } finally {
                 threadLock.unlock();
             }
@@ -236,12 +240,12 @@ public class SocketChannelSession implements SocketSession {
                     readBuffer.flip();
                     while (readBuffer.hasRemaining()) {
                         final char ch = (char) readBuffer.get();
-                        sb.append(ch);
                         if (ch == '\n') {
                             final String str = sb.toString();
                             sb.setLength(0);
-                            final String response = str.substring(0, str.length() - 1).trim();
-                            responses.put(response);
+                            responses.put(str.trim());
+                        } else {
+                            sb.append(ch);
                         }
                     }
 
@@ -262,6 +266,7 @@ public class SocketChannelSession implements SocketSession {
                         break;
                     } catch (final InterruptedException e1) {
                         // Do nothing - probably shutting down
+                        break;
                     }
                 }
             }
