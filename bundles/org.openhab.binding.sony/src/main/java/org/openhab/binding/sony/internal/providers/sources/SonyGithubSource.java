@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -208,7 +209,7 @@ public class SonyGithubSource extends AbstractSonySource {
                 .registerTypeAdapter(MetaConvert.class, new MetaConvertDeserializer())
                 .registerTypeAdapter(MetaInfo.class, new MetaInfoDeserializer()).create();
 
-        final String[] apiKeys = new String(java.util.Base64.getDecoder().decode(getProperty(properties, PROP_APIKEY)))
+        final String[] apiKeys = new String(Base64.getDecoder().decode(getProperty(properties, PROP_APIKEY)))
                 .split(",");
         apiKey = apiKeys[new Random().nextInt(apiKeys.length)];
 
