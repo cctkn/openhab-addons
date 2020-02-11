@@ -164,7 +164,8 @@ public class SonyServlet extends HttpServlet {
                 write(resp, gson.toJson(new CommandResponse(false, "No transport of type: " + transportName)));
                 return;
             } else {
-                final String cmd = "{\"id\":10,\"method\":\"" + command + "\",\"version\":\"" + version
+                // Use 1 to not conflict with ScalarWebRequest IDs
+                final String cmd = "{\"id\":1,\"method\":\"" + command + "\",\"version\":\"" + version
                         + "\",\"params\":[" + parms + "]}";
 
                 final ScalarWebRequest rqst = gson.fromJson(cmd, ScalarWebRequest.class);

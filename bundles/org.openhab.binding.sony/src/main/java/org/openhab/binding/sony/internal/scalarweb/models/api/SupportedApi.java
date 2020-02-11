@@ -206,19 +206,18 @@ public class SupportedApi {
         Objects.requireNonNull(transport, "transport cannot be null");
         Objects.requireNonNull(logger, "logger cannot be null");
 
-        int currId = 0;
-
         final List<ScalarWebMethod> methods = new ArrayList<>();
         try {
             // Retrieve the versions for the service
             final List<String> versionResult = transport
-                    .execute(new ScalarWebRequest(++currId, ScalarWebMethod.GETVERSIONS, ScalarWebMethod.V1_0))
+                    .execute(new ScalarWebRequest(ScalarWebMethod.GETVERSIONS, ScalarWebMethod.V1_0))
                     .asArray(String.class);
 
             // For each version, retrieve the methods for the service
             for (final String apiVersion : versionResult) {
-                final MethodTypes mtdResults = transport.execute(new ScalarWebRequest(++currId,
-                        ScalarWebMethod.GETMETHODTYPES, ScalarWebMethod.V1_0, apiVersion)).as(MethodTypes.class);
+                final MethodTypes mtdResults = transport
+                        .execute(new ScalarWebRequest(ScalarWebMethod.GETMETHODTYPES, ScalarWebMethod.V1_0, apiVersion))
+                        .as(MethodTypes.class);
                 methods.addAll(mtdResults.getMethods());
             }
         } catch (final IOException | IllegalArgumentException e) {
@@ -247,8 +246,8 @@ public class SupportedApi {
         final List<SupportedApiInfo> notifications = new ArrayList<>();
         if (mthdVersions.containsKey(ScalarWebMethod.SWITCHNOTIFICATIONS)) {
             try {
-                final Notifications ntfs = transport.execute(
-                        new ScalarWebRequest(++currId, ScalarWebMethod.SWITCHNOTIFICATIONS, "1.0", new Notifications()))
+                final Notifications ntfs = transport
+                        .execute(new ScalarWebRequest(ScalarWebMethod.SWITCHNOTIFICATIONS, "1.0", new Notifications()))
                         .as(Notifications.class);
                 Stream.concat(ntfs.getEnabled().stream(), ntfs.getDisabled().stream()).map(n -> {
                     final String version = n.getVersion();

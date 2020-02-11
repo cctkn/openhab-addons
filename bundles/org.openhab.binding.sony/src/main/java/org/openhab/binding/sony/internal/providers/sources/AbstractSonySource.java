@@ -430,7 +430,7 @@ public abstract class AbstractSonySource implements SonySource {
         try {
             writeLock.lock();
 
-            List<SonyModelListener> list = getListeners(srvModelName);
+            List<SonyModelListener> list = listeners.get(srvModelName);
             if (list == null) {
                 list = new ArrayList<>();
                 listeners.put(srvModelName, list);
@@ -479,6 +479,9 @@ public abstract class AbstractSonySource implements SonySource {
 
     /**
      * Get's all the listeners for a given {@link ServiceModelName}
+     * 
+     * Developer note: if a subclass overrides this method, you'll need to modify the addListener (which has
+     * listener.get to call this instead)
      * 
      * @param srvModelname a non-null service model name
      * @return a list of listeners or null if no listeners found for service/model name

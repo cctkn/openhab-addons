@@ -115,7 +115,6 @@ public class IrccContentInformation {
      * @param name the non-null, non-empty name to get
      * @return the value (possibly comma delimited) for the name or null if none found.
      */
-
     public @Nullable String getInfoItemValue(final String name) {
         Validate.notEmpty(name, "name cannot be empty");
         final List<@Nullable IrccInfoItem> ii = infoItems;

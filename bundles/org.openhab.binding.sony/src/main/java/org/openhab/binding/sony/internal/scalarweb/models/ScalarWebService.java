@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -104,12 +103,6 @@ public class ScalarWebService implements AutoCloseable {
     private final SupportedApi supportedApi;
 
     /**
-     * The current request identifier (static across all instances)
-     * note: start at 100 since below 100 tend to be utility ids (getting method types, etc)
-     */
-    private static AtomicInteger id = new AtomicInteger(100);
-
-    /**
      * Instantiates a new scalar web service.
      *
      * @param transportFactory the non-null transport factory to use
@@ -148,8 +141,7 @@ public class ScalarWebService implements AutoCloseable {
         final List<ScalarWebMethod> methods = new ArrayList<>();
         try {
             // Retrieve the api versions for the service
-            versions.addAll(execute(new ScalarWebRequest(id.incrementAndGet(), ScalarWebMethod.GETVERSIONS, version))
-                    .asArray(String.class));
+            versions.addAll(execute(new ScalarWebRequest(ScalarWebMethod.GETVERSIONS, version)).asArray(String.class));
         } catch (final IOException e) {
             if (StringUtils.contains(e.getMessage(), String.valueOf(HttpStatus.NOT_FOUND_404))) {
                 logger.debug("Could not retrieve method versions - missing method {}: {}", ScalarWebMethod.GETVERSIONS,
@@ -163,7 +155,7 @@ public class ScalarWebService implements AutoCloseable {
         for (final String apiVersion : versions) {
             try {
                 final MethodTypes mtdResults = execute(
-                        new ScalarWebRequest(id.incrementAndGet(), ScalarWebMethod.GETMETHODTYPES, version, apiVersion))
+                        new ScalarWebRequest(ScalarWebMethod.GETMETHODTYPES, version, apiVersion))
                                 .as(MethodTypes.class);
                 methods.addAll(mtdResults.getMethods());
             } catch (final IOException e) {
@@ -297,9 +289,9 @@ public class ScalarWebService implements AutoCloseable {
                 logger.debug("Method {} doesn't exist in the service {}", methodName, serviceName);
                 return ScalarWebResult.createNotImplemented(methodName);
             }
-            return execute(new ScalarWebRequest(id.incrementAndGet(), methodName, mtdVersion, parms));
+            return execute(new ScalarWebRequest(methodName, mtdVersion, parms));
         } else {
-            return execute(new ScalarWebRequest(id.incrementAndGet(), methodName, version, parms));
+            return execute(new ScalarWebRequest(methodName, version, parms));
         }
     }
 

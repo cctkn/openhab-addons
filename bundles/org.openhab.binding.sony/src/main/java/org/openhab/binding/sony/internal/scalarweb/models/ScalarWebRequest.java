@@ -13,6 +13,7 @@
 package org.openhab.binding.sony.internal.scalarweb.models;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -37,30 +38,34 @@ public class ScalarWebRequest {
     private final Object[] params;
 
     /**
+     * An incrementing integer for the identifier of this request
+     * Note: start at 100 to allow utility method ids (like SonyServlet)
+     */
+    private final static AtomicInteger requestId = new AtomicInteger(100);
+
+    /**
      * Instantiates a new scalar web request with no parameters
      *
-     * @param id the unique identifier
      * @param method the non-null, non-empty method name
      * @param version the non-null, non-empty method version
      */
-    public ScalarWebRequest(final int id, final String method, final String version) {
-        this(id, method, version, new Object[0]);
+    public ScalarWebRequest(final String method, final String version) {
+        this(method, version, new Object[0]);
     }
 
     /**
      * Instantiates a new scalar web request with parameters
      *
-     * @param id the unique identifier
      * @param method the non-null, non-empty method name
      * @param version the non-null, non-empty method version
      * @param params the non-null, possibly empty list of parameters
      */
-    public ScalarWebRequest(final int id, final String method, final String version, final Object... params) {
+    public ScalarWebRequest(final String method, final String version, final Object... params) {
         Validate.notEmpty(method, "method cannot be empty");
         Validate.notEmpty(version, "version cannot be empty");
         Objects.requireNonNull(params, "params cannot be null");
 
-        this.id = id;
+        this.id = requestId.incrementAndGet();
         this.method = method;
         this.version = version;
         this.params = params;

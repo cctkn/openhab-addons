@@ -53,7 +53,7 @@ import com.google.gson.Gson;
  * @author Tim Roberts - Initial contribution
  */
 @NonNullByDefault
-public class ScalarWebDeviceManager implements AutoCloseable {
+public class ScalarWebDeviceManager implements ScalarWebClient {
     /** The Constant for the sony upnp identifier */
     public static final String SONY_AV_NS = "urn:schemas-sony-com:av";
 
@@ -112,6 +112,8 @@ public class ScalarWebDeviceManager implements AutoCloseable {
         final SonyTransportFactory transportFactory = new SonyTransportFactory(baseUrl, gson,
                 context.getWebSocketClient(), context.getScheduler());
 
+        final Set<ServiceProtocol> myServiceProtocols = new HashSet<>(serviceProtocols);
+
         try (final SonyHttpTransport httpTransport = SonyTransportFactory.createHttpTransport(baseUrl,
                 ScalarWebService.GUIDE)) {
             // Manually create the guide as it's used to get service protocols and supported methods
@@ -126,14 +128,14 @@ public class ScalarWebDeviceManager implements AutoCloseable {
             for (final ServiceProtocol serviceProtocol : sps.getServiceProtocols()) {
                 // remove the one from the device descriptor above (keyed by name)
                 // the add this one (which has protocol information)
-                serviceProtocols.remove(serviceProtocol);
-                serviceProtocols.add(serviceProtocol);
+                myServiceProtocols.remove(serviceProtocol);
+                myServiceProtocols.add(serviceProtocol);
             }
 
             final Map<String, ScalarWebService> myServices = new HashMap<String, ScalarWebService>();
             myServices.put(ScalarWebService.GUIDE, guide);
 
-            for (ServiceProtocol serviceProtocol : serviceProtocols) {
+            for (ServiceProtocol serviceProtocol : myServiceProtocols) {
                 // Ignore the guid - we already added it above
                 if (StringUtils.equalsIgnoreCase(ScalarWebService.GUIDE, serviceProtocol.getServiceName())) {
                     continue;
@@ -256,6 +258,11 @@ public class ScalarWebDeviceManager implements AutoCloseable {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public ScalarWebDeviceManager getDevice() {
+        return this;
     }
 
     @Override

@@ -12,41 +12,24 @@
  */
 package org.openhab.binding.sony.internal.scalarweb;
 
-import java.util.Objects;
-
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.sony.internal.scalarweb.models.ScalarWebService;
 
 /**
- * This class represents a web scalar method definition that can be called
+ * This interface represents a scalar web client
  *
  * @author Tim Roberts - Initial contribution
  */
 @NonNullByDefault
-public class ScalarWebClient implements AutoCloseable {
-    /** The device manager */
-    private final ScalarWebDeviceManager deviceManager;
-
-    /**
-     * Instantiates a new scalar web state.
-     *
-     * @param deviceManager the non-null device manager
-     */
-    public ScalarWebClient(final ScalarWebDeviceManager deviceManager) {
-        Objects.requireNonNull(deviceManager, "deviceManager cannot be null");
-
-        this.deviceManager = deviceManager;
-    }
+public interface ScalarWebClient extends AutoCloseable {
 
     /**
      * Gets the device manager
      *
      * @return the non-null device manager
      */
-    public ScalarWebDeviceManager getDevice() {
-        return deviceManager;
-    }
+    ScalarWebDeviceManager getDevice();
 
     /**
      * Gets the service for the specified name
@@ -54,17 +37,6 @@ public class ScalarWebClient implements AutoCloseable {
      * @param serviceName the service name
      * @return the service or null if not found
      */
-    public @Nullable ScalarWebService getService(final String serviceName) {
-        return deviceManager.getService(serviceName);
-    }
-
-    @Override
-    public String toString() {
-        return deviceManager.toString();
-    }
-
-    @Override
-    public void close() {
-        deviceManager.close();
-    }
+    @Nullable
+    ScalarWebService getService(final String serviceName);
 }

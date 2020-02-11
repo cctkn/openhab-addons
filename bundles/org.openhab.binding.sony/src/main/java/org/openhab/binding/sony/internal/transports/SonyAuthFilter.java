@@ -127,7 +127,7 @@ public class SonyAuthFilter implements ClientRequestFilter, ClientResponseFilter
             final WebTarget target = client.target(actControlUrl);
             final Gson gson = GsonUtilities.getDefaultGson();
 
-            final String json = gson.toJson(new ScalarWebRequest(1, ScalarWebMethod.ACTREGISTER, ScalarWebMethod.V1_0,
+            final String json = gson.toJson(new ScalarWebRequest(ScalarWebMethod.ACTREGISTER, ScalarWebMethod.V1_0,
                     new ActRegisterId(), new Object[] { new ActRegisterOptions() }));
 
             try {

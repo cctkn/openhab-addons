@@ -334,7 +334,7 @@ public class SonyAuth {
     private ScalarWebResult scalarActRegister(final SonyHttpTransport transport, final @Nullable String accessCode) {
         Objects.requireNonNull(transport, "transport cannot be null");
 
-        final String actReg = gson.toJson(new ScalarWebRequest(1, ScalarWebMethod.ACTREGISTER, activationVersion,
+        final String actReg = gson.toJson(new ScalarWebRequest(ScalarWebMethod.ACTREGISTER, activationVersion,
                 new ActRegisterId(), new Object[] { new ActRegisterOptions() }));
 
         final String actUrl = getActivationUrl();

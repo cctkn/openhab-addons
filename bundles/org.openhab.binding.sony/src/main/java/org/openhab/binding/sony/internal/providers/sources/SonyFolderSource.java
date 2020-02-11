@@ -87,16 +87,67 @@ public class SonyFolderSource extends AbstractSonySource {
         createFolder(folderDefCapability);
 
         // Setup our watcher
-        watcher.getAndSet(scheduler.submit(new Watcher()));
+        watcher.set(scheduler.submit(new Watcher()));
 
         // Keeps the watcher alive in case it encounters an error
         final int watchDogTime = getPropertyInt(properties, PROP_WATCHDOG_INTERVAL);
-        SonyUtil.cancel(watchDog.getAndSet(scheduler.schedule(() -> {
+        watchDog.set(scheduler.schedule(() -> {
             final Future<?> fut = watcher.get();
             if (fut == null || fut.isDone()) {
                 SonyUtil.cancel(watcher.getAndSet(scheduler.submit(new Watcher())));
             }
-        }, watchDogTime, TimeUnit.SECONDS)));
+        }, watchDogTime, TimeUnit.SECONDS));
+    }
+
+    @Override
+    public void writeThingDefinition(final SonyThingDefinition thingTypeDefinition) {
+        Objects.requireNonNull(thingTypeDefinition, "thingTypeDefinition cannot be null");
+
+        final File file = new File(
+                folderDefThingTypes + File.separator + thingTypeDefinition.getModelName() + "." + JSONEXT);
+        if (file.exists()) {
+            logger.debug("File for thing definition already exists (write ignored): {}", file);
+            return;
+        }
+
+        final String json = gson.toJson(new SonyThingDefinition[] { thingTypeDefinition });
+
+        try {
+            FileUtils.write(file, json);
+        } catch (final IOException e) {
+            logger.debug("IOException writing thing defintion to {}: {}", file, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void writeDeviceCapabilities(final SonyDeviceCapability deviceCapability) {
+        Objects.requireNonNull(deviceCapability, "deviceCapability cannot be null");
+
+        final String modelName = deviceCapability.getModelName();
+        if (modelName == null || StringUtils.isEmpty(modelName)) {
+            logger.debug("Cannot write device capabilities because it has no model name: {}", deviceCapability);
+            return;
+        }
+
+        final File file = new File(folderDefCapability + File.separator + modelName + "." + JSONEXT);
+        if (file.exists()) {
+            logger.debug("File for thing definition already exists (write ignored): {}", file);
+            return;
+        }
+
+        final String json = gson.toJson(deviceCapability);
+
+        try {
+            FileUtils.write(file, json);
+        } catch (final IOException e) {
+            logger.debug("IOException writing methods to {}: {}", file, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void close() {
+        SonyUtil.cancel(watchDog.get());
+        SonyUtil.cancel(watcher.get());
     }
 
     /**
@@ -160,56 +211,5 @@ public class SonyFolderSource extends AbstractSonySource {
                 logger.debug("Watcher was interrupted");
             }
         }
-    }
-
-    @Override
-    public void writeThingDefinition(final SonyThingDefinition thingTypeDefinition) {
-        Objects.requireNonNull(thingTypeDefinition, "thingTypeDefinition cannot be null");
-
-        final File file = new File(
-                folderDefThingTypes + File.separator + thingTypeDefinition.getModelName() + "." + JSONEXT);
-        if (file.exists()) {
-            logger.debug("File for thing definition already exists (write ignored): {}", file);
-            return;
-        }
-
-        final String json = gson.toJson(new SonyThingDefinition[] { thingTypeDefinition });
-
-        try {
-            FileUtils.write(file, json);
-        } catch (final IOException e) {
-            logger.debug("IOException writing thing defintion to {}: {}", file, e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void writeDeviceCapabilities(final SonyDeviceCapability deviceCapability) {
-        Objects.requireNonNull(deviceCapability, "deviceCapability cannot be null");
-
-        final String modelName = deviceCapability.getModelName();
-        if (modelName == null || StringUtils.isEmpty(modelName)) {
-            logger.debug("Cannot write device capabilities because it has no model name: {}", deviceCapability);
-            return;
-        }
-
-        final File file = new File(folderDefCapability + File.separator + modelName + "." + JSONEXT);
-        if (file.exists()) {
-            logger.debug("File for thing definition already exists (write ignored): {}", file);
-            return;
-        }
-
-        final String json = gson.toJson(deviceCapability);
-
-        try {
-            FileUtils.write(file, json);
-        } catch (final IOException e) {
-            logger.debug("IOException writing methods to {}: {}", file, e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void close() {
-        SonyUtil.cancel(watchDog.get());
-        SonyUtil.cancel(watcher.get());
     }
 }

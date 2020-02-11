@@ -299,10 +299,9 @@ public class IrccClientFactory {
                         sysInfo = sys;
                     } else {
                         logger.debug(
-                                "Querying IRCC client {} for sysinfo url {} -- got error {} and defaulting to none",
+                                "Querying IRCC client {} for sysinfo url {} -- got error {} and defaulitn system information",
                                 irccUrl, sysUrl, sysResp.getHttpCode());
                         sysInfo = new IrccSystemInformation();
-                        throw sysResp.createException();
                     }
                 }
             }

@@ -121,32 +121,40 @@ public abstract class AbstractScalarResponse {
         for (final JsonElement resElm : localResults) {
             if (resElm.isJsonArray()) {
                 for (final JsonElement elm : resElm.getAsJsonArray()) {
-                    if (elm.isJsonObject()) {
-                        rc.add(gson.fromJson(elm, clazz));
-                    } else {
-                        if (SonyUtil.isPrimitive(clazz)) {
-                            rc.add(gson.fromJson(elm, clazz));
-                        } else {
-                            throw new IllegalArgumentException(
-                                    "Cannot convert ScalarWebResult to " + clazz + " with results: " + localResults);
-                        }
-                    }
+                    rc.add(getObject(gson, elm, clazz));
                 }
             } else {
-                if (resElm.isJsonObject()) {
-                    final JsonObject jobj = resElm.getAsJsonObject();
-                    rc.add(gson.fromJson(jobj, clazz));
-                } else {
-                    if (SonyUtil.isPrimitive(clazz)) {
-                        rc.add(gson.fromJson(resElm, clazz));
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Cannot convert ScalarWebResult to " + clazz + " with results: " + localResults);
-                    }
-                }
+                rc.add(getObject(gson, resElm, clazz));
             }
         }
         return rc;
+    }
+
+    /**
+     * Helper method to convert an json element to an object
+     * 
+     * @param gson a non-null GSON instance
+     * @param elm a non-null element to convert
+     * @param clazz a non-null class to convert to
+     * @return a non-null object
+     * @throws IllegalArgumentException if class cannot be converted
+     */
+    private static <T> T getObject(Gson gson, JsonElement elm, Class<T> clazz) {
+        Objects.requireNonNull(gson, "gson cannot be null");
+        Objects.requireNonNull(elm, "elm cannot be null");
+        Objects.requireNonNull(clazz, "clazz cannot be null");
+
+        if (elm.isJsonObject()) {
+            final JsonObject jobj = elm.getAsJsonObject();
+            return gson.fromJson(jobj, clazz);
+        } else {
+            if (SonyUtil.isPrimitive(clazz)) {
+                return gson.fromJson(elm, clazz);
+            } else {
+                throw new IllegalArgumentException(
+                        "Cannot convert ScalarWebResult to " + clazz + " with results: " + elm);
+            }
+        }
     }
 
     /**

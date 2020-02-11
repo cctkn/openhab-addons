@@ -134,7 +134,7 @@ public class ScalarWebClientFactory {
         }
 
         final URL baseUrl = new URL(scalarWebUrl.getProtocol(), scalarWebUrl.getHost(), LIKELY_PORT, LIKELY_PATH);
-        return new ScalarWebClient(new ScalarWebDeviceManager(baseUrl, context));
+        return new ScalarWebDeviceManager(baseUrl, context);
     }
 
     /**
@@ -154,11 +154,13 @@ public class ScalarWebClientFactory {
         logger.debug("Testing Default Scalar Web client: {}", likelyUrl);
         try (SonyTransport transport = SonyTransportFactory.createHttpTransport(likelyUrl,
                 GsonUtilities.getApiGson())) {
+
+            // see ScalarWebRequest id field for explanation of why I used 1
             final ScalarWebResult res = transport
-                    .execute(new ScalarWebRequest(1, ScalarWebMethod.GETVERSIONS, ScalarWebMethod.V1_0));
+                    .execute(new ScalarWebRequest(ScalarWebMethod.GETVERSIONS, ScalarWebMethod.V1_0));
             if (res.getHttpResponse().getHttpCode() == HttpStatus.OK_200) {
                 final URL baseUrl = new URL(scalarWebUrl.getProtocol(), scalarWebUrl.getHost(), port, LIKELY_PATH);
-                return new ScalarWebClient(new ScalarWebDeviceManager(baseUrl, context));
+                return new ScalarWebDeviceManager(baseUrl, context);
             }
         }
         return null;
@@ -195,7 +197,7 @@ public class ScalarWebClientFactory {
                 // Use the first valid one
                 ScalarWebDeviceManager myDevice = null;
                 for (int i = deviceInfos.getLength() - 1; i >= 0; i--) {
-                    final Node deviceInfo = deviceInfos.item(0);
+                    final Node deviceInfo = deviceInfos.item(i);
 
                     try {
                         myDevice = ScalarWebDeviceManager.create(deviceInfo, context);
@@ -209,7 +211,7 @@ public class ScalarWebClientFactory {
                     throw new IOException("No valid scalar web devices found");
                 }
 
-                return new ScalarWebClient(myDevice);
+                return myDevice;
             } else {
                 // If can't connect - try to connect to the likely websocket server directly using
                 // the host name and default path
