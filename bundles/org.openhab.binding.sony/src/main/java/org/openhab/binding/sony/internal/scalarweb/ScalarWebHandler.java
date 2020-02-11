@@ -130,12 +130,17 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
             public void statusChanged(final ThingStatus state, final ThingStatusDetail detail,
                     final @Nullable String msg) {
                 updateStatus(state, detail, msg);
-
             }
 
             @Override
             public void stateChanged(final String channelId, final State newState) {
-                updateState(channelId, newState);
+                final ThingStatus status = getThing().getStatus();
+                if (status == ThingStatus.ONLINE) {
+                    updateState(channelId, newState);
+                } else {
+                    // usually happens when we receive event notification during initialization
+                    logger.trace("Ignoring state update during {}: {}={}", status, channelId, newState);
+                }
             }
 
             @Override

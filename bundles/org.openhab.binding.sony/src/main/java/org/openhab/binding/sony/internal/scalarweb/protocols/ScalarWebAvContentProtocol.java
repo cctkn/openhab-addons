@@ -912,8 +912,9 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         final String version = getService().getVersion(ScalarWebMethod.GETPLAYINGCONTENTINFO);
 
         for (final Entry<String, String> entry : outputs.entrySet()) {
-            final String prefix = "Playing" + (StringUtils.equalsIgnoreCase(entry.getKey(), MAINOUTPUT) ? " "
-                    : (" (" + entry.getValue() + ") "));
+            final String translatedOutput = getTranslatedOutput(entry.getKey());
+            final String prefix = "Playing"
+                    + (StringUtils.isEmpty(translatedOutput) ? " " : (" (" + entry.getValue() + ") "));
 
             final String uri = entry.getKey();
             final String id = getIdForOutput(uri); // use the same id as the related terminal
@@ -2545,7 +2546,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                         final String cmd = command.toString();
                         if (StringUtils.equalsIgnoreCase(cmd, "select")) {
                             final ContentState state = stateContent.get();
-                            setPlayContent(state.getUri(), null, true);
+                            setPlayContent(state.getUri(), null);
                         } else {
                             logger.debug("{} command received an unknown command: {}", CN_CMD, cmd);
                         }
@@ -2605,27 +2606,27 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
      *
      * @param uri the non-null, possibly empty URI
      * @param output the possibly null, possibly empty output to play on
-     * @param on true if playing, false otherwise
      */
-    private void setPlayContent(final String uri, final @Nullable String output, final boolean on) {
+    private void setPlayContent(final String uri, final @Nullable String output) {
         Objects.requireNonNull(uri, "uri cannot be null");
 
-        final String translatedOutput = output == null || StringUtils.equalsIgnoreCase(output, MAINOUTPUT) ? ""
-                : output;
-        if (on) {
-            handleExecute(ScalarWebMethod.SETPLAYCONTENT, version -> {
-                if (VersionUtilities.equals(version, ScalarWebMethod.V1_0, ScalarWebMethod.V1_1)) {
-                    return new PlayContent_1_0(uri);
-                }
-                return new PlayContent_1_2(uri, translatedOutput);
-            });
-        } else {
-            if (getService().hasMethod(ScalarWebMethod.STOPPLAYINGCONTENT)) {
-                handleExecute(ScalarWebMethod.STOPPLAYINGCONTENT, new Output(uri));
-            } else {
-                handleExecute(ScalarWebMethod.DELETECOUNT, new DeleteContent(uri));
+        final String translatedOutput = getTranslatedOutput(output);
+        handleExecute(ScalarWebMethod.SETPLAYCONTENT, version -> {
+            if (VersionUtilities.equals(version, ScalarWebMethod.V1_0, ScalarWebMethod.V1_1)) {
+                return new PlayContent_1_0(uri);
             }
-        }
+            return new PlayContent_1_2(uri, translatedOutput);
+        });
+    }
+
+    /**
+     * Returns the translated output (ie MAINOUTPUT would be translated to an empty string)
+     * 
+     * @param output a possibly null, possibly empty output
+     * @return a non-null, possibly empty translated output
+     */
+    private static String getTranslatedOutput(@Nullable String output) {
+        return output == null || StringUtils.equalsIgnoreCase(output, MAINOUTPUT) ? "" : output;
     }
 
     /**
@@ -2656,7 +2657,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         final PlayingState state = statePlaying.get(id);
         final String playingUri = state == null ? "" : state.getUri();
 
-        final String translatedOutput = StringUtils.equalsIgnoreCase(output, MAINOUTPUT) ? "" : output;
+        final String translatedOutput = getTranslatedOutput(output);
 
         final Matcher ms = Source.RADIOPATTERN.matcher(playingUri);
         final boolean isRadio = ms.matches();
@@ -2673,7 +2674,11 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                 break;
 
             case "stop":
-                setPlayContent(playingUri, translatedOutput, false);
+                if (getService().hasMethod(ScalarWebMethod.STOPPLAYINGCONTENT)) {
+                    handleExecute(ScalarWebMethod.STOPPLAYINGCONTENT, new Output(playingUri));
+                } else {
+                    handleExecute(ScalarWebMethod.DELETECOUNT, new DeleteContent(playingUri));
+                }
                 break;
 
             case "next":
@@ -2744,7 +2749,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                     final int preset = state == null ? 1 : state.getPreset();
                     final String presetUri = ms.groupCount() == 1 ? ("?contentId=" + preset)
                             : ms.replaceFirst("$1" + preset);
-                    setPlayContent(presetUri, translatedOutput, true);
+                    setPlayContent(presetUri, translatedOutput);
                 } else {
                     logger.debug("Not playing a radio currently: {}", playingUri);
                 }
@@ -2767,7 +2772,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
         final Optional<Source> src = getSources().stream().filter(s -> s.isMatch(source)).findFirst();
         final String srcUri = src.isPresent() ? src.get().getSource() : null;
-        setPlayContent(StringUtils.defaultIfEmpty(srcUri, source), output, true);
+        setPlayContent(StringUtils.defaultIfEmpty(srcUri, source), output);
 
         getContext().getScheduler().execute(() -> {
             stateContent.set(new ContentState(source, "", 0));
@@ -2827,7 +2832,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                             "Cannot play preset channel {} because the ContentListResult didn't have a valid URI: {}",
                             dispName, res);
                 } else {
-                    setPlayContent(uri, null, true);
+                    setPlayContent(uri, null);
                 }
                 return false;
             }
