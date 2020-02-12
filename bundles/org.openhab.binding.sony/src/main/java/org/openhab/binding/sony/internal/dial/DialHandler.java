@@ -73,20 +73,20 @@ public class DialHandler extends AbstractThingHandler<DialConfig> {
 
         final DialProtocol<ThingCallback<String>> localProtocolHandler = protocolHandler.get();
         if (localProtocolHandler == null) {
-            logger.warn("Trying to handle a channel command before a protocol handler has been created");
+            logger.debug("Trying to handle a channel command before a protocol handler has been created");
             return;
         }
 
         final String channelId = channelUID.getId();
         final Channel channel = getThing().getChannel(channelId);
         if (channel == null) {
-            logger.warn("Channel wasn't found for {}", channelUID);
+            logger.debug("Channel wasn't found for {}", channelUID);
             return;
         }
 
         final String applId = channel.getProperties().get(DialConstants.CHANNEL_PROP_APPLID);
         if (StringUtils.isEmpty(applId)) {
-            logger.warn("Called with an empty applicationid - ignoring: {}", channelUID);
+            logger.debug("Called with an empty applicationid - ignoring: {}", channelUID);
             return;
         }
 
@@ -94,10 +94,10 @@ public class DialHandler extends AbstractThingHandler<DialConfig> {
             if (command instanceof OnOffType) {
                 localProtocolHandler.setState(channelId, applId, OnOffType.ON == command);
             } else {
-                logger.warn("Received a STATE channel command with a non OnOffType: {}", command);
+                logger.debug("Received a STATE channel command with a non OnOffType: {}", command);
             }
         } else {
-            logger.warn("Unknown/Unsupported Channel id: {}", channelUID);
+            logger.debug("Unknown/Unsupported Channel id: {}", channelUID);
         }
     }
 
@@ -116,20 +116,20 @@ public class DialHandler extends AbstractThingHandler<DialConfig> {
 
         final DialProtocol<ThingCallback<String>> localProtocolHandler = protocolHandler.get();
         if (localProtocolHandler == null) {
-            logger.warn("Trying to handle a refresh command before a protocol handler has been created");
+            logger.debug("Trying to handle a refresh command before a protocol handler has been created");
             return;
         }
 
         final String channelId = channelUID.getId();
         final Channel channel = getThing().getChannel(channelId);
         if (channel == null) {
-            logger.warn("Channel wasn't found for {}", channelUID);
+            logger.debug("Channel wasn't found for {}", channelUID);
             return;
         }
 
         final String applId = channel.getProperties().get(DialConstants.CHANNEL_PROP_APPLID);
         if (StringUtils.isEmpty(applId)) {
-            logger.warn("Called with an empty applicationid - ignoring: {}", channelUID);
+            logger.debug("Called with an empty applicationid - ignoring: {}", channelUID);
             return;
         }
 
@@ -212,7 +212,7 @@ public class DialHandler extends AbstractThingHandler<DialConfig> {
                 if (StringUtils.endsWithIgnoreCase(channelId, DialConstants.CHANNEL_STATE)) {
                     final String applId = chn.getProperties().get(DialConstants.CHANNEL_PROP_APPLID);
                     if (StringUtils.isEmpty(applId)) {
-                        logger.warn("Unknown application id for channel {}", channelId);
+                        logger.debug("Unknown application id for channel {}", channelId);
                     } else {
                         protocol.refreshState(channelId, applId);
                     }

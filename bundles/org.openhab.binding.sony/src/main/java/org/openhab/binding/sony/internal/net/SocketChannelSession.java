@@ -313,7 +313,7 @@ public class SocketChannelSession implements SocketSession {
                                 listener.responseException((IOException) response);
                             }
                         } else {
-                            logger.warn("Unknown response class: {}", response);
+                            logger.debug("Unknown response class: {}", response);
                         }
                     }
                 } catch (final InterruptedException e) {

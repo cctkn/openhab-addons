@@ -80,7 +80,7 @@ public class DialDiscoveryParticipant extends AbstractDiscoveryParticipant imple
 
         String deviceId;
         try {
-            final DialClient dialClient = new DialClientFactory().get(dialURL.toString());
+            final DialClient dialClient = DialClientFactory.get(dialURL.toString());
             if (dialClient == null || !dialClient.hasDialService()) {
                 logger.debug(
                         "DIAL device couldn't be created or didn't implement any device information - ignoring: {}",

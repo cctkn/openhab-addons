@@ -138,7 +138,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
 
         SonyUtil.sendWakeOnLan(logger, config.getDeviceIpAddress(), config.getDeviceMacAddress());
 
-        this.irccClient = new IrccClientFactory().get(config.getDeviceUrl());
+        this.irccClient = IrccClientFactory.get(config.getDeviceUrl());
         this.transport = SonyTransportFactory.createHttpTransport(irccClient.getBaseUrl().toExternalForm());
         this.sonyAuth = new SonyAuth(() -> irccClient);
     }
@@ -396,7 +396,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                                 SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_DURATION),
                                 SonyUtil.newDecimalType(Integer.parseInt(dur)));
                     } catch (final NumberFormatException e) {
-                        logger.warn("Could not convert {} into an integer", dur);
+                        logger.debug("Could not convert {} into an integer", dur);
                         callback.stateChanged(
                                 SonyUtil.createChannelId(IrccConstants.GRP_VIEWING, IrccConstants.CHANNEL_DURATION),
                                 UnDefType.NULL);
@@ -412,7 +412,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_POWER),
                     OnOffType.OFF);
         } else {
-            logger.warn("Unknown code from {}: {}", IrccClient.AN_GETSTATUS, resp);
+            logger.debug("Unknown code from {}: {}", IrccClient.AN_GETSTATUS, resp);
         }
     }
 
@@ -485,7 +485,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_TEXT),
                     UnDefType.UNDEF);
         } else {
-            logger.warn("Unknown code from {}: {}", IrccClient.AN_GETTEXT, resp);
+            logger.debug("Unknown code from {}: {}", IrccClient.AN_GETTEXT, resp);
         }
     }
 
@@ -528,7 +528,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_TITLE),
                     UnDefType.UNDEF);
         } else {
-            logger.warn("Unknown code from {}: {}", IrccClient.AN_GETCONTENTURL, resp);
+            logger.debug("Unknown code from {}: {}", IrccClient.AN_GETCONTENTURL, resp);
         }
     }
 
@@ -601,7 +601,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                             SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DURATION),
                             SonyUtil.newDecimalType(Integer.parseInt(dur)));
                 } catch (final NumberFormatException e) {
-                    logger.warn("Could not convert {} into an integer", dur);
+                    logger.debug("Could not convert {} into an integer", dur);
                     callback.stateChanged(
                             SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DURATION),
                             UnDefType.NULL);
@@ -621,7 +621,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
                             SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DATERELEASE),
                             new DateTimeType(daterelease));
                 } catch (final IllegalArgumentException e) {
-                    logger.warn("Could not convert {} into an valid date", daterelease);
+                    logger.debug("Could not convert {} into an valid date", daterelease);
                     callback.stateChanged(
                             SonyUtil.createChannelId(IrccConstants.GRP_CONTENT, IrccConstants.CHANNEL_DATERELEASE),
                             UnDefType.NULL);
@@ -652,7 +652,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
             callback.stateChanged(SonyUtil.createChannelId(IrccConstants.GRP_PRIMARY, IrccConstants.CHANNEL_CONTENTURL),
                     UnDefType.UNDEF);
         } else {
-            logger.warn("Unknown code from {}: {}", IrccClient.AN_GETCONTENTINFORMATION, resp);
+            logger.debug("Unknown code from {}: {}", IrccClient.AN_GETCONTENTINFORMATION, resp);
         }
     }
 
@@ -756,7 +756,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
         } else if (resp.getHttpCode() == HttpStatus.INTERNAL_SERVER_ERROR_500) {
             logger.debug("IRCC service returned a 500 - probably an unknown command: {}", cmdToSend);
         } else {
-            logger.warn("Bad return code from {}: {}", IrccClient.SRV_ACTION_SENDIRCC, resp);
+            logger.debug("Bad return code from {}: {}", IrccClient.SRV_ACTION_SENDIRCC, resp);
         }
     }
 
@@ -770,7 +770,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
 
         final String sendContentUrl = irccClient.getUrlForAction(IrccClient.AN_SENDCONTENTURL);
         if (sendContentUrl == null || StringUtils.isEmpty(sendContentUrl)) {
-            logger.warn("{} action was not implmented", IrccClient.AN_SENDCONTENTURL);
+            logger.debug("{} action was not implmented", IrccClient.AN_SENDCONTENTURL);
             return;
         }
         final String body = "<contentUrl><url>" + contentUrl + "</url></contentUrl>";
@@ -781,7 +781,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
         } else if (resp.getHttpCode() == HttpStatus.SERVICE_UNAVAILABLE_503) {
             logger.debug("IRCC service is unavailable (power off?)");
         } else {
-            logger.warn("Bad return code from {}: {}", IrccClient.AN_SENDCONTENTURL, resp);
+            logger.debug("Bad return code from {}: {}", IrccClient.AN_SENDCONTENTURL, resp);
         }
     }
 
@@ -794,7 +794,7 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
         Validate.notEmpty(text, "text cannot be empty");
         final String sendTextUrl = irccClient.getUrlForAction(IrccClient.AN_SENDTEXT);
         if (StringUtils.isEmpty(sendTextUrl)) {
-            logger.warn("{} action was not implmented", IrccClient.AN_SENDTEXT);
+            logger.debug("{} action was not implmented", IrccClient.AN_SENDTEXT);
             return;
         }
 
@@ -809,10 +809,10 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
             } else if (resp.getHttpCode() == HttpStatus.SERVICE_UNAVAILABLE_503) {
                 logger.debug("IRCC service is unavailable (power off?)");
             } else {
-                logger.warn("Unknown code for {}:L {}", IrccClient.AN_SENDTEXT, resp);
+                logger.debug("Unknown code for {}:L {}", IrccClient.AN_SENDTEXT, resp);
             }
         } catch (final UnsupportedEncodingException e) {
-            logger.warn("UTF-8 is not supported on this platform: {}", e.getMessage(), e);
+            logger.debug("UTF-8 is not supported on this platform: {}", e.getMessage(), e);
         }
     }
 

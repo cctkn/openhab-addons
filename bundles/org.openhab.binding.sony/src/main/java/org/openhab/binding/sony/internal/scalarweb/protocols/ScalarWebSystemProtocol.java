@@ -870,7 +870,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
             logger.debug("IRCC URL was not specified in configuration");
         } else {
             try {
-                final IrccClient irccClient = new IrccClientFactory().get(localIrccUrl);
+                final IrccClient irccClient = IrccClientFactory.get(localIrccUrl);
                 final ScalarWebContext context = getContext();
                 String localCmd = cmd;
 

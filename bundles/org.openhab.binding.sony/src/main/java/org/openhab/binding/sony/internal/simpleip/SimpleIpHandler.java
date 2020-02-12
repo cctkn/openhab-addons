@@ -92,7 +92,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                 if (command instanceof StringType) {
                     handler.setIR(command.toString());
                 } else {
-                    logger.warn("Received a IR channel command with a non StringType: {}", command);
+                    logger.debug("Received a IR channel command with a non StringType: {}", command);
                 }
 
                 break;
@@ -101,7 +101,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                 if (command instanceof OnOffType) {
                     handler.setPower(command == OnOffType.ON);
                 } else {
-                    logger.warn("Received a POWER channel command with a non OnOffType: {}", command);
+                    logger.debug("Received a POWER channel command with a non OnOffType: {}", command);
                 }
 
                 break;
@@ -118,7 +118,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                 } else if (command instanceof PercentType) {
                     handler.setAudioVolume(((PercentType) command).intValue());
                 } else {
-                    logger.warn(
+                    logger.debug(
                             "Received a AUDIO VOLUME channel command with a non OnOffType/IncreaseDecreaseType/PercentType: {}",
                             command);
                 }
@@ -129,7 +129,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                 if (command instanceof OnOffType) {
                     handler.setAudioMute(command == OnOffType.ON);
                 } else {
-                    logger.warn("Received a AUDIO MUTE channel command with a non OnOffType: {}", command);
+                    logger.debug("Received a AUDIO MUTE channel command with a non OnOffType: {}", command);
                 }
 
                 break;
@@ -138,7 +138,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                 if (command instanceof StringType) {
                     handler.setChannel(command.toString());
                 } else {
-                    logger.warn("Received a CHANNEL channel command with a non StringType: {}", command);
+                    logger.debug("Received a CHANNEL channel command with a non StringType: {}", command);
                 }
 
                 break;
@@ -147,7 +147,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                 if (command instanceof StringType) {
                     handler.setTripletChannel(command.toString());
                 } else {
-                    logger.warn("Received a TRIPLET CHANNEL channel command with a non StringType: {}", command);
+                    logger.debug("Received a TRIPLET CHANNEL channel command with a non StringType: {}", command);
                 }
 
                 break;
@@ -155,28 +155,28 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                 if (command instanceof StringType) {
                     handler.setInputSource(command.toString());
                 } else {
-                    logger.warn("Received a INPUT SOURCE channel command with a non StringType: {}", command);
+                    logger.debug("Received a INPUT SOURCE channel command with a non StringType: {}", command);
                 }
                 break;
             case SimpleIpConstants.CHANNEL_INPUT:
                 if (command instanceof StringType) {
                     handler.setInput(command.toString());
                 } else {
-                    logger.warn("Received a INPUT channel command with a non StringType: {}", command);
+                    logger.debug("Received a INPUT channel command with a non StringType: {}", command);
                 }
                 break;
             case SimpleIpConstants.CHANNEL_SCENE:
                 if (command instanceof StringType) {
                     handler.setScene(command.toString());
                 } else {
-                    logger.warn("Received a SCENE channel command with a non StringType: {}", command);
+                    logger.debug("Received a SCENE channel command with a non StringType: {}", command);
                 }
                 break;
             case SimpleIpConstants.CHANNEL_PICTUREMUTE:
                 if (command instanceof OnOffType) {
                     handler.setPictureMute(command == OnOffType.ON);
                 } else {
-                    logger.warn("Received a PICTURE MUTE channel command with a non OnOffType: {}", command);
+                    logger.debug("Received a PICTURE MUTE channel command with a non OnOffType: {}", command);
                 }
                 break;
             case SimpleIpConstants.CHANNEL_TOGGLEPICTUREMUTE:
@@ -186,7 +186,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                 if (command instanceof OnOffType) {
                     handler.setPictureInPicture(command == OnOffType.ON);
                 } else {
-                    logger.warn("Received a PICTURE IN PICTURE channel command with a non OnOffType: {}", command);
+                    logger.debug("Received a PICTURE IN PICTURE channel command with a non OnOffType: {}", command);
                 }
                 break;
             case SimpleIpConstants.CHANNEL_TOGGLEPICTUREINPICTURE:
@@ -197,7 +197,7 @@ public class SimpleIpHandler extends AbstractThingHandler<SimpleIpConfig> {
                 break;
 
             default:
-                logger.warn("Unknown/Unsupported Channel id: {}", id);
+                logger.debug("Unknown/Unsupported Channel id: {}", id);
                 break;
         }
     }

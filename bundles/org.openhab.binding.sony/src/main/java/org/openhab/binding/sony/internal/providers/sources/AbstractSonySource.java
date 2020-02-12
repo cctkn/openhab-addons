@@ -176,10 +176,9 @@ public abstract class AbstractSonySource implements SonySource {
             thingTypes.clear();
             thingTypeDefinitions.clear();
 
-            final List<Map.Entry<ThingType, SonyThingDefinition>> results = new ArrayList<>();
             for (final File file : new File(folder).listFiles()) {
                 if (file.isFile()) {
-                    results.addAll(readFile(file.getAbsolutePath()));
+                    readFile(file.getAbsolutePath());
                 }
             }
         } finally {

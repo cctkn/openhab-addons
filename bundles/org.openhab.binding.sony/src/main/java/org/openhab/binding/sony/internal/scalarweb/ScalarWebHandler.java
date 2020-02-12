@@ -217,7 +217,7 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
             final ScalarWebContext context = new ScalarWebContext(() -> getThing(), config, tracker, scheduler,
                     sonyDynamicStateProvider, webSocketClient, transformationService);
 
-            final ScalarWebClient client = new ScalarWebClientFactory().get(scalarWebUrl, context);
+            final ScalarWebClient client = ScalarWebClientFactory.get(scalarWebUrl, context);
             scalarClient.set(client);
 
             final ScalarWebLoginProtocol<ThingCallback<String>> loginHandler = new ScalarWebLoginProtocol<>(client,

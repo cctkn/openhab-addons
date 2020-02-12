@@ -12,7 +12,7 @@
  */
 package org.openhab.binding.sony.internal.ircc.models;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -287,7 +287,7 @@ public class IrccDevice {
      */
     public List<UpnpService> getServices() {
         final UpnpServiceList srvc = services;
-        return srvc == null ? new ArrayList<UpnpService>() : srvc.getServices();
+        return srvc == null ? Collections.emptyList() : srvc.getServices();
     }
 
     /**

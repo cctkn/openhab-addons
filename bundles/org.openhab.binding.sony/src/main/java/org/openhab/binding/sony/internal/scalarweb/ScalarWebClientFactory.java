@@ -47,9 +47,6 @@ import org.xml.sax.SAXException;
  */
 @NonNullByDefault
 public class ScalarWebClientFactory {
-    /** The logger */
-    private final Logger logger = LoggerFactory.getLogger(ScalarWebClientFactory.class);
-
     /** The likely base URL path to the sony services */
     private static final String LIKELY_PATH = "/sony";
 
@@ -76,7 +73,7 @@ public class ScalarWebClientFactory {
      * @throws SAXException if a SAX exception occurs readonly the documents
      * @throws URISyntaxException if a URI syntax exception occurs
      */
-    public ScalarWebClient get(final String scalarWebUrl, final ScalarWebContext context)
+    public static ScalarWebClient get(final String scalarWebUrl, final ScalarWebContext context)
             throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
         Validate.notEmpty(scalarWebUrl, "scalarWebUrl cannot be empty");
         Objects.requireNonNull(context, "context cannot be null");
@@ -95,15 +92,16 @@ public class ScalarWebClientFactory {
      * @throws SAXException if a SAX exception occurs readonly the documents
      * @throws URISyntaxException if a URI syntax exception occurs
      */
-    public ScalarWebClient get(final URL scalarWebUrl, final ScalarWebContext context)
+    public static ScalarWebClient get(final URL scalarWebUrl, final ScalarWebContext context)
             throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
         Objects.requireNonNull(scalarWebUrl, "scalarWebUrl cannot be null");
         Objects.requireNonNull(context, "context cannot be null");
 
+        final Logger logger = LoggerFactory.getLogger(ScalarWebClientFactory.class);
         if (StringUtils.isEmpty(scalarWebUrl.getPath())) {
-            return getDefaultClient(scalarWebUrl, context);
+            return getDefaultClient(scalarWebUrl, context, logger);
         } else {
-            return queryScalarWebSclient(scalarWebUrl, context);
+            return queryScalarWebSclient(scalarWebUrl, context, logger);
         }
     }
 
@@ -113,22 +111,24 @@ public class ScalarWebClientFactory {
      * 
      * @param scalarWebUrl a non-null URL
      * @param context a non-null context
+     * @param logger a non-null logger
      * @return a {@link ScalarWebClient}
      * @throws IOException if an IO Exception occurs
      * @throws DOMException if a DOM exception occurs readonly the documents
      * @throws URISyntaxException if a URI syntax exception occurs
      */
-    private ScalarWebClient getDefaultClient(final URL scalarWebUrl, final ScalarWebContext context)
-            throws DOMException, IOException, URISyntaxException {
+    private static ScalarWebClient getDefaultClient(final URL scalarWebUrl, final ScalarWebContext context,
+            final Logger logger) throws DOMException, IOException, URISyntaxException {
         Objects.requireNonNull(scalarWebUrl, "scalarWebUrl cannot be null");
         Objects.requireNonNull(context, "context cannot be null");
+        Objects.requireNonNull(logger, "logger cannot be null");
 
-        final ScalarWebClient homeClient = tryDefaultClientUrl(scalarWebUrl, HOME_AUDIO_PORT, context);
+        final ScalarWebClient homeClient = tryDefaultClientUrl(scalarWebUrl, HOME_AUDIO_PORT, context, logger);
         if (homeClient != null) {
             return homeClient;
         }
 
-        final ScalarWebClient personalClient = tryDefaultClientUrl(scalarWebUrl, PERSONAL_AUDIO_PORT, context);
+        final ScalarWebClient personalClient = tryDefaultClientUrl(scalarWebUrl, PERSONAL_AUDIO_PORT, context, logger);
         if (personalClient != null) {
             return personalClient;
         }
@@ -143,18 +143,25 @@ public class ScalarWebClientFactory {
      * @param scalarWebUrl a non-null scalar url
      * @param port a > 0 port number
      * @param context a non-null context
+     * @param logger a non-null logger
      * @return the scalar web client (if found) or null if not
      * @throws URISyntaxException if a uri syntax is invalid
      * @throws DOMException if a dom exception occurs
      * @throws IOException if an IO exception occurs
      */
-    private @Nullable ScalarWebClient tryDefaultClientUrl(URL scalarWebUrl, int port, final ScalarWebContext context)
-            throws URISyntaxException, DOMException, IOException {
+    private static @Nullable ScalarWebClient tryDefaultClientUrl(final URL scalarWebUrl, final int port,
+            final ScalarWebContext context, final Logger logger) throws URISyntaxException, DOMException, IOException {
+        Objects.requireNonNull(scalarWebUrl, "scalarWebUrl cannot be null");
+        Objects.requireNonNull(context, "context cannot be null");
+        Objects.requireNonNull(logger, "logger cannot be null");
+        if (port <= 0) {
+            throw new IllegalArgumentException("port cannot be <= 0: " + port);
+        }
+
         final URL likelyUrl = new URL(scalarWebUrl.getProtocol(), scalarWebUrl.getHost(), port, LIKELY_GUIDE_PATH);
         logger.debug("Testing Default Scalar Web client: {}", likelyUrl);
         try (SonyTransport transport = SonyTransportFactory.createHttpTransport(likelyUrl,
                 GsonUtilities.getApiGson())) {
-
             // see ScalarWebRequest id field for explanation of why I used 1
             final ScalarWebResult res = transport
                     .execute(new ScalarWebRequest(ScalarWebMethod.GETVERSIONS, ScalarWebMethod.V1_0));
@@ -171,16 +178,18 @@ public class ScalarWebClientFactory {
      * 
      * @param scalarWebUrl a non-null URL
      * @param context a non-null context
+     * @param logger a non-null logger
      * @return a {@link ScalarWebClient}
      * @throws IOException if an IO Exception occurs
      * @throws ParserConfigurationException if a parser configuration exception occurrs
      * @throws SAXException if a SAX exception occurs readonly the documents
      * @throws URISyntaxException if a URI syntax exception occurs
      */
-    public ScalarWebClient queryScalarWebSclient(final URL scalarWebUrl, final ScalarWebContext context)
-            throws URISyntaxException, ParserConfigurationException, SAXException, IOException {
+    public static ScalarWebClient queryScalarWebSclient(final URL scalarWebUrl, final ScalarWebContext context,
+            final Logger logger) throws URISyntaxException, ParserConfigurationException, SAXException, IOException {
         Objects.requireNonNull(scalarWebUrl, "scalarWebUrl cannot be null");
         Objects.requireNonNull(context, "context cannot be null");
+        Objects.requireNonNull(logger, "logger cannot be null");
 
         try (SonyHttpTransport transport = SonyTransportFactory.createHttpTransport(scalarWebUrl.toExternalForm())) {
             final HttpResponse resp = transport.executeGet(scalarWebUrl.toExternalForm());
@@ -215,7 +224,7 @@ public class ScalarWebClientFactory {
             } else {
                 // If can't connect - try to connect to the likely websocket server directly using
                 // the host name and default path
-                return getDefaultClient(scalarWebUrl, context);
+                return getDefaultClient(scalarWebUrl, context, logger);
             }
         }
     }

@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -40,9 +41,6 @@ import org.slf4j.LoggerFactory;
  */
 @NonNullByDefault
 public class DialClientFactory {
-    /** The logger */
-    private final Logger logger = LoggerFactory.getLogger(DialClientFactory.class);
-
     /**
      * Attempts to retrieve the {@link DialClient} from the specified URL. Null will be returned if the URL contained an
      * invalid representation
@@ -51,15 +49,19 @@ public class DialClientFactory {
      * @return the {@link DialClient} if found, null otherwise
      * @throws IOException if an IO exception occurs getting the client
      */
-    public @Nullable DialClient get(final String dialUrl) throws IOException {
+    public static @Nullable DialClient get(final String dialUrl) throws IOException {
         Validate.notEmpty(dialUrl, "dialUrl cannot be empty");
+
+        final Logger logger = LoggerFactory.getLogger(DialClientFactory.class);
 
         try {
             final URL dialURL = new URL(dialUrl);
             if (StringUtils.isEmpty(dialURL.getPath())) {
+                logger.debug("Creating default DIAL client for {}", dialUrl);
                 return createDefaultClient(dialUrl);
             } else {
-                return queryDialClient(dialUrl);
+                logger.debug("Querying DIAL client: {}", dialUrl);
+                return queryDialClient(dialUrl, logger);
             }
         } catch (final URISyntaxException e) {
             logger.debug("Malformed DIAL URL: {}", dialUrl, e);
@@ -74,10 +76,9 @@ public class DialClientFactory {
      * @return a non-null default {@link DialClient}
      * @throws MalformedURLException if the URL was malformed
      */
-    private DialClient createDefaultClient(final String dialUrl) throws MalformedURLException {
+    private static DialClient createDefaultClient(final String dialUrl) throws MalformedURLException {
         Validate.notEmpty(dialUrl, "dialUrl cannot be empty");
 
-        logger.debug("Creating default DIAL client for {}", dialUrl);
         final String appUrl = dialUrl + "/DIAL/apps/";
         final DialDeviceInfo ddi = new DialDeviceInfo(dialUrl + "/DIAL/sony/applist", null, null);
         return new DialClient(new URL(appUrl), Collections.singletonList(ddi));
@@ -87,14 +88,16 @@ public class DialClientFactory {
      * Private method to create a dial client by querying it's parameters
      * 
      * @param dialUrl a non-null, non-emtpy dial URL
+     * @param logger a non-null logger
      * @return a possibly null (if no content can be found) {@link DialClient}
      * @throws URISyntaxException if a URI exception occurred
      * @throws IOException if an IO exception occurred
      */
-    private @Nullable DialClient queryDialClient(final String dialUrl) throws URISyntaxException, IOException {
+    private static @Nullable DialClient queryDialClient(final String dialUrl, final Logger logger)
+            throws URISyntaxException, IOException {
         Validate.notEmpty(dialUrl, "dialUrl cannot be empty");
+        Objects.requireNonNull(logger, "logger cannot be null");
 
-        logger.debug("Querying DIAL client: {}", dialUrl);
         try (SonyHttpTransport transport = SonyTransportFactory.createHttpTransport(dialUrl)) {
             final HttpResponse resp = transport.executeGet(dialUrl);
             if (resp.getHttpCode() != HttpStatus.OK_200) {

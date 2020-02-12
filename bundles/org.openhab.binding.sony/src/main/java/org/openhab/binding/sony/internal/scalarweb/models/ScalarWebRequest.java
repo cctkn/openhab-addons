@@ -41,7 +41,7 @@ public class ScalarWebRequest {
      * An incrementing integer for the identifier of this request
      * Note: start at 100 to allow utility method ids (like SonyServlet)
      */
-    private final static AtomicInteger requestId = new AtomicInteger(100);
+    private static final AtomicInteger requestId = new AtomicInteger(100);
 
     /**
      * Instantiates a new scalar web request with no parameters

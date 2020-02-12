@@ -279,7 +279,7 @@ public class SonyUtil {
                 NetUtil.sendWol(deviceIpAddress, deviceMacAddress);
                 logger.debug("WOL packet sent to {}", deviceMacAddress);
             } catch (final IOException e) {
-                logger.warn("Exception occurred sending WOL packet to {}", deviceMacAddress, e);
+                logger.debug("Exception occurred sending WOL packet to {}", deviceMacAddress, e);
             }
         } else {
             logger.debug(

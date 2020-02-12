@@ -49,10 +49,6 @@ import org.slf4j.LoggerFactory;
  */
 @NonNullByDefault
 public class IrccClientFactory {
-
-    /** The logger used by the client */
-    private final Logger logger = LoggerFactory.getLogger(IrccClientFactory.class);
-
     /** The default service type for IRCC */
     public static final String SRV_IRCC_SERVICETYPE = "urn:schemas-sony-com:service:IRCC:1";
 
@@ -73,7 +69,7 @@ public class IrccClientFactory {
      * @throws IOException if an IO exception occurs
      * @throws URISyntaxException if a URL has an incorrect syntax
      */
-    public IrccClient get(final String irccUrl) throws IOException, URISyntaxException {
+    public static IrccClient get(final String irccUrl) throws IOException, URISyntaxException {
         Validate.notEmpty(irccUrl, "irccUrl cannot be empty");
         return get(new URL(irccUrl));
     }
@@ -85,18 +81,20 @@ public class IrccClientFactory {
      * @throws IOException if an IO exception occurs getting information from the client
      * @throws URISyntaxException if a URL has an incorrect syntax
      */
-    public IrccClient get(final URL irccUrl) throws IOException, URISyntaxException {
+    public static IrccClient get(final URL irccUrl) throws IOException, URISyntaxException {
         Objects.requireNonNull(irccUrl, "irccUrl cannot be null");
 
+        final Logger logger = LoggerFactory.getLogger(IrccClientFactory.class);
+
         if (StringUtils.isEmpty(irccUrl.getPath())) {
-            return getDefaultClient(irccUrl);
+            return getDefaultClient(irccUrl, logger);
         } else {
             try {
-                final IrccClient client = queryIrccClient(irccUrl);
-                return client == null ? getDefaultClient(irccUrl) : client;
+                final IrccClient client = queryIrccClient(irccUrl, logger);
+                return client == null ? getDefaultClient(irccUrl, logger) : client;
             } catch (final IOException | URISyntaxException e) {
                 logger.debug("Exception occurred querying IRCC client - trying default client: {}", e.getMessage(), e);
-                return getDefaultClient(irccUrl);
+                return getDefaultClient(irccUrl, logger);
             }
         }
     }
@@ -106,12 +104,15 @@ public class IrccClientFactory {
      * standard URLs/ports
      * 
      * @param irccUrl a non-null IRCC url
+     * @param logger a non-null logger
      * @return a non-null {@link IrccClient}
      * @throws URISyntaxException if a URL has an inccorect syntax
      * @throws MalformedURLException if a URL is malformed
      */
-    private IrccClient getDefaultClient(final URL irccUrl) throws URISyntaxException, MalformedURLException {
+    private static IrccClient getDefaultClient(final URL irccUrl, final Logger logger)
+            throws URISyntaxException, MalformedURLException {
         Objects.requireNonNull(irccUrl, "irccUrl cannot be null");
+        Objects.requireNonNull(logger, "logger cannot be null");
 
         logger.debug("Creating default IRCC client for {}", irccUrl);
 
@@ -180,12 +181,15 @@ public class IrccClientFactory {
      * Helper method to create a {@link IrccClient} from a URL discovered via UPNP
      * 
      * @param irccUrl a non-null URL pointing to the UPNP description
+     * @param logger a non-null logger
      * @return a non-null {@link IrccClient}
      * @throws URISyntaxException if a URL has an inccorect syntax
      * @throws MalformedURLException if a URL is malformed
      */
-    private IrccClient queryIrccClient(final URL irccUrl) throws IOException, URISyntaxException {
+    private static IrccClient queryIrccClient(final URL irccUrl, final Logger logger)
+            throws IOException, URISyntaxException {
         Objects.requireNonNull(irccUrl, "irccUrl cannot be null");
+        Objects.requireNonNull(logger, "logger cannot be null");
 
         try (SonyHttpTransport transport = SonyTransportFactory.createHttpTransport(irccUrl)) {
             logger.debug("Querying IRCC client {}", irccUrl);

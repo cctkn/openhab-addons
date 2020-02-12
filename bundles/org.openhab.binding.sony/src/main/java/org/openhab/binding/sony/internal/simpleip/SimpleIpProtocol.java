@@ -278,7 +278,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                     } else if (StringUtils.isEmpty(rsp)) {
                         logger.debug("Empty reponse (or unsupported command): '{}'", cmd);
                     } else {
-                        logger.warn("Unparsable response '{}' to command '{}'", rsp, cmd);
+                        logger.debug("Unparsable response '{}' to command '{}'", rsp, cmd);
                     }
                     return false;
                 }
@@ -419,14 +419,14 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         }
 
         if (StringUtils.isEmpty(code)) {
-            logger.warn("Code is empty - cannot send");
+            logger.debug("Code is empty - cannot send");
             return;
         }
 
         try {
             Integer.parseInt(code);
         } catch (final NumberFormatException e) {
-            logger.warn("The resulting code {} was not an integer", code);
+            logger.debug("The resulting code {} was not an integer", code);
         }
 
         logger.debug("Sending code {}", code);
@@ -686,7 +686,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
             } else if (TOGGLE_PIP_POSITION.equalsIgnoreCase(cmd)) {
                 handleTogglePIPPosition(parms);
             } else {
-                logger.warn("Unknown command response '{}' to command '{}' ", response, command);
+                logger.debug("Unknown command response '{}' to command '{}' ", response, command);
             }
         }
     }
@@ -730,7 +730,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
             } else if (MACADDRESS.equalsIgnoreCase(cmd)) {
                 handleMacAddressResponse(parms);
             } else {
-                logger.warn("Unknown notification: {}", response);
+                logger.debug("Unknown notification: {}", response);
             }
         }
     }
@@ -748,7 +748,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", IRCC, parms);
         } else {
-            logger.warn("Unknown {} response: {}", IRCC, parms);
+            logger.debug("Unknown {} response: {}", IRCC, parms);
         }
     }
 
@@ -765,7 +765,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", POWER, parms);
         } else {
-            logger.warn("Unknown {} response: {}", POWER, parms);
+            logger.debug("Unknown {} response: {}", POWER, parms);
         }
     }
 
@@ -782,7 +782,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", TOGGLE_POWER, parms);
         } else {
-            logger.warn("Unknown {} response: {}", TOGGLE_POWER, parms);
+            logger.debug("Unknown {} response: {}", TOGGLE_POWER, parms);
         }
     }
 
@@ -804,10 +804,10 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                 } else if (power == 1) {
                     callback.stateChanged(SimpleIpConstants.CHANNEL_POWER, OnOffType.ON);
                 } else {
-                    logger.warn("Unknown {} response: {}", POWER, parms);
+                    logger.debug("Unknown {} response: {}", POWER, parms);
                 }
             } catch (final NumberFormatException e) {
-                logger.warn("Unparsable {} response: {}", POWER, parms);
+                logger.debug("Unparsable {} response: {}", POWER, parms);
             }
 
             refreshState();
@@ -827,7 +827,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", VOLUME, parms);
         } else {
-            logger.warn("Unknown {} response: {}", VOLUME, parms);
+            logger.debug("Unknown {} response: {}", VOLUME, parms);
         }
     }
 
@@ -848,7 +848,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                 final int volume = StringUtils.isEmpty(parms) ? 0 : Integer.parseInt(parms);
                 callback.stateChanged(SimpleIpConstants.CHANNEL_VOLUME, new PercentType(volume));
             } catch (final NumberFormatException e) {
-                logger.warn("Unparsable {} response: {}", VOLUME, parms);
+                logger.debug("Unparsable {} response: {}", VOLUME, parms);
             }
         }
     }
@@ -866,7 +866,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", AUDIO_MUTE, parms);
         } else {
-            logger.warn("Unknown {} response: {}", AUDIO_MUTE, parms);
+            logger.debug("Unknown {} response: {}", AUDIO_MUTE, parms);
         }
     }
 
@@ -888,10 +888,10 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                 } else if (mute == 1) {
                     callback.stateChanged(SimpleIpConstants.CHANNEL_AUDIOMUTE, OnOffType.ON);
                 } else {
-                    logger.warn("Unknown {} response: {}", AUDIO_MUTE, parms);
+                    logger.debug("Unknown {} response: {}", AUDIO_MUTE, parms);
                 }
             } catch (final NumberFormatException e) {
-                logger.warn("Unparsable {} response: {}", AUDIO_MUTE, parms);
+                logger.debug("Unparsable {} response: {}", AUDIO_MUTE, parms);
             }
         }
     }
@@ -913,7 +913,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
             logger.debug("{} command invalid: {}", CHANNEL, parms);
             callback.stateChanged(SimpleIpConstants.CHANNEL_CHANNEL, StringType.EMPTY);
         } else {
-            logger.warn("Unknown {} response: {}", CHANNEL, parms);
+            logger.debug("Unknown {} response: {}", CHANNEL, parms);
         }
     }
 
@@ -938,10 +938,10 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                     final int post = postS == null ? 0 : Integer.parseInt(postS);
                     callback.stateChanged(SimpleIpConstants.CHANNEL_CHANNEL, new StringType(pre + "." + post));
                 } else {
-                    logger.warn("Unparsable {} response: {}", CHANNEL, parms);
+                    logger.debug("Unparsable {} response: {}", CHANNEL, parms);
                 }
             } catch (final NumberFormatException e) {
-                logger.warn("Unparsable {} response: {}", CHANNEL, parms);
+                logger.debug("Unparsable {} response: {}", CHANNEL, parms);
             }
         }
     }
@@ -963,7 +963,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
             logger.debug("{} command invalid: {}", TRIPLET_CHANNEL, parms);
             callback.stateChanged(SimpleIpConstants.CHANNEL_TRIPLETCHANNEL, StringType.EMPTY);
         } else {
-            logger.warn("Unknown {} response: {}", TRIPLET_CHANNEL, parms);
+            logger.debug("Unknown {} response: {}", TRIPLET_CHANNEL, parms);
         }
     }
 
@@ -991,10 +991,10 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                             new StringType(first + "." + second + "." + third));
 
                 } catch (final NumberFormatException e) {
-                    logger.warn("Unparsable triplet channel response: {}", parms);
+                    logger.debug("Unparsable triplet channel response: {}", parms);
                 }
             } else {
-                logger.warn("Unparsable triplet channel response: {}", parms);
+                logger.debug("Unparsable triplet channel response: {}", parms);
             }
         }
     }
@@ -1012,9 +1012,9 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", INPUT_SOURCE, parms);
         } else if (RSP_NOSUCHTHING.equals(parms)) {
-            logger.warn("{} response is no such input: {}", INPUT_SOURCE, parms);
+            logger.debug("{} response is no such input: {}", INPUT_SOURCE, parms);
         } else {
-            logger.warn("Unknown {} response: {}", INPUT_SOURCE, parms);
+            logger.debug("Unknown {} response: {}", INPUT_SOURCE, parms);
         }
     }
 
@@ -1055,9 +1055,9 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", INPUT, parms);
         } else if (RSP_NOSUCHTHING.equals(parms)) {
-            logger.warn("{} response is no such input: {}", INPUT, parms);
+            logger.debug("{} response is no such input: {}", INPUT, parms);
         } else {
-            logger.warn("Unknown {} response: {}", INPUT, parms);
+            logger.debug("Unknown {} response: {}", INPUT, parms);
         }
     }
 
@@ -1082,7 +1082,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                     // workaround to @NonNullByDefault and maps.get issue
                     final String inputName = INPUT_TYPES.containsKey(inputType) ? INPUT_TYPES.get(inputType) : null;
                     if (inputName == null) {
-                        logger.warn("Unknown {} name for code: {}", INPUT, parms);
+                        logger.debug("Unknown {} name for code: {}", INPUT, parms);
                     } else {
                         callback.stateChanged(SimpleIpConstants.CHANNEL_INPUT,
                                 new StringType(inputName + (inputType != INPUT_TV ? portNbr : "")));
@@ -1092,10 +1092,10 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                         refreshInputSource();
                     }
                 } catch (final NumberFormatException e) {
-                    logger.warn("Unparsable {} response: {}", INPUT, parms);
+                    logger.debug("Unparsable {} response: {}", INPUT, parms);
                 }
             } else {
-                logger.warn("Unparsable {} response: {}", INPUT, parms);
+                logger.debug("Unparsable {} response: {}", INPUT, parms);
             }
         }
     }
@@ -1113,9 +1113,9 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", SCENE, parms);
         } else if (RSP_NOSUCHTHING.equals(parms)) {
-            logger.warn("{} response is no such input: {}", SCENE, parms);
+            logger.debug("{} response is no such input: {}", SCENE, parms);
         } else {
-            logger.warn("Unknown {} response: {}", SCENE, parms);
+            logger.debug("Unknown {} response: {}", SCENE, parms);
         }
     }
 
@@ -1152,7 +1152,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", PICTURE_MUTE, parms);
         } else {
-            logger.warn("Unknown {} response: {}", PICTURE_MUTE, parms);
+            logger.debug("Unknown {} response: {}", PICTURE_MUTE, parms);
         }
     }
 
@@ -1174,10 +1174,10 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                 } else if (mute == 1) {
                     callback.stateChanged(SimpleIpConstants.CHANNEL_PICTUREMUTE, OnOffType.ON);
                 } else {
-                    logger.warn("Unknown {} response: {}", PICTURE_MUTE, parms);
+                    logger.debug("Unknown {} response: {}", PICTURE_MUTE, parms);
                 }
             } catch (final NumberFormatException e) {
-                logger.warn("Unparsable {} response: {}", PICTURE_MUTE, parms);
+                logger.debug("Unparsable {} response: {}", PICTURE_MUTE, parms);
             }
         }
     }
@@ -1195,7 +1195,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", TOGGLE_PICTURE_MUTE, parms);
         } else {
-            logger.warn("Unknown {} response: {}", TOGGLE_PICTURE_MUTE, parms);
+            logger.debug("Unknown {} response: {}", TOGGLE_PICTURE_MUTE, parms);
         }
     }
 
@@ -1212,7 +1212,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", PICTURE_IN_PICTURE, parms);
         } else {
-            logger.warn("Unknown {} response: {}", PICTURE_IN_PICTURE, parms);
+            logger.debug("Unknown {} response: {}", PICTURE_IN_PICTURE, parms);
         }
     }
 
@@ -1234,10 +1234,10 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                 } else if (enabled == 1) {
                     callback.stateChanged(SimpleIpConstants.CHANNEL_PICTUREINPICTURE, OnOffType.ON);
                 } else {
-                    logger.warn("Unknown {} response: {}", PICTURE_IN_PICTURE, parms);
+                    logger.debug("Unknown {} response: {}", PICTURE_IN_PICTURE, parms);
                 }
             } catch (final NumberFormatException e) {
-                logger.warn("Unparsable {} response: {}", PICTURE_IN_PICTURE, parms);
+                logger.debug("Unparsable {} response: {}", PICTURE_IN_PICTURE, parms);
             }
         }
     }
@@ -1255,7 +1255,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", TOGGLE_PICTURE_IN_PICTURE, parms);
         } else {
-            logger.warn("Unknown {} response: {}", TOGGLE_PICTURE_IN_PICTURE, parms);
+            logger.debug("Unknown {} response: {}", TOGGLE_PICTURE_IN_PICTURE, parms);
         }
     }
 
@@ -1272,7 +1272,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         } else if (RSP_SUCCESS.equals(parms)) {
             logger.trace("{} command succeeded: {}", TOGGLE_PIP_POSITION, parms);
         } else {
-            logger.warn("Unknown {} response: {}", TOGGLE_PIP_POSITION, parms);
+            logger.debug("Unknown {} response: {}", TOGGLE_PIP_POSITION, parms);
         }
     }
 
@@ -1338,7 +1338,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
             return true;
         }
 
-        logger.warn("Unparsable notification: {}", response);
+        logger.debug("Unparsable notification: {}", response);
         return true;
     }
 
