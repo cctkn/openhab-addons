@@ -20,31 +20,10 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @author Tim Roberts - Initial contribution
  */
 @NonNullByDefault
-public class TransportOptionAutoAuth implements TransportOption {
+public enum TransportOptionAutoAuth implements TransportOption {
     /** Do automatically authenticate */
-    public static final TransportOptionAutoAuth TRUE = new TransportOptionAutoAuth(true);
+    TRUE,
 
     /** Do NOT automatically authenticate */
-    public static final TransportOptionAutoAuth FALSE = new TransportOptionAutoAuth(false);
-
-    /** Whether to automatically authenticate */
-    private final boolean autoAuth;
-
-    /**
-     * Constructs the option from the parameter
-     * 
-     * @param autoAuth whether to automatically authenticate (true) or not (false)
-     */
-    private TransportOptionAutoAuth(final boolean autoAuth) {
-        this.autoAuth = autoAuth;
-    }
-
-    /**
-     * Whether to automatically authenticate
-     * 
-     * @return true if enabled, false if not
-     */
-    public boolean isAutoAuth() {
-        return autoAuth;
-    }
+    FALSE
 }

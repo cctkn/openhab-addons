@@ -19,7 +19,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +131,24 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
         INPUT_TYPES.put(50000, "Screen Mirroring");
         INPUT_TYPES.put(60000, "PC RGB Input");
     }
+
+    /** The default commands */
+    private static final List<String> DEFAULT_CMDS = Arrays.asList("Input=1", "Guide=2", "EPG=3", "Favorites=4",
+            "Display=5", "Home=6", "Options=7", "Return=8", "Up=9", "Down=10", "Right=11", "Left=12", "Confirm=13",
+            "Red=14", "Green=15", "Yellow=16", "Blue=17", "Num1=18", "Num2=19", "Num3=20", "Num4=21", "Num5=22",
+            "Num6=23", "Num7=24", "Num8=25", "Num9=26", "Num0=27", "Num11=28", "Num12=29", "Volume-Up=30",
+            "Volume-Down=31", "Mute=32", "Channel-Up=33", "Channel-Down=34", "Subtitle=35", "Closed-Caption=36",
+            "Enter=37", "DOT=38", "Analog=39", "Teletext=40", "Exit=41", "Analog2=42", "*AD=43", "Digital=44",
+            "Analog?=45", "BS=46", "CS=47", "BS/CS=48", "Ddata=49", "Pic-Off=50", "Tv_Radio=51", "Theater=52", "SEN=53",
+            "Internet-Widgets=54", "Internet-Video=55", "Netflix=56", "Scene-Select=57", "Model3D=58", "iManual=59",
+            "Audio=60", "Wide=61", "Jump=62", "PAP=63", "MyEPG=64", "Program-Description=65", "Write-Chapter=66",
+            "TrackID=67", "Ten-Key=68", "AppliCast=69", "acTVila=70", "Delete-Video=71", "Photo-Frame=72",
+            "TV-Pause=73", "Key-Pad=74", "Media=75", "Sync-Menu=76", "Forward=77", "Play=78", "Rewind=79", "Prev=80",
+            "Stop=81", "Next=82", "Rec=83", "Pause=84", "Eject=85", "Flash-Plus=86", "Flash-Minus=87", "Top-Menus=88",
+            "Popup-Menu=89", "Rakuraku-Start=90", "One-Touch-Time-Rec=91", "One-Touch-View=92", "One-Touch-Rec=93",
+            "One-Touch-Stop=94", "DUX=95", "Football-Mode=96", "Social=97", "Power=98", "Power-On=103", "Sleep=104",
+            "Sleep-Timer=105", "Composite1=107", "Video2=108", "Picture-Mode=110", "Demo-Surround=121", "Hdmi1=124",
+            "Hdmi2=125", "Hdmi3=126", "Hdmi4=127", "Action-Menu=129", "Help=130");
 
     /**
      * Constructs the protocol handler from given parameters. This constructor will create the
@@ -271,7 +289,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                             } else if (type == TYPE_QUERY) {
                                 handleNotification(m, rsp);
                             } else {
-                                logger.error("Unknown command type: {}", cmd);
+                                logger.debug("Unknown command type: {}", cmd);
                             }
                             return true;
                         }
@@ -414,7 +432,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
                 }
             }
         } catch (final TransformationException e) {
-            logger.error("Failed to transform {} using map file '{}', exception={}", irCmd, cmdMap, e.getMessage());
+            logger.debug("Failed to transform {} using map file '{}', exception={}", irCmd, cmdMap, e.getMessage());
             return;
         }
 
@@ -1357,120 +1375,7 @@ class SimpleIpProtocol implements SocketSessionListener, AutoCloseable {
      * @return a non-null, non-empty list of commands
      */
     private List<String> getDefaultCommands() {
-        final List<String> cmds = new ArrayList<String>();
-        // cmds.add("Power-Off=0"); - doesn't seem to be power-off
-        cmds.add("Input=1");
-        cmds.add("Guide=2");
-        cmds.add("EPG=3");
-        cmds.add("Favorites=4");
-        cmds.add("Display=5");
-        cmds.add("Home=6");
-        cmds.add("Options=7");
-        cmds.add("Return=8");
-        cmds.add("Up=9");
-        cmds.add("Down=10");
-        cmds.add("Right=11");
-        cmds.add("Left=12");
-        cmds.add("Confirm=13");
-        cmds.add("Red=14");
-        cmds.add("Green=15");
-        cmds.add("Yellow=16");
-        cmds.add("Blue=17");
-        cmds.add("Num1=18");
-        cmds.add("Num2=19");
-        cmds.add("Num3=20");
-        cmds.add("Num4=21");
-        cmds.add("Num5=22");
-        cmds.add("Num6=23");
-        cmds.add("Num7=24");
-        cmds.add("Num8=25");
-        cmds.add("Num9=26");
-        cmds.add("Num0=27");
-        cmds.add("Num11=28");
-        cmds.add("Num12=29");
-        cmds.add("Volume-Up=30");
-        cmds.add("Volume-Down=31");
-        cmds.add("Mute=32");
-        cmds.add("Channel-Up=33");
-        cmds.add("Channel-Down=34");
-        cmds.add("Subtitle=35");
-        cmds.add("Closed-Caption=36");
-        cmds.add("Enter=37");
-        cmds.add("DOT=38");
-        cmds.add("Analog=39");
-        cmds.add("Teletext=40");
-        cmds.add("Exit=41");
-        cmds.add("Analog2=42");
-        cmds.add("*AD=43");
-        cmds.add("Digital=44");
-        cmds.add("Analog?=45");
-        cmds.add("BS=46");
-        cmds.add("CS=47");
-        cmds.add("BS/CS=48");
-        cmds.add("Ddata=49");
-        cmds.add("Pic-Off=50");
-        cmds.add("Tv_Radio=51");
-        cmds.add("Theater=52");
-        cmds.add("SEN=53");
-        cmds.add("Internet-Widgets=54");
-        cmds.add("Internet-Video=55");
-        cmds.add("Netflix=56");
-        cmds.add("Scene-Select=57");
-        cmds.add("Model3D=58");
-        cmds.add("iManual=59");
-        cmds.add("Audio=60");
-        cmds.add("Wide=61");
-        cmds.add("Jump=62");
-        cmds.add("PAP=63");
-        cmds.add("MyEPG=64");
-        cmds.add("Program-Description=65");
-        cmds.add("Write-Chapter=66");
-        cmds.add("TrackID=67");
-        cmds.add("Ten-Key=68");
-        cmds.add("AppliCast=69");
-        cmds.add("acTVila=70");
-        cmds.add("Delete-Video=71");
-        cmds.add("Photo-Frame=72");
-        cmds.add("TV-Pause=73");
-        cmds.add("Key-Pad=74");
-        cmds.add("Media=75");
-        cmds.add("Sync-Menu=76");
-        cmds.add("Forward=77");
-        cmds.add("Play=78");
-        cmds.add("Rewind=79");
-        cmds.add("Prev=80");
-        cmds.add("Stop=81");
-        cmds.add("Next=82");
-        cmds.add("Rec=83");
-        cmds.add("Pause=84");
-        cmds.add("Eject=85");
-        cmds.add("Flash-Plus=86");
-        cmds.add("Flash-Minus=87");
-        cmds.add("Top-Menus=88");
-        cmds.add("Popup-Menu=89");
-        cmds.add("Rakuraku-Start=90");
-        cmds.add("One-Touch-Time-Rec=91");
-        cmds.add("One-Touch-View=92");
-        cmds.add("One-Touch-Rec=93");
-        cmds.add("One-Touch-Stop=94");
-        cmds.add("DUX=95");
-        cmds.add("Football-Mode=96");
-        cmds.add("Social=97");
-        cmds.add("Power=98");
-        cmds.add("Power-On=103");
-        cmds.add("Sleep=104");
-        cmds.add("Sleep-Timer=105");
-        cmds.add("Composite1=107");
-        cmds.add("Video2=108");
-        cmds.add("Picture-Mode=110");
-        cmds.add("Demo-Surround=121");
-        cmds.add("Hdmi1=124");
-        cmds.add("Hdmi2=125");
-        cmds.add("Hdmi3=126");
-        cmds.add("Hdmi4=127");
-        cmds.add("Action-Menu=129");
-        cmds.add("Help=130");
-        return cmds;
+        return DEFAULT_CMDS;
     }
 
     @Override

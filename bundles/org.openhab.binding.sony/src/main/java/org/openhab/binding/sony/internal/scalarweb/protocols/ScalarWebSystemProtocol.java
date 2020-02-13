@@ -892,7 +892,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                             }
                         }
                     } catch (final TransformationException e) {
-                        logger.error("Failed to transform {} using map file '{}', exception={}", cmd, cmdMap,
+                        logger.debug("Failed to transform {} using map file '{}', exception={}", cmd, cmdMap,
                                 e.getMessage());
                         return;
                     }

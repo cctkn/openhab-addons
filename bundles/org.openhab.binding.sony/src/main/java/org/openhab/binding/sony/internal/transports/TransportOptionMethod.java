@@ -20,17 +20,17 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @author Tim Roberts - Initial contribution
  */
 @NonNullByDefault
-public class TransportOptionMethod implements TransportOption {
+public enum TransportOptionMethod implements TransportOption {
 
     /** Represents a GET method */
-    public static final TransportOptionMethod GET = new TransportOptionMethod();
+    GET,
 
     /** Represents a POST method for XML */
-    public static final TransportOptionMethod POST_XML = new TransportOptionMethod();
+    POST_XML,
 
     /** Represents a POST method for JSON */
-    public static final TransportOptionMethod POST_JSON = new TransportOptionMethod();
+    POST_JSON,
 
     /** Represents a DELETE method */
-    public static final TransportOptionMethod DELETE = new TransportOptionMethod();
+    DELETE
 }

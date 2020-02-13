@@ -72,7 +72,8 @@ public class SonyHttpTransport extends AbstractSonyTransport {
 
         this.requestor.register(new SonyContentTypeFilter());
         this.requestor.register(new SonyAuthFilter(getBaseUri(), () -> {
-            final boolean authNeeded = getOptions(TransportOptionAutoAuth.class).stream().anyMatch(e -> e.isAutoAuth());
+            final boolean authNeeded = getOptions(TransportOptionAutoAuth.class).stream()
+                    .anyMatch(e -> e == TransportOptionAutoAuth.TRUE);
             return authNeeded;
         }));
         this.setOption(TransportOptionAutoAuth.FALSE);
@@ -91,7 +92,7 @@ public class SonyHttpTransport extends AbstractSonyTransport {
                 .findFirst().orElse(oldAutoAuth);
 
         try {
-            if (oldAutoAuth.isAutoAuth() != newAutoAuth.isAutoAuth()) {
+            if (oldAutoAuth != newAutoAuth) {
                 setOption(newAutoAuth);
             }
 
@@ -139,7 +140,7 @@ public class SonyHttpTransport extends AbstractSonyTransport {
                 }
             }
         } finally {
-            if (oldAutoAuth.isAutoAuth() != newAutoAuth.isAutoAuth()) {
+            if (oldAutoAuth != newAutoAuth) {
                 setOption(oldAutoAuth);
             }
         }
