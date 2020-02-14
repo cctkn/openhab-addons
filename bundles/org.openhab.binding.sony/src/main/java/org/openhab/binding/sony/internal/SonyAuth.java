@@ -58,7 +58,7 @@ public class SonyAuth {
     private final Gson gson = GsonUtilities.getApiGson();
 
     /** The callback to get an IRCC client instance */
-    private final @Nullable GetIrccClient getIrccClient;
+    private final @Nullable IrccClientProvider irccClientProvider;
 
     /** The activation URL */
     private final String activationUrl;
@@ -76,16 +76,16 @@ public class SonyAuth {
 
         activationUrl = NetUtil.getSonyUrl(url, ScalarWebService.ACCESSCONTROL);
         activationVersion = ScalarWebMethod.V1_0;
-        getIrccClient = null;
+        irccClientProvider = null;
     }
 
     /**
      * Constructs the authentication with a callback for a IRCC client
      * 
-     * @param getIrccClient a non-null callback
+     * @param irccClientProvider a non-null callback
      */
-    public SonyAuth(final GetIrccClient getIrccClient) {
-        this(getIrccClient, null);
+    public SonyAuth(final IrccClientProvider irccClientProvider) {
+        this(irccClientProvider, null);
     }
 
     /**
@@ -94,9 +94,9 @@ public class SonyAuth {
      * @param getIrccClient a non-null IRCC client
      * @param accessControlService a possibly null access control service
      */
-    public SonyAuth(final GetIrccClient getIrccClient, final @Nullable ScalarWebService accessControlService) {
+    public SonyAuth(final IrccClientProvider getIrccClient, final @Nullable ScalarWebService accessControlService) {
         Objects.requireNonNull(getIrccClient, "getIrccClient cannot be null");
-        this.getIrccClient = getIrccClient;
+        this.irccClientProvider = getIrccClient;
 
         String actUrl = null, actVersion = null;
 
@@ -116,7 +116,7 @@ public class SonyAuth {
      * @return a non-null device id header name
      */
     private String getDeviceIdHeaderName() {
-        final IrccClient irccClient = getIrccClient == null ? null : getIrccClient.getClient();
+        final IrccClient irccClient = irccClientProvider == null ? null : irccClientProvider.getClient();
         final IrccSystemInformation sysInfo = irccClient == null ? null : irccClient.getSystemInformation();
         final String actionHeader = sysInfo == null ? null : sysInfo.getActionHeader();
         return "X-" + StringUtils.defaultIfEmpty(actionHeader, "CERS-DEVICE-ID");
@@ -128,7 +128,7 @@ public class SonyAuth {
      * @return a integer specifying the registration mode or null if none
      */
     private @Nullable Integer getRegistrationMode() {
-        final IrccClient irccClient = getIrccClient == null ? null : getIrccClient.getClient();
+        final IrccClient irccClient = irccClientProvider == null ? null : irccClientProvider.getClient();
         return irccClient == null ? null : irccClient.getRegistrationMode();
     }
 
@@ -138,7 +138,7 @@ public class SonyAuth {
      * @return a non-empty URL if found, null if not
      */
     private @Nullable String getRegistrationUrl() {
-        final IrccClient irccClient = getIrccClient == null ? null : getIrccClient.getClient();
+        final IrccClient irccClient = irccClientProvider == null ? null : irccClientProvider.getClient();
         return irccClient == null ? null
                 : StringUtils.defaultIfEmpty(irccClient.getUrlForAction(IrccClient.AN_REGISTER), null);
     }
@@ -153,7 +153,7 @@ public class SonyAuth {
             return activationUrl;
         }
 
-        final IrccClient irccClient = getIrccClient == null ? null : getIrccClient.getClient();
+        final IrccClient irccClient = irccClientProvider == null ? null : irccClientProvider.getClient();
         return irccClient == null ? null : NetUtil.getSonyUrl(irccClient.getBaseUrl(), ScalarWebService.ACCESSCONTROL);
     }
 
@@ -381,7 +381,7 @@ public class SonyAuth {
      * Functional interface to retrive an IRCC client
      */
     @NonNullByDefault
-    public interface GetIrccClient {
+    public interface IrccClientProvider {
         /**
          * Called when an IRCC client is needed
          * 

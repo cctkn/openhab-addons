@@ -106,6 +106,6 @@ public class AccessResult {
         }
 
         final AccessResult other = (AccessResult) obj;
-        return StringUtils.equalsIgnoreCase(code, other.code);
+        return StringUtils.equals(code, other.code);
     }
 }

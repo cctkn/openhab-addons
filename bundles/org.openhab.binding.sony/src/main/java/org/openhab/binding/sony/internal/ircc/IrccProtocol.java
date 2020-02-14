@@ -818,5 +818,6 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
 
     @Override
     public void close() {
+        transport.close();
     }
 }

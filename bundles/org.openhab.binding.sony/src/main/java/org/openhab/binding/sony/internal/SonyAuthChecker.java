@@ -57,8 +57,15 @@ public class SonyAuthChecker {
     public CheckResult checkResult(final CheckResultCallback callback) {
         Objects.requireNonNull(callback, "callback cannot be null");
 
-        // Check to see if auth
         final String localAccessCode = accessCode;
+
+        // If we have an access code and it's not RQST...
+        // try to set the access code header and check for a good result
+        // This will work in a few different scenarios where a header is required for communications to be successful
+        // If this works - return back that we had an OK using a HEADER (ie OK_HEADER)
+        //
+        // Note: we ignore RQST because we don't want to trigger the pairing screen on a device at this stage
+        // and/or we are cookie based (probably websocket or authentication has been turned off on the device)
         if (localAccessCode != null
                 && !StringUtils.equalsIgnoreCase(ScalarWebConstants.ACCESSCODE_RQST, localAccessCode)) {
             final TransportOptionHeader authHeader = new TransportOptionHeader(
@@ -73,6 +80,8 @@ public class SonyAuthChecker {
             }
         }
 
+        // If we made it here - we are likely not header based but cookie based (or we are not even authenticated)
+        // Attempt the check result without the auth header and return OK_COOKIE is good
         final AccessResult res = callback.checkResult();
         if (res == null) {
             return new CheckResult(CheckResult.OTHER, "Check result returned null");
@@ -81,6 +90,9 @@ public class SonyAuthChecker {
         if (AccessResult.OK.equals(res)) {
             return CheckResult.OK_COOKIE;
         }
+
+        // We aren't either cookie or header based - return the results (likely needs pairing or the screen is off or
+        // not on the main screen)
         return new CheckResult(res);
     }
 

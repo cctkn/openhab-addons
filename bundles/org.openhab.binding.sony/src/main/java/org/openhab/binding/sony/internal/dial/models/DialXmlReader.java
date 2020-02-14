@@ -35,11 +35,11 @@ public class DialXmlReader<T> {
     private final XStream xstream = new XStream(new StaxDriver());
 
     /** The reader for the ROOT XML (see {@link DialRoot}) */
-    public static final DialXmlReader<DialRoot> ROOT = new DialXmlReader<>(
+    static final DialXmlReader<DialRoot> ROOT = new DialXmlReader<>(
             new Class[] { DialRoot.class, DialRoot.RootDevice.class, DialClient.class, DialDeviceInfo.class });
 
     /** The reader for the SERVICE XML (see {@link DialService}) */
-    public static final DialXmlReader<DialService> SERVICE = new DialXmlReader<>(
+    static final DialXmlReader<DialService> SERVICE = new DialXmlReader<>(
             new Class[] { DialService.class, DialApp.class, DialApp.SupportedAction.class });
 
     /** The reader for the APP STATE XML (see {@link DialAppState}) */

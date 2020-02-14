@@ -95,9 +95,7 @@ public abstract class AbstractThingHandler<C extends AbstractConfig> extends Bas
     @Override
     public void initialize() {
         updateStatus(ThingStatus.UNKNOWN, ThingStatusDetail.NONE, "Initializing ...");
-        SonyUtil.cancel(retryConnection.getAndSet(this.scheduler.submit(() -> {
-            doConnect();
-        })));
+        SonyUtil.cancel(retryConnection.getAndSet(this.scheduler.submit(this::doConnect)));
     }
 
     /**
