@@ -94,7 +94,7 @@ A TV with multiple HDMI ports may have a status channel like
 
 ### General Settings
 
-A number of channels below will be marked as a General Setting.
+A number of channels below will be marked as a General Setting (Item Type: GeneralSetting).
 This was Sony's way of describing a setting in a general way.
 A general setting will have one or more channels decribing the setting and may be a combination of different types of channels (dimmers, switches, numbers).
 
@@ -570,16 +570,26 @@ Just the initial status will likely be incorrect.
 ### Video Channels (service ID of "video")
 
 The following list the channels for the video service.
+The video service allows management of the video quality itself.
+
+| Channel Type ID        | Read/Write | Item Type      | Description                                         |
+| ---------------------- | ---------- | -------------- | --------------------------------------------------- |
+| picturequalitysettings | RW         | GeneralSetting | The settings for picture quality                    |
+
+If supported, contains about 20 different quality settings (dimming, mode, color, hdr mode, etc)
+
+### Video Screen Channels (service ID of "videoScreen")
+
+The following list the channels for the video screen service.
 The video service allows management of the video (screen) itself.
 
-| Channel Type ID      | Read/Write | Item Type | Description                                         |
-| -------------------- | ---------- | --------- | --------------------------------------------------- |
-| audiosource          | RW         | String    | The audio source of the screen (speaker, headphone) |
-| bannermode           | RW         | String    | The banner mode (demo)                              |
-| multiscreenmode      | RW         | String    | The multiscreen mode (pip)                          |
-| pipsubscreenposition | RW         | String    | The pip screen position                             |
-| scenesetting         | RW         | String    | The sceen settings                                  |
-
+| Channel Type ID        | Read/Write | Item Type      | Description                                         |
+| ---------------------- | ---------- | -------------- | --------------------------------------------------- |
+| audiosource            | RW         | String         | The audio source of the screen (speaker, headphone) |
+| bannermode             | RW         | String         | The banner mode (demo)                              |
+| multiscreenmode        | RW         | String         | The multiscreen mode (pip)                          |
+| pipsubscreenposition   | RW         | String         | The pip screen position                             |
+| scenesetting           | RW         | String         | The sceen settings                                  |
 
 The values of these channels are pretty much unknown and you'll need to experiment with your device if you wish to use them.
 

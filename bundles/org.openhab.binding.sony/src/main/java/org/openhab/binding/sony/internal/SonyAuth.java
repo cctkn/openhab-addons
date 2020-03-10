@@ -167,7 +167,7 @@ public class SonyAuth {
     public AccessResult requestAccess(final SonyHttpTransport transport, final @Nullable String accessCode) {
         Objects.requireNonNull(transport, "transport cannot be null");
 
-        logger.debug("Requesting access: {}", StringUtils.defaultIfEmpty(accessCode, "(request)"));
+        logger.debug("Requesting access: {}", StringUtils.defaultIfEmpty(accessCode, "(initial)"));
 
         if (accessCode != null) {
             transport.setOption(new TransportOptionHeader(NetUtil.createAccessCodeHeader(accessCode)));
@@ -270,35 +270,36 @@ public class SonyAuth {
 
         // Do the registration first with what the mode says,
         // then try it again with the other mode (so registration mode sometimes lie)
-        final String[] registrationTypes = new String[2];
+        final String[] registrationTypes = new String[3];
         if (getRegistrationMode() == 2) {
             registrationTypes[0] = "new";
             registrationTypes[1] = "initial";
+            registrationTypes[2] = "renewal";
         } else {
             registrationTypes[0] = "initial";
             registrationTypes[1] = "new";
+            registrationTypes[2] = "renewal";
         }
 
         final TransportOption[] headers = accessCode == null ? new TransportOption[0]
                 : new TransportOption[] { new TransportOptionHeader(NetUtil.createAuthHeader(accessCode)) };
-        try {
-            final String rqst = "?name=" + URLEncoder.encode(NetUtil.getDeviceName(), "UTF-8") + "&registrationType="
-                    + registrationTypes[0] + "&deviceId=" + URLEncoder.encode(NetUtil.getDeviceId(), "UTF-8");
-            final HttpResponse resp = transport.executeGet(registrationUrl + rqst, headers);
-            if (resp.getHttpCode() != HttpStatus.BAD_REQUEST_400) {
-                return resp;
+
+        HttpResponse resp = new HttpResponse(HttpStatus.SERVICE_UNAVAILABLE_503, "unavailable");
+        for (String rType : registrationTypes) {
+            try {
+                final String rqst = "?name=" + URLEncoder.encode(NetUtil.getDeviceName(), "UTF-8")
+                        + "&registrationType=" + rType + "&deviceId="
+                        + URLEncoder.encode(NetUtil.getDeviceId(), "UTF-8");
+                resp = transport.executeGet(registrationUrl + rqst, headers);
+                if (resp.getHttpCode() == HttpStatus.OK_200) {
+                    return resp;
+                }
+            } catch (final UnsupportedEncodingException e) {
+                resp = new HttpResponse(HttpStatus.SERVICE_UNAVAILABLE_503, e.toString());
             }
-        } catch (final UnsupportedEncodingException e) {
-            // let it got to the next one...
         }
 
-        try {
-            final String rqst2 = "?name=" + URLEncoder.encode(NetUtil.getDeviceName(), "UTF-8") + "&registrationType="
-                    + registrationTypes[1] + "&deviceId=" + URLEncoder.encode(NetUtil.getDeviceId(), "UTF-8");
-            return transport.executeGet(registrationUrl + rqst2, headers);
-        } catch (final UnsupportedEncodingException e) {
-            return new HttpResponse(HttpStatus.SERVICE_UNAVAILABLE_503, e.toString());
-        }
+        return resp;
     }
 
     /**

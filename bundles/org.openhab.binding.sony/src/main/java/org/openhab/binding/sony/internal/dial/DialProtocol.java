@@ -105,7 +105,6 @@ class DialProtocol<T extends ThingCallback<String>> implements AutoCloseable {
 
         transport = SonyTransportFactory.createHttpTransport(deviceUrlStr);
 
-        SonyUtil.sendWakeOnLan(logger, config.getDeviceIpAddress(), config.getDeviceMacAddress());
         final DialClient dialClient = DialClientFactory.get(this.deviceUrlStr);
         if (dialClient == null) {
             throw new IOException("DialState could not be retrieved from " + deviceAddress);
@@ -131,8 +130,6 @@ class DialProtocol<T extends ThingCallback<String>> implements AutoCloseable {
 
         transport.setOption(TransportOptionAutoAuth.FALSE);
         final SonyAuthChecker authChecker = new SonyAuthChecker(transport, accessCode);
-
-        SonyUtil.sendWakeOnLan(logger, config.getDeviceIpAddress(), config.getDeviceMacAddress());
 
         final CheckResult checkResult = authChecker.checkResult(() -> {
             for (final DialDeviceInfo info : dialClient.getDeviceInfos()) {

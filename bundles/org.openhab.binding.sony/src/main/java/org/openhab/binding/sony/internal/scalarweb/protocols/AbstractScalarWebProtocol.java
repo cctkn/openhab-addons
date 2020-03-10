@@ -528,7 +528,15 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
                 final ScalarWebChannel channel = createChannel(ctgy, id, target, uri);
 
                 final String ui = set.getDeviceUIInfo();
-                if (ui != null && StringUtils.isNotEmpty(ui)) {
+                if (ui == null || StringUtils.isEmpty(ui)) {
+                    if (candidates.size() > 0) {
+                        final GeneralSettingsCandidate candidate = candidates.get(0);
+                        if (candidate != null && candidate.getMax() != null && candidate.getMin() != null
+                                && candidate.getStep() != null) {
+                            channel.addProperty(PROP_DEVICEUI, GeneralSetting.SLIDER);
+                        }
+                    }
+                } else {
                     channel.addProperty(PROP_DEVICEUI, ui);
                 }
                 channel.addProperty(PROP_SETTINGTYPE, settingType);
@@ -697,7 +705,9 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
 
             apiToCtgy.put(getMethodName, ctgy);
 
-        } catch (final IOException e) {
+        } catch (
+
+        final IOException e) {
             // ignore - probably not handled
         }
     }

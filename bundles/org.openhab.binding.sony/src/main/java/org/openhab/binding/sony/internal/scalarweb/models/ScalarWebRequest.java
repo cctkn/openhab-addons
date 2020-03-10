@@ -41,7 +41,7 @@ public class ScalarWebRequest {
      * An incrementing integer for the identifier of this request
      * Note: start at 100 to allow utility method ids (like SonyServlet)
      */
-    private static final AtomicInteger requestId = new AtomicInteger(100);
+    private static final AtomicInteger REQUESTID = new AtomicInteger(100);
 
     /**
      * Instantiates a new scalar web request with no parameters
@@ -65,7 +65,7 @@ public class ScalarWebRequest {
         Validate.notEmpty(version, "version cannot be empty");
         Objects.requireNonNull(params, "params cannot be null");
 
-        this.id = requestId.incrementAndGet();
+        this.id = REQUESTID.incrementAndGet();
         this.method = method;
         this.version = version;
         this.params = params;

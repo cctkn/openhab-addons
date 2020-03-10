@@ -151,11 +151,13 @@ public class ScalarWebMethod {
     public static final String GETAUDIOSOURCESCREEN = "getAudioSourceScreen";
     public static final String GETBANNERMODE = "getBannerMode";
     public static final String GETMULTISCREENMODE = "getMultiScreenMode";
+    public static final String GETPICTUREQUALITYSETTINGS = "getPictureQualitySettings";
     public static final String GETPIPSUBSCREENPOSITION = "getPipSubScreenPosition";
     public static final String GETSCENESETTING = "getSceneSetting";
     public static final String SETAUDIOSOURCESCREEN = "setAudioSourceScreen";
     public static final String SETBANNERMODE = "setBannerMode";
     public static final String SETMULTISCREENMODE = "setMultiScreenMode";
+    public static final String SETPICTUREQUALITYSETTINGS = "setPictureQualitySettings";
     public static final String SETPIPSUBSCREENPOSITION = "setPipSubScreenPosition";
     public static final String SETSCENESETTING = "setSceneSetting";
 

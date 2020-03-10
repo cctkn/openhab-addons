@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The implementation of the protocol handles the Video Scrren service
+ * The implementation of the protocol handles the Video Screen service
  *
  * @author Tim Roberts - Initial contribution
  * @param <T> the generic type for the callback

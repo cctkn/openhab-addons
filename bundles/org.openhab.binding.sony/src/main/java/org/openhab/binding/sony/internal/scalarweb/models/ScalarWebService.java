@@ -62,6 +62,7 @@ public class ScalarWebService implements AutoCloseable {
     public static final String GUIDE = "guide";
     public static final String ILLUMINATION = "illumination";
     public static final String SYSTEM = "system";
+    public static final String VIDEO = "video";
     public static final String VIDEOSCREEN = "videoScreen";
 
     // These are (undocumented) services that I haven't figured out yet
@@ -83,6 +84,7 @@ public class ScalarWebService implements AutoCloseable {
             put(GUIDE, labelFor(GUIDE));
             put(ILLUMINATION, labelFor(ILLUMINATION));
             put(SYSTEM, labelFor(SYSTEM));
+            put(VIDEO, labelFor(VIDEO));
             put(VIDEOSCREEN, labelFor(VIDEOSCREEN));
         }
     });
@@ -355,6 +357,8 @@ public class ScalarWebService implements AutoCloseable {
                 return "Illumination";
             case SYSTEM:
                 return "System";
+            case VIDEO:
+                return "Video";
             case VIDEOSCREEN:
                 return "Video Screen";
             default:

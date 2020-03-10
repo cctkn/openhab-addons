@@ -64,8 +64,22 @@
 		</channels>
 	</channel-group-type>
 
+	<channel-group-type id="scalargroupillumination" advanced="true">
+		<label>Illumnination</label>
+		<channels>
+			<channel id="dynamic" typeId="dynamic" />
+		</channels>
+	</channel-group-type>
+
 	<channel-group-type id="scalargroupsystem">
 		<label>System</label>
+		<channels>
+			<channel id="dynamic" typeId="dynamic" />
+		</channels>
+	</channel-group-type>
+
+	<channel-group-type id="scalargroupvideo">
+		<label>Video</label>
 		<channels>
 			<channel id="dynamic" typeId="dynamic" />
 		</channels>
@@ -91,7 +105,9 @@
 			<channel-group typeId="scalargroupcontentshare" id="contentshare" />
 			<channel-group typeId="scalargroupencryption" id="encryption" />
 			<channel-group typeId="scalargroupguide" id="guide" />
+			<channel-group typeId="scalargroupillumination" id="illumination" />
 			<channel-group typeId="scalargroupsystem" id="system" />
+			<channel-group typeId="scalargroupvideo" id="video" />
 			<channel-group typeId="scalargroupvideoscreen" id="videoScreen" />
 		</channel-groups>
 		<representation-property>ScalarUDN</representation-property>

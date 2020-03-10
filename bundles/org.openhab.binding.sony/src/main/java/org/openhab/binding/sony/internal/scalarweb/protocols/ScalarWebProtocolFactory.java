@@ -93,6 +93,11 @@ public class ScalarWebProtocolFactory<T extends ThingCallback<String>> implement
                             callback, context.getConfig().getIrccUrl()));
                     break;
 
+                case ScalarWebService.VIDEO:
+                    protocols.put(ScalarWebService.VIDEO,
+                            new ScalarWebVideoProtocol<T>(this, context, service, callback));
+                    break;
+
                 case ScalarWebService.VIDEOSCREEN:
                     protocols.put(ScalarWebService.VIDEOSCREEN,
                             new ScalarWebVideoScreenProtocol<T>(this, context, service, callback));

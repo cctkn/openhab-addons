@@ -136,8 +136,6 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
 
         this.transformService = transformService;
 
-        SonyUtil.sendWakeOnLan(logger, config.getDeviceIpAddress(), config.getDeviceMacAddress());
-
         this.irccClient = IrccClientFactory.get(config.getDeviceUrl());
         this.transport = SonyTransportFactory.createHttpTransport(irccClient.getBaseUrl().toExternalForm());
         this.sonyAuth = new SonyAuth(() -> irccClient);
@@ -166,15 +164,21 @@ class IrccProtocol<T extends ThingCallback<String>> implements AutoCloseable {
     LoginUnsuccessfulResponse login() throws IOException {
         transport.setOption(TransportOptionAutoAuth.FALSE);
 
-        SonyUtil.sendWakeOnLan(logger, config.getDeviceIpAddress(), config.getDeviceMacAddress());
         final String accessCode = config.getAccessCode();
 
         final SonyAuthChecker authChecker = new SonyAuthChecker(transport, accessCode);
         final CheckResult checkResult = authChecker.checkResult(() -> {
-            // try to execute a non-existent command. If it worked (lol) or returned a 500 (which means it doesn't
-            // exist).
-            // then we are good (we didn't get a forbidden)
-            final HttpResponse status = irccClient.executeSoap(transport, "nonexistentcommand");
+            // To check our authorization, we execute a non-existent command.
+            // If it worked (200), we need to check further if we can getstatus (BDVs will respond 200
+            // on non-existent command and not authorized)
+            //
+            // If we have 200 (good) or 500 (command not found), we return OK
+            // If we have 403 (unauthorized) or 503 (service not available), we need pairing
+            HttpResponse status = irccClient.executeSoap(transport, "nonexistentcommand");
+            if (status.getHttpCode() == HttpStatus.OK_200) {
+                status = getStatus();
+            }
+
             if (status.getHttpCode() == HttpStatus.OK_200
                     || status.getHttpCode() == HttpStatus.INTERNAL_SERVER_ERROR_500) {
                 return AccessResult.OK;
