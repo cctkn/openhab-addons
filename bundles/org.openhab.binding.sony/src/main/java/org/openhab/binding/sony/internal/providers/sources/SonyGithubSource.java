@@ -207,7 +207,8 @@ public class SonyGithubSource extends AbstractSonySource {
 
         gson = GsonUtilities.getDefaultGsonBuilder()
                 .registerTypeAdapter(MetaConvert.class, new MetaConvertDeserializer())
-                .registerTypeAdapter(MetaInfo.class, new MetaInfoDeserializer()).create();
+                .registerTypeAdapter(MetaInfo.class, new MetaInfoDeserializer())
+                .registerTypeAdapter(SonyDeviceCapability.class, new SonyDeviceCapabilitySerializer()).create();
 
         final String[] apiKeys = new String(Base64.getDecoder().decode(getProperty(properties, PROP_APIKEY)))
                 .split(",");

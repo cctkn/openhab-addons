@@ -720,7 +720,7 @@ Because of this - in addition to writing things locally, the addon will query GI
 Likewise it will upload device thing types/capabilities to allow for quicker diagnosis of new/updated capabilities as sony releases them.
 This is somewhat similar to what the ZWAVE addon does (but uses github as the DB instead).
 
-Please note that the ONLY identifying information being uploaded would be a local IP address and the name you assigned to the device and this will ONLY upload information if your model is new or has changed from the existing one.
+Please note that the ONLY identifying information being uploaded would be the name you assigned to the device and this will ONLY upload information if your model is new or has changed from the existing one.
 
 There are two github repositories this addon works with:
 

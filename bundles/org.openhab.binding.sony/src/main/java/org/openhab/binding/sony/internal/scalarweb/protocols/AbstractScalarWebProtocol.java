@@ -705,9 +705,7 @@ public abstract class AbstractScalarWebProtocol<T extends ThingCallback<String>>
 
             apiToCtgy.put(getMethodName, ctgy);
 
-        } catch (
-
-        final IOException e) {
+        } catch (final IOException e) {
             // ignore - probably not handled
         }
     }
