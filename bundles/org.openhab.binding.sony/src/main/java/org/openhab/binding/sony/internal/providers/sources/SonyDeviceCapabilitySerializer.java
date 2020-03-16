@@ -13,6 +13,7 @@
 package org.openhab.binding.sony.internal.providers.sources;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,6 +21,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.sony.internal.providers.models.SonyDeviceCapability;
 
 /**
@@ -31,7 +33,12 @@ import org.openhab.binding.sony.internal.providers.models.SonyDeviceCapability;
 @NonNullByDefault
 public class SonyDeviceCapabilitySerializer implements JsonSerializer<SonyDeviceCapability> {
     @Override
-    public JsonElement serialize(SonyDeviceCapability src, Type typeOfSrc, JsonSerializationContext context) {
+    public @Nullable JsonElement serialize(SonyDeviceCapability src, @Nullable Type typeOfSrc,
+            @Nullable JsonSerializationContext context) {
+        if (context == null) {
+            return null;
+        }
+
         final JsonElement je = context.serialize(src, typeOfSrc);
         if (je != null && je instanceof JsonObject) {
             final JsonObject jo = je.getAsJsonObject();
