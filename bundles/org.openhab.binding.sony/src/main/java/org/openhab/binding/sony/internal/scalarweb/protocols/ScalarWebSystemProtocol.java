@@ -33,6 +33,8 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.smarthome.core.library.types.DateTimeType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.StringType;
+import org.eclipse.smarthome.core.library.unit.MetricPrefix;
+import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.transform.TransformationException;
@@ -304,7 +306,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                         "scalarsystemstorageformattable", "Storage Formattable Status (" + sourcePart + ")", null));
                 descriptors.add(createDescriptor(createChannel(ST_FORMATTING, id), "String",
                         "scalarsystemstorageformatting", "Storage Formatting Status (" + sourcePart + ")", null));
-                descriptors.add(createDescriptor(createChannel(ST_FREECAPACITYMB, id), "Number",
+                descriptors.add(createDescriptor(createChannel(ST_FREECAPACITYMB, id), "Number:DataAmount",
                         "scalarsystemstoragefreecapacitymb", "Storage Free Capacity (" + sourcePart + ")", null));
                 descriptors.add(createDescriptor(createChannel(ST_ISAVAILABLE, id), "String",
                         "scalarsystemstorageisavailable", "Storage Available Status (" + sourcePart + ")", null));
@@ -316,7 +318,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                         "scalarsystemstoragepermission", "Storage Permission Status (" + sourcePart + ")", null));
                 descriptors.add(createDescriptor(createChannel(ST_POSITION, id), "String",
                         "scalarsystemstorageposition", "Storage Position (" + sourcePart + ")", null));
-                descriptors.add(createDescriptor(createChannel(ST_SYSTEMAREACAPACITYMB, id), "Number",
+                descriptors.add(createDescriptor(createChannel(ST_SYSTEMAREACAPACITYMB, id), "Number:DataAmount",
                         "scalarsystemstoragesystemareacapacitymb", "Storage System Capacity (" + sourcePart + ")",
                         null));
                 descriptors.add(createDescriptor(createChannel(ST_TYPE, id), "String", "scalarsystemstoragetype",
@@ -325,7 +327,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                         "Storage URI (" + sourcePart + ")", null));
                 descriptors.add(createDescriptor(createChannel(ST_VOLUMELABEL, id), "String",
                         "scalarsystemstoragevolumelabel", "Storage Label (" + sourcePart + ")", null));
-                descriptors.add(createDescriptor(createChannel(ST_WHOLECAPACITYMB, id), "Number",
+                descriptors.add(createDescriptor(createChannel(ST_WHOLECAPACITYMB, id), "Number:DataAmount",
                         "scalarsystemstoragewholecapacitymb", "Storage Whole Capacity (" + sourcePart + ")", null));
             }
         } else {
@@ -354,7 +356,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                         "scalarsystemstorageformatstatus", "Storage Format Status (" + sourcePart + ")", null));
                 descriptors.add(createDescriptor(createChannel(ST_FORMATTABLE, id), "String",
                         "scalarsystemstorageformattable", "Storage Formattable Status (" + sourcePart + ")", null));
-                descriptors.add(createDescriptor(createChannel(ST_FREECAPACITYMB, id), "Number",
+                descriptors.add(createDescriptor(createChannel(ST_FREECAPACITYMB, id), "Number:DataAmount",
                         "scalarsystemstoragefreecapacitymb", "Storage Free Capacity (" + sourcePart + ")", null));
                 descriptors.add(createDescriptor(createChannel(ST_HASNONSTANDARDDATA, id), "String",
                         "scalarsystemstoragehasnonstandarddata", "Storage Non-standard Data (" + sourcePart + ")",
@@ -391,13 +393,13 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                         "scalarsystemstorageprotocol", "Storage Protocol (" + sourcePart + ")", null));
                 descriptors.add(createDescriptor(createChannel(ST_REGISTRATIONDATE, id), "String",
                         "scalarsystemstorageregistrationdate", "Storage Registration Date (" + sourcePart + ")", null));
-                descriptors.add(createDescriptor(createChannel(ST_SYSTEMAREACAPACITYMB, id), "Number",
+                descriptors.add(createDescriptor(createChannel(ST_SYSTEMAREACAPACITYMB, id), "Number:DataAmount",
                         "scalarsystemstoragesystemareacapacitymb", "Storage System Capacity (" + sourcePart + ")",
                         null));
-                descriptors.add(createDescriptor(createChannel(ST_TIMESECTOFINALIZE, id), "Number",
+                descriptors.add(createDescriptor(createChannel(ST_TIMESECTOFINALIZE, id), "Number:Time",
                         "scalarsystemstoragetimesectofinalize", "Storage Finalization Time (" + sourcePart + ")",
                         null));
-                descriptors.add(createDescriptor(createChannel(ST_TIMESECTOGETCONTENTS, id), "Number",
+                descriptors.add(createDescriptor(createChannel(ST_TIMESECTOGETCONTENTS, id), "Number:Time",
                         "scalarsystemstoragetimesectogetcontents", "Storage Get Contents Time (" + sourcePart + ")",
                         null));
                 descriptors.add(createDescriptor(createChannel(ST_TYPE, id), "String", "scalarsystemstoragetype",
@@ -408,7 +410,7 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
                         "scalarsystemstorageusbdevicetype", "Storage USB Type (" + sourcePart + ")", null));
                 descriptors.add(createDescriptor(createChannel(ST_VOLUMELABEL, id), "String",
                         "scalarsystemstoragevolumelabel", "Storage Label (" + sourcePart + ")", null));
-                descriptors.add(createDescriptor(createChannel(ST_WHOLECAPACITYMB, id), "Number",
+                descriptors.add(createDescriptor(createChannel(ST_WHOLECAPACITYMB, id), "Number:DataAmount",
                         "scalarsystemstoragewholecapacitymb", "Storage Whole Capacity (" + sourcePart + ")", null));
             }
         }
@@ -1045,17 +1047,20 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
         stateChanged(ST_FORMAT, id, SonyUtil.newStringType(item.getFormat()));
         stateChanged(ST_FORMATTABLE, id, SonyUtil.newStringType(item.getFormattable()));
         stateChanged(ST_FORMATTING, id, SonyUtil.newStringType(item.getFormatting()));
-        stateChanged(ST_FREECAPACITYMB, id, SonyUtil.newDecimalType(item.getFreeCapacityMB()));
+        stateChanged(ST_FREECAPACITYMB, id,
+                SonyUtil.newQuantityType(item.getFreeCapacityMB(), MetricPrefix.MEGA(SmartHomeUnits.BYTE)));
         stateChanged(ST_ISAVAILABLE, id, SonyUtil.newStringType(item.getIsAvailable()));
         stateChanged(ST_LUN, id, SonyUtil.newDecimalType(item.getLun()));
         stateChanged(ST_MOUNTED, id, SonyUtil.newStringType(item.getMounted()));
         stateChanged(ST_PERMISSION, id, SonyUtil.newStringType(item.getPermission()));
         stateChanged(ST_POSITION, id, SonyUtil.newStringType(item.getPosition()));
-        stateChanged(ST_SYSTEMAREACAPACITYMB, id, SonyUtil.newDecimalType(item.getSystemAreaCapacityMB()));
+        stateChanged(ST_SYSTEMAREACAPACITYMB,
+                SonyUtil.newQuantityType(item.getSystemAreaCapacityMB(), MetricPrefix.MEGA(SmartHomeUnits.BYTE)));
         stateChanged(ST_TYPE, id, SonyUtil.newStringType(item.getType()));
         stateChanged(ST_URI, id, SonyUtil.newStringType(uri));
         stateChanged(ST_VOLUMELABEL, id, SonyUtil.newStringType(item.getVolumeLabel()));
-        stateChanged(ST_WHOLECAPACITYMB, id, SonyUtil.newDecimalType(item.getWholeCapacityMB()));
+        stateChanged(ST_WHOLECAPACITYMB, id,
+                SonyUtil.newQuantityType(item.getWholeCapacityMB(), MetricPrefix.MEGA(SmartHomeUnits.BYTE)));
     }
 
     /**
@@ -1081,7 +1086,8 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
         stateChanged(ST_FORMAT, id, SonyUtil.newStringType(item.getFormat()));
         stateChanged(ST_FORMATSTATUS, id, SonyUtil.newStringType(item.getFormatStatus()));
         stateChanged(ST_FORMATTABLE, id, SonyUtil.newStringType(item.getFormattable()));
-        stateChanged(ST_FREECAPACITYMB, id, SonyUtil.newDecimalType(item.getFreeCapacityMB()));
+        stateChanged(ST_FREECAPACITYMB, id,
+                SonyUtil.newQuantityType(item.getFreeCapacityMB(), MetricPrefix.MEGA(SmartHomeUnits.BYTE)));
         stateChanged(ST_HASNONSTANDARDDATA, id, SonyUtil.newStringType(item.getHasNonStandardData()));
         stateChanged(ST_HASUNSUPPORTEDCONTENTS, id, SonyUtil.newStringType(item.getHasUnsupportedContents()));
         stateChanged(ST_ISAVAILABLE, id, SonyUtil.newStringType(item.getIsAvailable()));
@@ -1097,14 +1103,18 @@ class ScalarWebSystemProtocol<T extends ThingCallback<String>> extends AbstractS
         stateChanged(ST_POSITION, id, SonyUtil.newStringType(item.getPosition()));
         stateChanged(ST_PROTOCOL, id, SonyUtil.newStringType(item.getProtocol()));
         stateChanged(ST_REGISTRATIONDATE, id, SonyUtil.newStringType(item.getRegistrationDate()));
-        stateChanged(ST_SYSTEMAREACAPACITYMB, id, SonyUtil.newDecimalType(item.getSystemAreaCapacityMB()));
-        stateChanged(ST_TIMESECTOFINALIZE, id, SonyUtil.newDecimalType(item.getTimeSecToFinalize()));
-        stateChanged(ST_TIMESECTOGETCONTENTS, id, SonyUtil.newDecimalType(item.getTimeSecToGetContents()));
+        stateChanged(ST_SYSTEMAREACAPACITYMB, id,
+                SonyUtil.newQuantityType(item.getSystemAreaCapacityMB(), MetricPrefix.MEGA(SmartHomeUnits.BYTE)));
+        stateChanged(ST_TIMESECTOFINALIZE, id,
+                SonyUtil.newQuantityType(item.getTimeSecToFinalize(), SmartHomeUnits.SECOND));
+        stateChanged(ST_TIMESECTOGETCONTENTS, id,
+                SonyUtil.newQuantityType(item.getTimeSecToGetContents(), SmartHomeUnits.SECOND));
         stateChanged(ST_TYPE, id, SonyUtil.newStringType(item.getType()));
         stateChanged(ST_URI, id, SonyUtil.newStringType(uri));
         stateChanged(ST_USBDEVICETYPE, id, SonyUtil.newStringType(item.getUsbDeviceType()));
         stateChanged(ST_VOLUMELABEL, id, SonyUtil.newStringType(item.getVolumeLabel()));
-        stateChanged(ST_WHOLECAPACITYMB, id, SonyUtil.newDecimalType(item.getWholeCapacityMB()));
+        stateChanged(ST_WHOLECAPACITYMB, id,
+                SonyUtil.newQuantityType(item.getWholeCapacityMB(), MetricPrefix.MEGA(SmartHomeUnits.BYTE)));
     }
 
     /**

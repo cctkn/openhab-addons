@@ -295,21 +295,19 @@ public abstract class AbstractSonySource implements SonySource {
 
                     final List<String> channelValidationMessage = new ArrayList<>();
 
-                    final String mappedId = chl.getMappedChannelId();
                     final String channelId = chl.getChannelId();
                     if (channelId == null || StringUtils.isEmpty(channelId)) {
                         channelValidationMessage.add("Missing channelID element");
                         continue;
                     }
-                    final String chlIdToUse = mappedId == null ? channelId : mappedId;
 
-                    final String groupId = StringUtils.substringBefore(chlIdToUse, "#");
+                    final String groupId = StringUtils.substringBefore(channelId, "#");
                     if (groupId == null || StringUtils.isEmpty(groupId)) {
-                        channelValidationMessage.add("Missing groupID from channelId: " + chlIdToUse);
+                        channelValidationMessage.add("Missing groupID from channelId: " + channelId);
                         continue;
                     }
 
-                    final String idWithoutGroup = StringUtils.substringAfter(chlIdToUse, "#");
+                    final String idWithoutGroup = StringUtils.substringAfter(channelId, "#");
 
                     final String channelType = chl.getChannelType();
                     if (channelType == null || StringUtils.isEmpty(channelType)) {

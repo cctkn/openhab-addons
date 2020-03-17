@@ -330,7 +330,7 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
         final List<SonyThingChannelDefinition> chls = thing.getChannels().stream().filter(channelFilter).map(chl -> {
             final ChannelTypeUID ctuid = chl.getChannelTypeUID();
             return ctuid == null ? null
-                    : new SonyThingChannelDefinition(chl.getUID().getId(), null, ctuid.getId(),
+                    : new SonyThingChannelDefinition(chl.getUID().getId(), ctuid.getId(),
                             new SonyThingStateDefinition(getStateDescription(chl, null, null)), chl.getProperties());
         }).filter(chl -> chl != null).sorted((f, l) -> f.getChannelId().compareToIgnoreCase(l.getChannelId()))
                 .collect(Collectors.toList());

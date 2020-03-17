@@ -13,7 +13,6 @@
 package org.openhab.binding.sony.internal.providers.sources;
 
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

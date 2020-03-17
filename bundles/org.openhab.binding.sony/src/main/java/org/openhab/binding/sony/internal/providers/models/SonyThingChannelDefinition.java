@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -35,9 +34,6 @@ import org.eclipse.jdt.annotation.Nullable;
 public class SonyThingChannelDefinition {
     /** The channel identifier */
     private @Nullable String channelId;
-
-    /** The mapped channel identifier (null if no mapping) */
-    private @Nullable String mappedChannelId;
 
     /** The channel type identifier */
     private @Nullable String channelType;
@@ -58,20 +54,18 @@ public class SonyThingChannelDefinition {
      * Constructs the definition from the passed arguments.
      *
      * @param channelId the non-null, non-empty channel identifier
-     * @param mappedChannelId the possibly null, possibly empty mapped channel identifier
      * @param channelType the non-null, non-empty channel type
      * @param state the non-null thing state definition
      * @param properties the non-null, possibly empty properties
      */
-    public SonyThingChannelDefinition(final String channelId, final @Nullable String mappedChannelId,
-            final String channelType, final SonyThingStateDefinition state, final Map<String, String> properties) {
+    public SonyThingChannelDefinition(final String channelId, final String channelType,
+            final SonyThingStateDefinition state, final Map<String, String> properties) {
         Validate.notEmpty(channelId, "channelId must not be empty");
         Validate.notEmpty(channelType, "channelType must not be empty");
         Objects.requireNonNull(state, "state cannot be null");
         Objects.requireNonNull(properties, "properties cannot be null");
 
         this.channelId = channelId;
-        this.mappedChannelId = mappedChannelId;
         this.channelType = channelType;
         this.properties = new HashMap<>(properties);
         this.state = state;
@@ -84,15 +78,6 @@ public class SonyThingChannelDefinition {
      */
     public @Nullable String getChannelId() {
         return channelId;
-    }
-
-    /**
-     * Returns the mapped channel identifier
-     *
-     * @return a possibly null, never empty (if not null) mapped channel identifier
-     */
-    public @Nullable String getMappedChannelId() {
-        return StringUtils.defaultIfEmpty(mappedChannelId, null);
     }
 
     /**
@@ -125,7 +110,7 @@ public class SonyThingChannelDefinition {
 
     @Override
     public String toString() {
-        return "SonyThingChannelDefinition [channelId=" + channelId + ", mappedChannelId=" + mappedChannelId
-                + ", channelType=" + channelType + ", properties=" + properties + ", state=" + state + "]";
+        return "SonyThingChannelDefinition [channelId=" + channelId + ", channelType=" + channelType + ", properties="
+                + properties + ", state=" + state + "]";
     }
 }

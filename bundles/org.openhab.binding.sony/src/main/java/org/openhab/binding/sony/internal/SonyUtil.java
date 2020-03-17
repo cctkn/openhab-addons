@@ -26,6 +26,9 @@ import java.util.TreeSet;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.measure.Quantity;
+import javax.measure.Unit;
+
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -35,6 +38,7 @@ import org.eclipse.smarthome.core.common.AbstractUID;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
+import org.eclipse.smarthome.core.library.types.QuantityType;
 import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.types.State;
@@ -134,6 +138,30 @@ public class SonyUtil {
      */
     public static State newStringType(final @Nullable String str) {
         return str == null ? UnDefType.UNDEF : new StringType(str);
+    }
+
+    /**
+     * Returns a new quantity type or UnDefType.UNDEF if the integer is null
+     *
+     * @param itgr the possibly null integer
+     * @param unit a non-null unit
+     * @return either a QuantityType or UnDefType.UNDEF is null
+     */
+    public static <T extends Quantity<T>> State newQuantityType(final @Nullable Integer itgr, final Unit<T> unit) {
+        Objects.requireNonNull(unit, "unit cannot be null");
+        return itgr == null ? UnDefType.UNDEF : new QuantityType<T>(itgr, unit);
+    }
+
+    /**
+     * Returns a new quantity type or UnDefType.UNDEF if the double is null
+     *
+     * @param dbl the possibly null double
+     * @param unit a non-null unit
+     * @return either a QuantityType or UnDefType.UNDEF is null
+     */
+    public static <T extends Quantity<T>> State newQuantityType(final @Nullable Double dbl, final Unit<T> unit) {
+        Objects.requireNonNull(unit, "unit cannot be null");
+        return dbl == null ? UnDefType.UNDEF : new QuantityType<T>(dbl, unit);
     }
 
     /**

@@ -42,6 +42,8 @@ import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.RawType;
 import org.eclipse.smarthome.core.library.types.StringType;
+import org.eclipse.smarthome.core.library.unit.MetricPrefix;
+import org.eclipse.smarthome.core.library.unit.SmartHomeUnits;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.StateDescription;
@@ -446,9 +448,9 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             descriptors.add(createDescriptor(createChannel(CN_DIRECTREMOTENUM), "Number",
                     "scalarwebavcontrolcontentdirectremotenum"));
             descriptors.add(createDescriptor(createChannel(CN_DISPNUM), "String", "scalarwebavcontrolcontentdispnum"));
-            descriptors.add(
-                    createDescriptor(createChannel(CN_DURATIONSEC), "Number", "scalarwebavcontrolcontentdurationsec"));
-            descriptors.add(createDescriptor(createChannel(CN_FILESIZEBYTE), "Number",
+            descriptors.add(createDescriptor(createChannel(CN_DURATIONSEC), "Number:Time",
+                    "scalarwebavcontrolcontentdurationsec"));
+            descriptors.add(createDescriptor(createChannel(CN_FILESIZEBYTE), "Number:DataAmount",
                     "scalarwebavcontrolcontentfilesizebyte"));
             descriptors.add(createDescriptor(createChannel(CN_ISALREADYPLAYED), "String",
                     "scalarwebavcontrolcontentisalreadyplayed"));
@@ -485,11 +487,11 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             descriptors.add(createDescriptor(createChannel(CN_DIRECTREMOTENUM), "Number",
                     "scalarwebavcontrolcontentdirectremotenum"));
             descriptors.add(createDescriptor(createChannel(CN_DISPNUM), "String", "scalarwebavcontrolcontentdispnum"));
-            descriptors.add(
-                    createDescriptor(createChannel(CN_DURATIONSEC), "Number", "scalarwebavcontrolcontentdurationsec"));
+            descriptors.add(createDescriptor(createChannel(CN_DURATIONSEC), "Number:Time",
+                    "scalarwebavcontrolcontentdurationsec"));
             descriptors.add(createDescriptor(createChannel(CN_EPGVISIBILITY), "String",
                     "scalarwebavcontrolcontentepgvisibility"));
-            descriptors.add(createDescriptor(createChannel(CN_FILESIZEBYTE), "Number",
+            descriptors.add(createDescriptor(createChannel(CN_FILESIZEBYTE), "Number:DataAmount",
                     "scalarwebavcontrolcontentfilesizebyte"));
             descriptors.add(createDescriptor(createChannel(CN_ISALREADYPLAYED), "String",
                     "scalarwebavcontrolcontentisalreadyplayed"));
@@ -509,7 +511,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                     "scalarwebavcontrolcontentprogrammediatype"));
             descriptors.add(
                     createDescriptor(createChannel(CN_PROGRAMNUM), "Number", "scalarwebavcontrolcontentprogramnum"));
-            descriptors.add(createDescriptor(createChannel(CN_SIZEMB), "Number", "scalarwebavcontrolcontentsizemb"));
+            descriptors.add(
+                    createDescriptor(createChannel(CN_SIZEMB), "Number:DataAmount", "scalarwebavcontrolcontentsizemb"));
             descriptors.add(createDescriptor(createChannel(CN_STARTDATETIME), "String",
                     "scalarwebavcontrolcontentstartdatetime"));
             descriptors.add(
@@ -538,7 +541,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                     createDescriptor(createChannel(CN_AUDIOCODEC), "String", "scalarwebavcontrolcontentaudiocodec"));
             descriptors.add(createDescriptor(createChannel(CN_AUDIOFREQUENCY), "String",
                     "scalarwebavcontrolcontentaudiofrequency"));
-            descriptors.add(createDescriptor(createChannel(CN_BROADCASTFREQ), "Number",
+            descriptors.add(createDescriptor(createChannel(CN_BROADCASTFREQ), "Number:Frequency",
                     "scalarwebavcontrolcontentbroadcastfreq"));
             descriptors.add(createDescriptor(createChannel(CN_BROADCASTFREQBAND), "String",
                     "scalarwebavcontrolcontentbroadcastband"));
@@ -557,12 +560,12 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             descriptors.add(createDescriptor(createChannel(CN_DIRECTREMOTENUM), "Number",
                     "scalarwebavcontrolcontentdirectremotenum"));
             descriptors.add(createDescriptor(createChannel(CN_DISPNUM), "String", "scalarwebavcontrolcontentdispnum"));
-            descriptors.add(createDescriptor(createChannel(CN_DURATIONMSEC), "Number",
+            descriptors.add(createDescriptor(createChannel(CN_DURATIONMSEC), "Number:Time",
                     "scalarwebavcontrolcontentdurationmsec"));
             descriptors.add(createDescriptor(createChannel(CN_EPGVISIBILITY), "String",
                     "scalarwebavcontrolcontentepgvisibility"));
             descriptors.add(createDescriptor(createChannel(CN_FILENO), "String", "scalarwebavcontrolcontentfileno"));
-            descriptors.add(createDescriptor(createChannel(CN_FILESIZEBYTE), "Number",
+            descriptors.add(createDescriptor(createChannel(CN_FILESIZEBYTE), "Number:DataAmount",
                     "scalarwebavcontrolcontentfilesizebyte"));
             descriptors
                     .add(createDescriptor(createChannel(CN_FOLDERNO), "String", "scalarwebavcontrolcontentfolderno"));
@@ -599,7 +602,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                     createDescriptor(createChannel(CN_PROGRAMNUM), "Number", "scalarwebavcontrolcontentprogramnum"));
             descriptors.add(createDescriptor(createChannel(CN_REMOTEPLAYTYPE), "String",
                     "scalarwebavcontrolcontentremoteplaytype"));
-            descriptors.add(createDescriptor(createChannel(CN_SIZEMB), "Number", "scalarwebavcontrolcontentsizemb"));
+            descriptors.add(
+                    createDescriptor(createChannel(CN_SIZEMB), "Number:DataAmount", "scalarwebavcontrolcontentsizemb"));
             descriptors.add(createDescriptor(createChannel(CN_STARTDATETIME), "String",
                     "scalarwebavcontrolcontentstartdatetime"));
             descriptors.add(
@@ -635,7 +639,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                     createDescriptor(createChannel(CN_BIVLASSETID), "String", "scalarwebavcontrolcontentbivlassetid"));
             descriptors.add(createDescriptor(createChannel(CN_BIVLPROVIDER), "String",
                     "scalarwebavcontrolcontentbivlprovider"));
-            descriptors.add(createDescriptor(createChannel(CN_BROADCASTFREQ), "Number",
+            descriptors.add(createDescriptor(createChannel(CN_BROADCASTFREQ), "Number:Frequency",
                     "scalarwebavcontrolcontentbroadcastfreq"));
             descriptors.add(createDescriptor(createChannel(CN_BROADCASTFREQBAND), "String",
                     "scalarwebavcontrolcontentbroadcastband"));
@@ -679,15 +683,15 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             descriptors.add(createDescriptor(createChannel(CN_DISPNUM), "String", "scalarwebavcontrolcontentdispnum"));
             // descriptors.add(createDescriptor(createChannel(CN_DUBBINGINFO), "String",
             // "scalarwebavcontrolcontextdubbingInfo")); // todo
-            descriptors.add(createDescriptor(createChannel(CN_DURATIONMSEC), "Number",
+            descriptors.add(createDescriptor(createChannel(CN_DURATIONMSEC), "Number:Time",
                     "scalarwebavcontrolcontentdurationmsec"));
-            descriptors.add(
-                    createDescriptor(createChannel(CN_DURATIONSEC), "Number", "scalarwebavcontrolcontentdurationsec"));
+            descriptors.add(createDescriptor(createChannel(CN_DURATIONSEC), "Number:Time",
+                    "scalarwebavcontrolcontentdurationsec"));
             descriptors.add(createDescriptor(createChannel(CN_EPGVISIBILITY), "String",
                     "scalarwebavcontrolcontentepgvisibility"));
             descriptors.add(createDescriptor(createChannel(CN_EVENTID), "String", "scalarwebavcontrolcontenteventid"));
             descriptors.add(createDescriptor(createChannel(CN_FILENO), "String", "scalarwebavcontrolcontentfileno"));
-            descriptors.add(createDescriptor(createChannel(CN_FILESIZEBYTE), "Number",
+            descriptors.add(createDescriptor(createChannel(CN_FILESIZEBYTE), "Number:DataAmount",
                     "scalarwebavcontrolcontentfilesizebyte"));
             descriptors
                     .add(createDescriptor(createChannel(CN_FOLDERNO), "String", "scalarwebavcontrolcontentfolderno"));
@@ -756,7 +760,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
             descriptors.add(
                     createDescriptor(createChannel(CN_REPEATTYPE), "String", "scalarwebavcontrolcontentrepeattype"));
             descriptors.add(createDescriptor(createChannel(CN_SERVICE), "String", "scalarwebavcontrolcontentservice"));
-            descriptors.add(createDescriptor(createChannel(CN_SIZEMB), "Number", "scalarwebavcontrolcontentsizemb"));
+            descriptors.add(
+                    createDescriptor(createChannel(CN_SIZEMB), "Number:DataAmount", "scalarwebavcontrolcontentsizemb"));
             descriptors.add(createDescriptor(createChannel(CN_SOURCE), "String", "scalarwebavcontrolcontentsource"));
             descriptors.add(
                     createDescriptor(createChannel(CN_SOURCELABEL), "String", "scalarwebavcontrolcontentsourcelabel"));
@@ -938,7 +943,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                 descriptors.add(createDescriptor(createChannel(PL_DISPNUM, id, uri), "String",
                         "scalarwebavcontrolpldispnum", prefix + "Display Number", null));
 
-                descriptors.add(createDescriptor(createChannel(PL_DURATIONSEC, id, uri), "Number",
+                descriptors.add(createDescriptor(createChannel(PL_DURATIONSEC, id, uri), "Number:Time",
                         "scalarwebavcontrolpldurationsec", prefix + "Duraction (in seconds)", null));
 
                 descriptors.add(createDescriptor(createChannel(PL_MEDIATYPE, id, uri), "String",
@@ -986,7 +991,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                         "scalarwebavcontrolplaudiocodec", prefix + "Audio Codec", null));
                 descriptors.add(createDescriptor(createChannel(PL_AUDIOFREQUENCY, id, uri), "String",
                         "scalarwebavcontrolplaudiofrequency", prefix + "Audio Frequency", null));
-                descriptors.add(createDescriptor(createChannel(PL_BROADCASTFREQ, id, uri), "Number",
+                descriptors.add(createDescriptor(createChannel(PL_BROADCASTFREQ, id, uri), "Number:Frequency",
                         "scalarwebavcontrolplbroadcastfreq", prefix + "Broadcast Frequency", null));
                 descriptors.add(createDescriptor(createChannel(PL_BROADCASTFREQBAND, id, uri), "String",
                         "scalarwebavcontrolplbroadcastfreqband", prefix + "Broadcast Frequency Band", null));
@@ -1006,7 +1011,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                         "scalarwebavcontrolpldabensemblelabel", prefix + "DAB Ensemble Label", null));
                 descriptors.add(createDescriptor(createChannel(PL_DABSERVICELABEL, id, uri), "String",
                         "scalarwebavcontrolpldabservicelabel", prefix + "DAB Service Label", null));
-                descriptors.add(createDescriptor(createChannel(PL_DURATIONMSEC, id, uri), "Number",
+                descriptors.add(createDescriptor(createChannel(PL_DURATIONMSEC, id, uri), "Number:Time",
                         "scalarwebavcontrolpldurationmsec", prefix + "Duration (in milliseconds)", null));
                 descriptors.add(createDescriptor(createChannel(PL_FILENO, id, uri), "String",
                         "scalarwebavcontrolplfileno", prefix + "File Number", null));
@@ -1030,9 +1035,9 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                         "scalarwebavcontrolplplaystepspeed", prefix + "Play Step Speed", null));
                 descriptors.add(createDescriptor(createChannel(PL_PODCASTNAME, id, uri), "String",
                         "scalarwebavcontrolplpodcastname", prefix + "Podcast Name", null));
-                descriptors.add(createDescriptor(createChannel(PL_POSITIONMSEC, id, uri), "Number",
+                descriptors.add(createDescriptor(createChannel(PL_POSITIONMSEC, id, uri), "Number:Time",
                         "scalarwebavcontrolplpositionmsec", prefix + "Position (in milliseconds)", null));
-                descriptors.add(createDescriptor(createChannel(PL_POSITIONSEC, id, uri), "Number",
+                descriptors.add(createDescriptor(createChannel(PL_POSITIONSEC, id, uri), "Number:Time",
                         "scalarwebavcontrolplpositionsec", prefix + "Position (in seconds)", null));
                 descriptors.add(createDescriptor(createChannel(PL_REPEATTYPE, id, uri), "String",
                         "scalarwebavcontrolplrepeattype", prefix + "Repeat Type", null));
@@ -1612,8 +1617,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
         stateChanged(CN_DIRECTREMOTENUM, SonyUtil.newDecimalType(clr.getDirectRemoteNum()));
         stateChanged(CN_DISPNUM, SonyUtil.newStringType(clr.getDispNum()));
-        stateChanged(CN_DURATIONSEC, SonyUtil.newDecimalType(clr.getDurationSec()));
-        stateChanged(CN_FILESIZEBYTE, SonyUtil.newDecimalType(clr.getFileSizeByte()));
+        stateChanged(CN_DURATIONSEC, SonyUtil.newQuantityType(clr.getDurationSec(), SmartHomeUnits.SECOND));
+        stateChanged(CN_FILESIZEBYTE, SonyUtil.newQuantityType(clr.getFileSizeByte(), SmartHomeUnits.BYTE));
         stateChanged(CN_ISALREADYPLAYED,
                 SonyUtil.newStringType(Boolean.toString(BooleanUtils.toBoolean(clr.isAlreadyPlayed()))));
         stateChanged(CN_ISPROTECTED,
@@ -1653,8 +1658,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
         stateChanged(CN_DIRECTREMOTENUM, SonyUtil.newDecimalType(clr.getDirectRemoteNum()));
         stateChanged(CN_DISPNUM, SonyUtil.newStringType(clr.getDispNum()));
-        stateChanged(CN_DURATIONSEC, SonyUtil.newDecimalType(clr.getDurationSec()));
-        stateChanged(CN_FILESIZEBYTE, SonyUtil.newDecimalType(clr.getFileSizeByte()));
+        stateChanged(CN_DURATIONSEC, SonyUtil.newQuantityType(clr.getDurationSec(), SmartHomeUnits.SECOND));
+        stateChanged(CN_FILESIZEBYTE, SonyUtil.newQuantityType(clr.getFileSizeByte(), SmartHomeUnits.BYTE));
         stateChanged(CN_ISALREADYPLAYED,
                 SonyUtil.newStringType(Boolean.toString(BooleanUtils.toBoolean(clr.isAlreadyPlayed()))));
         stateChanged(CN_ISPROTECTED,
@@ -1668,7 +1673,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         stateChanged(CN_PRODUCTID, SonyUtil.newStringType(clr.getProductID()));
         stateChanged(CN_PROGRAMMEDIATYPE, SonyUtil.newStringType(clr.getProgramMediaType()));
         stateChanged(CN_PROGRAMNUM, SonyUtil.newDecimalType(clr.getProgramNum()));
-        stateChanged(CN_SIZEMB, SonyUtil.newDecimalType(clr.getSizeMB()));
+        stateChanged(CN_SIZEMB, SonyUtil.newQuantityType(clr.getSizeMB(), MetricPrefix.MEGA(SmartHomeUnits.BYTE)));
 
         stateChanged(CN_STARTDATETIME, SonyUtil.newStringType(clr.getStartDateTime()));
         stateChanged(CN_STORAGEURI, SonyUtil.newStringType(clr.getStorageUri()));
@@ -1704,7 +1709,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
                     Arrays.stream(audioInfo).map(ai -> ai.getFrequency()).collect(Collectors.joining(","))));
         }
 
-        stateChanged(CN_BROADCASTFREQ, SonyUtil.newDecimalType(clr.getBroadcastFreq()));
+        stateChanged(CN_BROADCASTFREQ, SonyUtil.newQuantityType(clr.getBroadcastFreq(), SmartHomeUnits.HERTZ));
         stateChanged(CN_BROADCASTFREQBAND, SonyUtil.newStringType(clr.getBroadcastFreqBand()));
         stateChanged(CN_CHANNELNAME, SonyUtil.newStringType(clr.getChannelName()));
 
@@ -1719,9 +1724,10 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
         stateChanged(CN_DIRECTREMOTENUM, SonyUtil.newDecimalType(clr.getDirectRemoteNum()));
         stateChanged(CN_DISPNUM, SonyUtil.newStringType(clr.getDispNum()));
-        stateChanged(CN_DURATIONMSEC, SonyUtil.newDecimalType(clr.getDurationMSec()));
+        stateChanged(CN_DURATIONMSEC,
+                SonyUtil.newQuantityType(clr.getDurationMSec(), MetricPrefix.MILLI(SmartHomeUnits.SECOND)));
         stateChanged(CN_FILENO, SonyUtil.newStringType(clr.getFileNo()));
-        stateChanged(CN_FILESIZEBYTE, SonyUtil.newDecimalType(clr.getFileSizeByte()));
+        stateChanged(CN_FILESIZEBYTE, SonyUtil.newQuantityType(clr.getFileSizeByte(), SmartHomeUnits.BYTE));
         stateChanged(CN_FOLDERNO, SonyUtil.newStringType(clr.getFolderNo()));
         stateChanged(CN_GENRE, SonyUtil.newStringType(clr.getGenre()));
         stateChanged(CN_IS3D, SonyUtil.newStringType(clr.is3D()));
@@ -1748,7 +1754,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         stateChanged(CN_PROGRAMMEDIATYPE, SonyUtil.newStringType(clr.getProgramMediaType()));
         stateChanged(CN_PROGRAMNUM, SonyUtil.newDecimalType(clr.getProgramNum()));
         stateChanged(CN_REMOTEPLAYTYPE, SonyUtil.newStringType(clr.getRemotePlayType()));
-        stateChanged(CN_SIZEMB, SonyUtil.newDecimalType(clr.getSizeMB()));
+        stateChanged(CN_SIZEMB, SonyUtil.newQuantityType(clr.getSizeMB(), MetricPrefix.MEGA(SmartHomeUnits.BYTE)));
 
         stateChanged(CN_STARTDATETIME, SonyUtil.newStringType(clr.getStartDateTime()));
         stateChanged(CN_STORAGEURI, SonyUtil.newStringType(clr.getStorageUri()));
@@ -1800,7 +1806,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
         final BroadcastFreq bf = clr.getBroadcastFreq();
         if (bf != null) {
-            stateChanged(CN_BROADCASTFREQ, SonyUtil.newDecimalType(bf.getFrequency()));
+            stateChanged(CN_BROADCASTFREQ, SonyUtil.newQuantityType(bf.getFrequency(), SmartHomeUnits.HERTZ));
             stateChanged(CN_BROADCASTFREQBAND, SonyUtil.newStringType(bf.getBand()));
         }
         stateChanged(CN_CHANNELNAME, SonyUtil.newStringType(clr.getChannelName()));
@@ -1837,13 +1843,14 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
 
         final Duration duration = clr.getDuration();
         if (duration != null) {
-            stateChanged(CN_DURATIONMSEC, SonyUtil.newDecimalType(duration.getSeconds()));
-            stateChanged(CN_DURATIONSEC, SonyUtil.newDecimalType(duration.getMillseconds()));
+            stateChanged(CN_DURATIONMSEC,
+                    SonyUtil.newQuantityType(duration.getMillseconds(), MetricPrefix.MILLI(SmartHomeUnits.SECOND)));
+            stateChanged(CN_DURATIONSEC, SonyUtil.newQuantityType(duration.getSeconds(), SmartHomeUnits.SECOND));
         }
 
         stateChanged(CN_EVENTID, SonyUtil.newStringType(clr.getEventId()));
         stateChanged(CN_FILENO, SonyUtil.newStringType(clr.getFileNo()));
-        stateChanged(CN_FILESIZEBYTE, SonyUtil.newDecimalType(clr.getFileSizeByte()));
+        stateChanged(CN_FILESIZEBYTE, SonyUtil.newQuantityType(clr.getFileSizeByte(), SmartHomeUnits.BYTE));
         stateChanged(CN_FOLDERNO, SonyUtil.newStringType(clr.getFolderNo()));
         stateChanged(CN_GENRE, SonyUtil.newStringType(clr.getGenre()));
         stateChanged(CN_GLOBALPLAYBACKCOUNT, SonyUtil.newDecimalType(clr.getGlobalPlaybackCount()));
@@ -1882,7 +1889,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         stateChanged(CN_REMOTEPLAYTYPE, SonyUtil.newStringType(clr.getRemotePlayType()));
         stateChanged(CN_REPEATTYPE, SonyUtil.newStringType(clr.getRepeatType()));
         stateChanged(CN_SERVICE, SonyUtil.newStringType(clr.getService()));
-        stateChanged(CN_SIZEMB, SonyUtil.newDecimalType(clr.getSizeMB()));
+        stateChanged(CN_SIZEMB, SonyUtil.newQuantityType(clr.getSizeMB(), MetricPrefix.MEGA(SmartHomeUnits.BYTE)));
         stateChanged(CN_SOURCE, SonyUtil.newStringType(clr.getSource()));
         stateChanged(CN_SOURCELABEL, SonyUtil.newStringType(clr.getSourceLabel()));
 
@@ -2046,7 +2053,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         stateChanged(PL_BIVLPROVIDER, id, SonyUtil.newStringType(pci.getBivlProvider()));
         stateChanged(PL_BIVLSERVICEID, id, SonyUtil.newStringType(pci.getBivlServiceId()));
         stateChanged(PL_DISPNUM, id, SonyUtil.newStringType(pci.getDispNum()));
-        stateChanged(PL_DURATIONSEC, id, SonyUtil.newDecimalType(pci.getDurationSec()));
+        stateChanged(PL_DURATIONSEC, id, SonyUtil.newQuantityType(pci.getDurationSec(), SmartHomeUnits.SECOND));
         stateChanged(PL_MEDIATYPE, id, SonyUtil.newStringType(pci.getMediaType()));
         stateChanged(PL_ORIGINALDISPNUM, id, SonyUtil.newStringType(pci.getOriginalDispNum()));
         stateChanged(PL_PLAYSPEED, id, SonyUtil.newStringType(pci.getPlaySpeed()));
@@ -2131,7 +2138,7 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         stateChanged(PL_AUDIOFREQUENCY, id, SonyUtil.newStringType(
                 ais == null ? null : Arrays.stream(ais).map(a -> a.getFrequency()).collect(Collectors.joining(","))));
 
-        stateChanged(PL_BROADCASTFREQ, id, SonyUtil.newDecimalType(pci.getBroadcastFreq()));
+        stateChanged(PL_BROADCASTFREQ, id, SonyUtil.newQuantityType(pci.getBroadcastFreq(), SmartHomeUnits.HERTZ));
         stateChanged(PL_BROADCASTFREQBAND, id, SonyUtil.newStringType(pci.getBroadcastFreqBand()));
         stateChanged(PL_CHANNELNAME, id, SonyUtil.newStringType(pci.getChannelName()));
         stateChanged(PL_CHAPTERCOUNT, id, SonyUtil.newDecimalType(pci.getChapterCount()));
@@ -2144,7 +2151,8 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         stateChanged(PL_DABENSEMBLELABEL, id, SonyUtil.newStringType(di == null ? null : di.getEnsembleLabel()));
         stateChanged(PL_DABSERVICELABEL, id, SonyUtil.newStringType(di == null ? null : di.getServiceLabel()));
 
-        stateChanged(PL_DURATIONMSEC, id, SonyUtil.newDecimalType(pci.getDurationMsec()));
+        stateChanged(PL_DURATIONMSEC, id,
+                SonyUtil.newQuantityType(pci.getDurationMsec(), MetricPrefix.MILLI(SmartHomeUnits.SECOND)));
         stateChanged(PL_FILENO, id, SonyUtil.newStringType(pci.getFileNo()));
         stateChanged(PL_GENRE, id, SonyUtil.newStringType(pci.getGenre()));
         stateChanged(PL_INDEX, id, SonyUtil.newDecimalType(pci.getIndex()));
@@ -2156,8 +2164,9 @@ class ScalarWebAvContentProtocol<T extends ThingCallback<String>> extends Abstra
         stateChanged(PL_PLAYLISTNAME, id, SonyUtil.newStringType(pci.getPlaylistName()));
         stateChanged(PL_PLAYSTEPSPEED, id, SonyUtil.newDecimalType(pci.getPlayStepSpeed()));
         stateChanged(PL_PODCASTNAME, id, SonyUtil.newStringType(pci.getPodcastName()));
-        stateChanged(PL_POSITIONMSEC, id, SonyUtil.newDecimalType(pci.getPositionMsec()));
-        stateChanged(PL_POSITIONSEC, id, SonyUtil.newDecimalType(pci.getPositionSec()));
+        stateChanged(PL_POSITIONMSEC, id,
+                SonyUtil.newQuantityType(pci.getPositionMsec(), MetricPrefix.MILLI(SmartHomeUnits.SECOND)));
+        stateChanged(PL_POSITIONSEC, id, SonyUtil.newQuantityType(pci.getPositionSec(), SmartHomeUnits.SECOND));
         stateChanged(PL_REPEATTYPE, id, SonyUtil.newStringType(pci.getRepeatType()));
         stateChanged(PL_SERVICE, id, SonyUtil.newStringType(pci.getService()));
         stateChanged(PL_SOURCELABEL, id, SonyUtil.newStringType(pci.getSourceLabel()));
