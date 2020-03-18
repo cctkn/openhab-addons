@@ -271,8 +271,8 @@
 	<channel-type id="scalarsystemstoragefreecapacitymb" advanced="true">
 		<item-type>Number:DataAmount</item-type>
 		<label>Storage Free Capacity</label>
-		<description>The storage free capacity (in MB)</description>
-		<state readOnly="true" />
+		<description>The storage free capacity</description>
+		<state readOnly="true" pattern="%d %unit%" />
 	</channel-type>
 
 	<channel-type id="scalarsystemstoragehasnonstandarddata" advanced="true">
@@ -383,22 +383,22 @@
 	<channel-type id="scalarsystemstoragesystemareacapacitymb" advanced="true">
 		<item-type>Number:DataAmount</item-type>
 		<label>Storage System Capacity</label>
-		<description>The storage system capacity (in MB)</description>
-		<state readOnly="true" />
+		<description>The storage system capacity</description>
+		<state readOnly="true" pattern="%d %unit%" />
 	</channel-type>
 
 	<channel-type id="scalarsystemstoragetimesectofinalize" advanced="true">
 		<item-type>Number:Time</item-type>
 		<label>Storage Time to Finalize</label>
-		<description>The time (in seconds) to finalize</description>
-		<state readOnly="true" />
+		<description>The time to finalize</description>
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarsystemstoragetimesectogetcontents" advanced="true">
 		<item-type>Number:Time</item-type>
 		<label>Storage Time to Get Contents</label>
-		<description>The time (in seconds) to get storage contents</description>
-		<state readOnly="true" />
+		<description>The time to get storage contents</description>
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarsystemstoragetype" advanced="true">
@@ -432,7 +432,7 @@
 	<channel-type id="scalarsystemstoragewholecapacitymb" advanced="true">
 		<item-type>Number:DataAmount</item-type>
 		<label>Storage Whole Capacity</label>
-		<description>The storage whole capacity (in MB)</description>
+		<description>The storage whole capacity</description>
 		<state readOnly="true" />
 	</channel-type>
 
@@ -684,8 +684,8 @@
 	<channel-type id="scalarwebavcontrolcontentfilesizebyte" advanced="true">
 		<item-type>Number:DataAmount</item-type>
 		<label>Content File Size</label>
-		<description>The content file size (in bytes)</description>
-		<state readOnly="true" />
+		<description>The content file size</description>
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolcontentisprotected" advanced="true">
@@ -739,15 +739,15 @@
 	<channel-type id="scalarwebavcontrolcontentdurationsec" advanced="true">
 		<item-type>Number:Time</item-type>
 		<label>Content Duration</label>
-		<description>The duration (in seconds) of the content</description>
-		<state readOnly="true" />
+		<description>The duration of the content</description>
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolcontentdurationmsec" advanced="true">
 		<item-type>Number:Time</item-type>
 		<label>Content Duration</label>
-		<description>The duration (in milliseconds) of the content</description>
-		<state readOnly="true" />
+		<description>The duration of the content</description>
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolcontentaudiocodec" advanced="true">
@@ -809,8 +809,8 @@
 	<channel-type id="scalarwebavcontrolcontentsizemb" advanced="true">
 		<item-type>Number:DataAmount</item-type>
 		<label>Content Size</label>
-		<description>Size of the content (in MB)</description>
-		<state readOnly="true" />
+		<description>Size of the content</description>
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolcontentcreatedtime" advanced="true">
@@ -908,7 +908,7 @@
 		<item-type>Number:Frequency</item-type>
 		<label>Content Broadcast Freq</label>
 		<description>Content Broadcast Frequency</description>
-		<state readOnly="true" />
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolcontentbroadcastband" advanced="true">
@@ -1374,8 +1374,8 @@
 	<channel-type id="scalarwebavcontrolpldurationsec" advanced="true">
 		<item-type>Number:Time</item-type>
 		<label>Playing Duration</label>
-		<description>The duration (in seconds) of the content currently playing</description>
-		<state readOnly="true" />
+		<description>The duration of the content currently playing</description>
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolplmediatype" advanced="true">
@@ -1444,22 +1444,22 @@
 	<channel-type id="scalarwebavcontrolplpositionsec" advanced="true">
 		<item-type>Number:Time</item-type>
 		<label>Playing Position Seconds</label>
-		<description>The current position (in seconds) of the content currently playing</description>
-		<state readOnly="true" />
+		<description>The current position of the content currently playing</description>
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolplpositionmsec" advanced="true">
 		<item-type>Number:Time</item-type>
 		<label>Playing Position MilliSeconds</label>
-		<description>The current position (in ms) of the content currently playing</description>
-		<state readOnly="true" />
+		<description>The current position of the content currently playing</description>
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolpldurationmsec" advanced="true">
 		<item-type>Number:Time</item-type>
 		<label>Playing Duration MilliSeconds</label>
-		<description>The current duration (in ms) of the content currently playing</description>
-		<state readOnly="true" />
+		<description>The current duration of the content currently playing</description>
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolplplaystepspeed" advanced="true">
@@ -1564,7 +1564,7 @@
 		<item-type>Number:Frequency</item-type>
 		<label>Playing Broadcast Frequency</label>
 		<description>The broad cast frequency of the content currently playing</description>
-		<state readOnly="true" />
+		<state readOnly="true" pattern="%d %unit%"/>
 	</channel-type>
 
 	<channel-type id="scalarwebavcontrolplbroadcastfreqband" advanced="true">

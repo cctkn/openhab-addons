@@ -202,63 +202,63 @@ Please note the following acyronyms are used:
 | BIVL | Sony Bravia Internet Link  |
 | DAB  | Digital Audio Broadcasting |
 
-| Channel Type ID      | Read/Write | Item Type | Description                       |
-| -------------------- | ---------- | --------- | --------------------------------- |
-| pl_albumname         | R          | String    | Album name                        |
-| pl_applicationname   | R          | String    | Application name                  |
-| pl_artist            | R          | String    | Artist                            |
-| pl_audiochannel      | R          | String    | Audio channel                     |
-| pl_audiocodec        | R          | String    | Audio codec                       |
-| pl_audiofrequency    | R          | String    | Audio frequency                   |
-| pl_bivlassetid       | R          | String    | BIVL asset id                     |
-| pl_bivlprovider      | R          | String    | BIVL provider                     |
-| pl_bivlserviceid     | R          | String    | BIVL service id                   |
-| pl_broadcastfreq     | R          | Number    | Broadcasting frequency            |
-| pl_broadcastfreqband | R          | String    | Broadcasting frequency band       |
-| pl_channelname       | R          | String    | Channel name                      |
-| pl_chaptercount      | R          | Number    | Chapter count                     |
-| pl_chapterindex      | R          | Number    | Chapter index                     |
-| pl_cmd               | RW (1)     | String    | Playing command                   |
-| pl_contentkind       | R          | String    | Content kind                      |
-| pl_dabcomponentlabel | R          | String    | DAB component label               |
-| pl_dabdynamiclabel   | R          | String    | DAB dynamic label                 |
-| pl_dabensemblelabel  | R          | String    | DAB ensemble label                |
-| pl_dabservicelabel   | R          | String    | DAB service label                 |
-| pl_dispnum           | R          | String    | Display number                    |
-| pl_durationmsec      | R          | Number    | Duration (ms)                     |
-| pl_durationsec       | R          | Number    | Duration (sec)                    |
-| pl_fileno            | R          | String    | File number                       |
-| pl_genre             | R          | String    | Genre                             |
-| pl_index             | R          | Number    | Index number                      |
-| pl_is3d              | R          | String    | 3D setting                        |
-| pl_mediatype         | R          | String    | Media type                        |
-| pl_originaldispnum   | R          | String    | Original display number           |
-| pl_output            | R          | String    | Output                            |
-| pl_parentindex       | R          | Number    | Parent index                      |
-| pl_parenturi         | R          | String    | Parent URI                        |
-| pl_path              | R          | String    | Path to content                   |
-| pl_playlistname      | R          | String    | Playlist name                     |
-| pl_playspeed         | R          | String    | Playing speed                     |
-| pl_playstepspeed     | R          | Number    | Playing step speed                |
-| pl_podcastname       | R          | String    | Podcast name                      |
-| pl_positionmsec      | R          | Number    | Position (ms)                     |
-| pl_positionsec       | R          | Number    | Position (sec)                    |
-| pl_presetid          | RW (1)     | Number    | Preset identifier                 |
-| pl_programnum        | R          | Number    | Program number                    |
-| pl_programtitle      | R          | String    | Program title                     |
-| pl_repeattype        | R          | String    | Repeat type                       |
-| pl_service           | R          | String    | Service identifier                |
-| pl_source            | R          | String    | Source                            |
-| pl_sourcelabel       | R          | String    | Source label                      |
-| pl_startdatetime     | R          | String    | Start date/time                   |
-| pl_state             | R          | String    | Current state                     |
-| pl_statesupplement   | R          | String    | Supplemental information to state |
-| pl_subtitleindex     | R          | Number    | Subtitle index                    |
-| pl_title             | R          | String    | Title                             |
-| pl_totalcount        | R          | Number    | Total count                       |
-| pl_tripletstr        | R          | String    | Triplet string                    |
-| pl_uri               | R          | String    | URI                               |
-| pl_videocodec        | R          | String    | Video codec                       |
+| Channel Type ID      | Read/Write | Item Type         | Description                       |
+| -------------------- | ---------- | ----------------- | --------------------------------- |
+| pl_albumname         | R          | String            | Album name                        |
+| pl_applicationname   | R          | String            | Application name                  |
+| pl_artist            | R          | String            | Artist                            |
+| pl_audiochannel      | R          | String            | Audio channel                     |
+| pl_audiocodec        | R          | String            | Audio codec                       |
+| pl_audiofrequency    | R          | String            | Audio frequency                   |
+| pl_bivlassetid       | R          | String            | BIVL asset id                     |
+| pl_bivlprovider      | R          | String            | BIVL provider                     |
+| pl_bivlserviceid     | R          | String            | BIVL service id                   |
+| pl_broadcastfreq     | R          | Number:Frequency  | Broadcasting frequency            |
+| pl_broadcastfreqband | R          | String            | Broadcasting frequency band       |
+| pl_channelname       | R          | String            | Channel name                      |
+| pl_chaptercount      | R          | Number            | Chapter count                     |
+| pl_chapterindex      | R          | Number            | Chapter index                     |
+| pl_cmd               | RW (1)     | String            | Playing command                   |
+| pl_contentkind       | R          | String            | Content kind                      |
+| pl_dabcomponentlabel | R          | String            | DAB component label               |
+| pl_dabdynamiclabel   | R          | String            | DAB dynamic label                 |
+| pl_dabensemblelabel  | R          | String            | DAB ensemble label                |
+| pl_dabservicelabel   | R          | String            | DAB service label                 |
+| pl_dispnum           | R          | String            | Display number                    |
+| pl_durationmsec      | R          | Number:DataAmount | Duration                          |
+| pl_durationsec       | R          | Number:DataAmount | Duration                          |
+| pl_fileno            | R          | String            | File number                       |
+| pl_genre             | R          | String            | Genre                             |
+| pl_index             | R          | Number            | Index number                      |
+| pl_is3d              | R          | String            | 3D setting                        |
+| pl_mediatype         | R          | String            | Media type                        |
+| pl_originaldispnum   | R          | String            | Original display number           |
+| pl_output            | R          | String            | Output                            |
+| pl_parentindex       | R          | Number            | Parent index                      |
+| pl_parenturi         | R          | String            | Parent URI                        |
+| pl_path              | R          | String            | Path to content                   |
+| pl_playlistname      | R          | String            | Playlist name                     |
+| pl_playspeed         | R          | String            | Playing speed                     |
+| pl_playstepspeed     | R          | Number            | Playing step speed                |
+| pl_podcastname       | R          | String            | Podcast name                      |
+| pl_positionmsec      | R          | Number:DataAmount | Position                          |
+| pl_positionsec       | R          | Number:DataAmount | Position                          |
+| pl_presetid          | RW (1)     | Number            | Preset identifier                 |
+| pl_programnum        | R          | Number            | Program number                    |
+| pl_programtitle      | R          | String            | Program title                     |
+| pl_repeattype        | R          | String            | Repeat type                       |
+| pl_service           | R          | String            | Service identifier                |
+| pl_source            | R          | String            | Source                            |
+| pl_sourcelabel       | R          | String            | Source label                      |
+| pl_startdatetime     | R          | String            | Start date/time                   |
+| pl_state             | R          | String            | Current state                     |
+| pl_statesupplement   | R          | String            | Supplemental information to state |
+| pl_subtitleindex     | R          | Number            | Subtitle index                    |
+| pl_title             | R          | String            | Title                             |
+| pl_totalcount        | R          | Number            | Total count                       |
+| pl_tripletstr        | R          | String            | Triplet string                    |
+| pl_uri               | R          | String            | URI                               |
+| pl_videocodec        | R          | String            | Video codec                       |
 
 1. The playing command supports the following:
 
@@ -374,93 +374,93 @@ Please note the following acyronyms are used:
 | DAB  | Digital Audio Broadcasting |
 | EPG  | Electronic Program Guide   |
 
-| Channel Type ID             | Read/Write | Item Type | Description                      |
-| --------------------------- | ---------- | --------- | -------------------------------- |
-| cn_albumname                | R          | String    | Album name                       |
-| cn_applicationname          | R          | String    | Application name                 |
-| cn_artist                   | R          | String    | Artist                           |
-| cn_audiochannel             | R          | String    | Audio channel                    |
-| cn_audiocodec               | R          | String    | Audio codec                      |
-| cn_audiofrequency           | R          | String    | Audio frequency                  |
-| cn_bivlserviceid            | R          | String    | BIVL service id                  |
-| cn_bivleassetid             | R          | String    | BIVL asset id                    |
-| cn_bivlprovider             | R          | String    | BIVL provider                    |
-| cn_broadcastfreq            | R          | Number    | Broadcast frequency              |
-| cn_broadcastfreqband        | R          | String    | Broadcase frequency band         |
-| cn_channelname              | R          | String    | Channel name                     |
-| cn_channelsurfingvisibility | RW (4)     | String    | Visibility setting for surfing   |
-| cn_chaptercount             | R          | Number    | Chapter count                    |
-| cn_chapterindex             | R          | Number    | Chapter index                    |
-| cn_childcount               | R (1)      | Number    | Count of children                |
-| cn_clipcount                | R          | Number    | Clip count                       |
-| cn_cmd                      | RW (2)     | String    | Content command                  |
-| cn_contentkind              | R          | String    | Content kind                     |
-| cn_contenttype              | R          | String    | Content type                     |
-| cn_createdtime              | R          | String    | Content created date/time        |
-| cn_dabcomponentlabel        | R          | String    | DAB component label              |
-| cn_dabdynamiclabel          | R          | String    | DAB dynamic label                |
-| cn_dabensemblelabel         | R          | String    | DAB ensemble label               |
-| cn_dabservicelabel          | R          | String    | DAB service label                |
-| cn_description              | R          | String    | Content description              |
-| cn_directremotenum          | R          | Number    | Direct remote number             |
-| cn_dispnum                  | R          | String    | Display number                   |
-| cn_durationmsec             | R          | Number    | Duration (ms)                    |
-| cn_durationsec              | R          | Number    | Duration (sec)                   |
-| cn_epgvisibility            | RW (4)     | String    | Visibility setting for EPG       |
-| cn_eventid                  | R          | String    | Event identifier                 |
-| cn_fileno                   | R          | String    | File number                      |
-| cn_filesizebyte             | R          | Number    | File size (byte)                 |
-| cn_folderno                 | R          | String    | Folder number                    |
-| cn_genre                    | R          | String    | Genre                            |
-| cn_globalplaybackcount      | R          | Number    | Global playback count            |
-| cn_hasresume                | R (3)      | String    | Can resume                       |
-| cn_idx                      | RW (1)     | Number    | Content index number             |
-| cn_is3d                     | R (3)      | String    | 3D setting                       |
-| cn_is4k                     | R (3)      | String    | 4K setting                       |
-| cn_isalreadyplayed          | R (3)      | String    | Already played setting           |
-| cn_isautodelete             | R (3)      | String    | Auto delete setting              |
-| cn_isbrowsable              | R (3)      | String    | Whether browsesable or not       |
-| cn_isnew                    | R (3)      | String    | Whether new or not               |
-| cn_isplayable               | R (3)      | String    | Whether playable or not          |
-| cn_isplaylist               | R (3)      | String    | Whether a playlist or not        |
-| cn_isprotected              | RW (3)     | String    | Whether protected or not         |
-| cn_issoundphoto             | R (3)      | String    | Whether a sound photo or not     |
-| cn_mediatype                | R          | String    | Media type                       |
-| cn_originaldispnum          | R          | String    | Original display number          |
-| cn_output                   | R          | String    | Possible output                  |
-| cn_parentalcountry          | R          | String    | Parental rating country          |
-| cn_parentalrating           | R          | String    | Parental rating                  |
-| cn_parentalsystem           | R          | String    | Parental rating system           |
-| cn_parentindex              | R          | Number    | Parent index                     |
-| cn_parenturi                | RW (1)     | String    | Parent content URI               |
-| cn_path                     | R          | String    | Path to content                  |
-| cn_playlistname             | R          | String    | Playlist name                    |
-| cn_podcastname              | R          | String    | PODcast name                     |
-| cn_productid                | R          | String    | Product identifier               |
-| cn_programmediatype         | R          | String    | Program media type               |
-| cn_programnum               | R          | Number    | Program number                   |
-| cn_programservicetype       | R          | String    | Program serivce type             |
-| cn_programtitle             | R          | String    | Program title                    |
-| cn_remoteplaytype           | R          | String    | Remote play type                 |
-| cn_repeattype               | R          | String    | Repeat type                      |
-| cn_service                  | R          | String    | Service type                     |
-| cn_sizemb                   | R          | Number    | Size (MB)                        |
-| cn_source                   | R          | String    | Source                           |
-| cn_sourcelabel              | R          | String    | Source label                     |
-| cn_startdatetime            | R          | String    | Start date/time                  |
-| cn_state                    | R          | String    | Current state                    |
-| cn_statesupplement          | R          | String    | Supplementl information to state |
-| cn_storageuri               | R          | String    | Storage URI                      |
-| cn_subtitlelanguage         | R          | String    | Subtitle language                |
-| cn_subtitletitle            | R          | String    | Subtitle title                   |
-| cn_synccontentpriority      | R          | String    | Synchronized content priority    |
-| cn_title                    | R          | String    | Content title                    |
-| cn_totalcount               | R          | Number    | Total count                      |
-| cn_tripletstr               | R          | String    | Triplet string                   |
-| cn_uri                      | R (1)      | String    | Content URI                      |
-| cn_usercontentflag          | R          | Switch    | User content flag                |
-| cn_videocodec               | R          | String    | Video codec                      |
-| cn_visibility               | RW (4)     | String    | General visibility setting       |
+| Channel Type ID             | Read/Write | Item Type         | Description                      |
+| --------------------------- | ---------- | ----------------- | -------------------------------- |
+| cn_albumname                | R          | String            | Album name                       |
+| cn_applicationname          | R          | String            | Application name                 |
+| cn_artist                   | R          | String            | Artist                           |
+| cn_audiochannel             | R          | String            | Audio channel                    |
+| cn_audiocodec               | R          | String            | Audio codec                      |
+| cn_audiofrequency           | R          | String            | Audio frequency                  |
+| cn_bivlserviceid            | R          | String            | BIVL service id                  |
+| cn_bivleassetid             | R          | String            | BIVL asset id                    |
+| cn_bivlprovider             | R          | String            | BIVL provider                    |
+| cn_broadcastfreq            | R          | Number:Frequency  | Broadcast frequency              |
+| cn_broadcastfreqband        | R          | String            | Broadcase frequency band         |
+| cn_channelname              | R          | String            | Channel name                     |
+| cn_channelsurfingvisibility | RW (4)     | String            | Visibility setting for surfing   |
+| cn_chaptercount             | R          | Number            | Chapter count                    |
+| cn_chapterindex             | R          | Number            | Chapter index                    |
+| cn_childcount               | R (1)      | Number            | Count of children                |
+| cn_clipcount                | R          | Number            | Clip count                       |
+| cn_cmd                      | RW (2)     | String            | Content command                  |
+| cn_contentkind              | R          | String            | Content kind                     |
+| cn_contenttype              | R          | String            | Content type                     |
+| cn_createdtime              | R          | String            | Content created date/time        |
+| cn_dabcomponentlabel        | R          | String            | DAB component label              |
+| cn_dabdynamiclabel          | R          | String            | DAB dynamic label                |
+| cn_dabensemblelabel         | R          | String            | DAB ensemble label               |
+| cn_dabservicelabel          | R          | String            | DAB service label                |
+| cn_description              | R          | String            | Content description              |
+| cn_directremotenum          | R          | Number            | Direct remote number             |
+| cn_dispnum                  | R          | String            | Display number                   |
+| cn_durationmsec             | R          | Number:DataAmount | Duration                         |
+| cn_durationsec              | R          | Number:DataAmount | Duration                         |
+| cn_epgvisibility            | RW (4)     | String            | Visibility setting for EPG       |
+| cn_eventid                  | R          | String            | Event identifier                 |
+| cn_fileno                   | R          | String            | File number                      |
+| cn_filesizebyte             | R          | Number:DataAmount | File size                        |
+| cn_folderno                 | R          | String            | Folder number                    |
+| cn_genre                    | R          | String            | Genre                            |
+| cn_globalplaybackcount      | R          | Number            | Global playback count            |
+| cn_hasresume                | R (3)      | String            | Can resume                       |
+| cn_idx                      | RW (1)     | Number            | Content index number             |
+| cn_is3d                     | R (3)      | String            | 3D setting                       |
+| cn_is4k                     | R (3)      | String            | 4K setting                       |
+| cn_isalreadyplayed          | R (3)      | String            | Already played setting           |
+| cn_isautodelete             | R (3)      | String            | Auto delete setting              |
+| cn_isbrowsable              | R (3)      | String            | Whether browsesable or not       |
+| cn_isnew                    | R (3)      | String            | Whether new or not               |
+| cn_isplayable               | R (3)      | String            | Whether playable or not          |
+| cn_isplaylist               | R (3)      | String            | Whether a playlist or not        |
+| cn_isprotected              | RW (3)     | String            | Whether protected or not         |
+| cn_issoundphoto             | R (3)      | String            | Whether a sound photo or not     |
+| cn_mediatype                | R          | String            | Media type                       |
+| cn_originaldispnum          | R          | String            | Original display number          |
+| cn_output                   | R          | String            | Possible output                  |
+| cn_parentalcountry          | R          | String            | Parental rating country          |
+| cn_parentalrating           | R          | String            | Parental rating                  |
+| cn_parentalsystem           | R          | String            | Parental rating system           |
+| cn_parentindex              | R          | Number            | Parent index                     |
+| cn_parenturi                | RW (1)     | String            | Parent content URI               |
+| cn_path                     | R          | String            | Path to content                  |
+| cn_playlistname             | R          | String            | Playlist name                    |
+| cn_podcastname              | R          | String            | PODcast name                     |
+| cn_productid                | R          | String            | Product identifier               |
+| cn_programmediatype         | R          | String            | Program media type               |
+| cn_programnum               | R          | Number            | Program number                   |
+| cn_programservicetype       | R          | String            | Program serivce type             |
+| cn_programtitle             | R          | String            | Program title                    |
+| cn_remoteplaytype           | R          | String            | Remote play type                 |
+| cn_repeattype               | R          | String            | Repeat type                      |
+| cn_service                  | R          | String            | Service type                     |
+| cn_sizemb                   | R          | Number:DataAmount | Size                             |
+| cn_source                   | R          | String            | Source                           |
+| cn_sourcelabel              | R          | String            | Source label                     |
+| cn_startdatetime            | R          | String            | Start date/time                  |
+| cn_state                    | R          | String            | Current state                    |
+| cn_statesupplement          | R          | String            | Supplementl information to state |
+| cn_storageuri               | R          | String            | Storage URI                      |
+| cn_subtitlelanguage         | R          | String            | Subtitle language                |
+| cn_subtitletitle            | R          | String            | Subtitle title                   |
+| cn_synccontentpriority      | R          | String            | Synchronized content priority    |
+| cn_title                    | R          | String            | Content title                    |
+| cn_totalcount               | R          | Number            | Total count                      |
+| cn_tripletstr               | R          | String            | Triplet string                   |
+| cn_uri                      | R (1)      | String            | Content URI                      |
+| cn_usercontentflag          | R          | Switch            | User content flag                |
+| cn_videocodec               | R          | String            | Video codec                      |
+| cn_visibility               | RW (4)     | String            | General visibility setting       |
 
 1. Please refer to "Using Content" section for more information
 2. The only command supported is "select" to start playing the content
@@ -510,51 +510,52 @@ The CEC service allows management of the HDMI CEC settings.
 The following list the channels for the system service.
 The system service allows management of general system settings.
 
-| Channel Type ID                 | Read/Write | Item Type      | Description                                           |
-| ------------------------------- | ---------- | -------------- | ----------------------------------------------------- |
-| currenttime                     | R          | DateTime       | Current time of the device (format depends on device) |
-| ledindicatorstatus              | RW (1)     | String         | LED indicator status                                  |
-| powersavingsmode                | RW (2)     | String         | The power savings mode                                |
-| wolmode                         | RW         | Switch         | Whether WOL is enabled                                |
-| language                        | RW         | String         | The langauge used                                     |
-| reboot                          | RW (3)     | Switch         | Whether to reboot the device                          |
-| syscmd                          | RW (4)     | String         | The IRCC command to send                              |
-| postalcode                      | RW         | String         | The postal code of the device                         |
-| devicemiscsettings              | RW         | GeneralSetting | Misc device settings (timezones, auot update, etc)    |
-| powersettings                   | RW         | GeneralSetting | The power settings (wol, standby, etc)                |
-| sleepsettings                   | RW         | GeneralSetting | The sleep timer settings                              |
-| wutangsettings                  | RW         | GeneralSetting | The wutang settings (google cast settings)            |
-| st_devicename-{src}             | R (5)      | String         | The storage device name                               |
-| st_error-{src}                  | R (5)      | String         | Any storage errors                                    |
-| st_filesystem-{src}             | R (5)      | String         | The storage file system                               |
-| st_finalizestatus-{src}         | R (5)      | String         | The storage finalization status                       |
-| st_format-{src}                 | R (5)      | String         | The storage format                                    |
-| st_formatstatus-{src}           | R (5)      | String         | The storage format status                             |
-| st_formattable-{src}            | R (5)      | String         | The storage formattable status                        |
-| st_formatting-{src}             | R (5)      | String         | Whether the storage is formatting                     |
-| st_freecapacitymb-{src}         | R (5)      | Number         | The storage free space (in MB)                        |
-| st_hasnonstandarddata-{src}     | R (5)      | String         | Whether the storage has non-standard data             |
-| st_hasunsupportedcontents-{src} | R (5)      | String         | Whether the storage has unsupported contents          |
-| st_isavailable-{src}            | R (5)      | String         | Whether the storage is available                      |
-| st_islocked-{src}               | R (5)      | String         | Whether the storage is locked                         |
-| st_ismanagementinfofull-{src}   | R (5)      | String         | Whether the storage management info is full           |
-| st_isprotected-{src}            | R (5)      | String         | Whether the storage is protected                      |
-| st_isregistered-{src}           | R (5)      | String         | Whether the storage is registered                     |
-| st_isselfrecorded-{src}         | R (5)      | String         | Whether the storage is self recorded                  |
-| st_issqvsupported-{src}         | R (5)      | String         | Whether the storage is SQV (standard quality voice)   |
-| st_lun-{src}                    | R (5)      | Number         | The storage LUN (logical unit number)                 |
-| st_mounted-{src}                | R (5)      | String         | The storage mount status                              |
-| st_permission-{src}             | R (5)      | String         | The storage permission                                |
-| st_position-{src}               | R (5)      | String         | The storage position (front, back, internal, etc)     |
-| st_protocol-{src}               | R (5)      | String         | The storage protocol                                  |
-| st_registrationdate-{src}       | R (5)      | String         | The storage registration date                         |
-| st_systemareacapacitymb-{src}   | R (5)      | Number         | The storage system capacity (in MB)                   |
-| st_timesectofinalize-{src}      | R (5)      | Number         | The time (in seconds) to finalize                     |
-| st_timesectogetcontents-{src}   | R (5)      | Number         | The time (in seconds) to get contents                 |
-| st_type-{src}                   | R (5)      | String         | The storage type                                      |
-| st_uri-{src}                    | R (5)      | String         | The storage URI                                       |
-| st_usbdevicetype-{src}          | R (5)      | String         | The storage USB device type                           |
-| st_volumelabel-{src}            | R (5)      | String         | The storage label                                     |
+| Channel Type ID                 | Read/Write | Item Type         | Description                                           |
+| ------------------------------- | ---------- | ----------------- | ----------------------------------------------------- |
+| currenttime                     | R          | DateTime          | Current time of the device (format depends on device) |
+| ledindicatorstatus              | RW (1)     | String            | LED indicator status                                  |
+| powersavingsmode                | RW (2)     | String            | The power savings mode                                |
+| wolmode                         | RW         | Switch            | Whether WOL is enabled                                |
+| language                        | RW         | String            | The langauge used                                     |
+| reboot                          | RW (3)     | Switch            | Whether to reboot the device                          |
+| syscmd                          | RW (4)     | String            | The IRCC command to send                              |
+| postalcode                      | RW         | String            | The postal code of the device                         |
+| devicemiscsettings              | RW         | GeneralSetting    | Misc device settings (timezones, auot update, etc)    |
+| powersettings                   | RW         | GeneralSetting    | The power settings (wol, standby, etc)                |
+| sleepsettings                   | RW         | GeneralSetting    | The sleep timer settings                              |
+| wutangsettings                  | RW         | GeneralSetting    | The wutang settings (google cast settings)            |
+| st_devicename-{src}             | R (5)      | String            | The storage device name                               |
+| st_error-{src}                  | R (5)      | String            | Any storage errors                                    |
+| st_filesystem-{src}             | R (5)      | String            | The storage file system                               |
+| st_finalizestatus-{src}         | R (5)      | String            | The storage finalization status                       |
+| st_format-{src}                 | R (5)      | String            | The storage format                                    |
+| st_formatstatus-{src}           | R (5)      | String            | The storage format status                             |
+| st_formattable-{src}            | R (5)      | String            | The storage formattable status                        |
+| st_formatting-{src}             | R (5)      | String            | Whether the storage is formatting                     |
+| st_freecapacitymb-{src}         | R (5)      | Number:DataAmount | The storage free space                                |
+| st_hasnonstandarddata-{src}     | R (5)      | String            | Whether the storage has non-standard data             |
+| st_hasunsupportedcontents-{src} | R (5)      | String            | Whether the storage has unsupported contents          |
+| st_isavailable-{src}            | R (5)      | String            | Whether the storage is available                      |
+| st_islocked-{src}               | R (5)      | String            | Whether the storage is locked                         |
+| st_ismanagementinfofull-{src}   | R (5)      | String            | Whether the storage management info is full           |
+| st_isprotected-{src}            | R (5)      | String            | Whether the storage is protected                      |
+| st_isregistered-{src}           | R (5)      | String            | Whether the storage is registered                     |
+| st_isselfrecorded-{src}         | R (5)      | String            | Whether the storage is self recorded                  |
+| st_issqvsupported-{src}         | R (5)      | String            | Whether the storage is SQV (standard quality voice)   |
+| st_lun-{src}                    | R (5)      | Number            | The storage LUN (logical unit number)                 |
+| st_mounted-{src}                | R (5)      | String            | The storage mount status                              |
+| st_permission-{src}             | R (5)      | String            | The storage permission                                |
+| st_position-{src}               | R (5)      | String            | The storage position (front, back, internal, etc)     |
+| st_protocol-{src}               | R (5)      | String            | The storage protocol                                  |
+| st_registrationdate-{src}       | R (5)      | String            | The storage registration date                         |
+| st_systemareacapacitymb-{src}   | R (5)      | Number:DataAmount | The storage system capacity                           |
+| st_timesectofinalize-{src}      | R (5)      | Number:Time       | The time to finalize                                  |
+| st_timesectogetcontents-{src}   | R (5)      | Number:Time       | The time to get contents                              |
+| st_type-{src}                   | R (5)      | String            | The storage type                                      |
+| st_uri-{src}                    | R (5)      | String            | The storage URI                                       |
+| st_usbdevicetype-{src}          | R (5)      | String            | The storage USB device type                           |
+| st_volumelabel-{src}            | R (5)      | String            | The storage label                                     |
+| st_wholeCapacityMB-{src}        | R (5)      | Number:DataAmount | The storage whole capacity                            |
 
 1. Sets the LED status - generally "Off", "Low" or "High" (there may be others specific to your device like "AutoBrightnessAdjust")
 2. Sets the power savings mode - generally "Off", "Low" or "High" (there may be others specific to your device)

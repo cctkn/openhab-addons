@@ -80,9 +80,6 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
     private static final int APPLISTINTERVAL = 60000;
     private static final int ACTIVEAPPINTERVAL = 10000;
 
-    /** The encryption key to use */
-    // private final @Nullable String pubKey;
-
     /** The lock used to modify app information */
     private final Lock appListLock = new ReentrantLock();
 
@@ -112,19 +109,6 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
     ScalarWebAppControlProtocol(final ScalarWebProtocolFactory<T> factory, final ScalarWebContext context,
             final ScalarWebService service, final T callback) {
         super(factory, context, service, callback);
-
-        // String localPubKey = null;
-        // final ScalarWebService enc = getService(ScalarWebService.ENCRYPTION);
-        // if (enc != null) {
-        // try {
-        // final PublicKey publicKey = enc.execute(ScalarWebMethod.GETPUBLICKEY).as(PublicKey.class);
-        // localPubKey = publicKey.getPublicKey();
-        // } catch (final IOException e) {
-        // logger.debug("Exception getting public key: {}", e.getMessage());
-        // }
-        // }
-
-        // pubKey = localPubKey;
     }
 
     @Override
@@ -363,7 +347,7 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
                         .createHttpTransport(getService().getTransport().getBaseUri().toString())) {
                     final RawType rawType = NetUtil.getRawType(transport, iconUrl);
                     callback.stateChanged(channelId, rawType == null ? UnDefType.UNDEF : rawType);
-                } catch (URISyntaxException e) {
+                } catch (final URISyntaxException e) {
                     logger.debug("Exception occurred getting application icon: {}", e.getMessage());
                 }
             }
@@ -431,7 +415,35 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
      */
     private void refreshTextForm(final String channelId) {
         Validate.notEmpty(channelId, "channelId cannot be empty");
+
+        // String pubKey = null;
+        // final ScalarWebService enc = getService(ScalarWebService.ENCRYPTION);
+        // if (enc != null) {
+        // try {
+        // final PublicKey publicKey = enc.execute(ScalarWebMethod.GETPUBLICKEY).as(PublicKey.class);
+        // pubKey = publicKey.getPublicKey();
+        // } catch (final IOException e) {
+        // logger.debug("Exception getting public key: {}", e.getMessage());
+        // }
+        // }
+
         try {
+            // if (StringUtils.isNotEmpty(pubKey)) {
+            // byte[] byteKey = Base64.getDecoder().decode(pubKey);
+            // X509EncodedKeySpec X509publicKey = new X509EncodedKeySpec(byteKey);
+            // KeyFactory kf = KeyFactory.getInstance("RSA");
+            // java.security.PublicKey sonyPublicKey = kf.generatePublic(X509publicKey);
+            // KeyGenerator gen = KeyGenerator.getInstance("AES");
+            // gen.init(128); /* 128-bit AES */
+            // SecretKey secretKey = gen.generateKey();
+            // Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+            // cipher.init(Cipher.ENCRYPT_MODE, sonyPublicKey);
+            // byte[] a = cipher.doFinal(secretKey.getEncoded());
+            // String encKey = new String(Base64.getEncoder().encode(a), "UTF-8");
+
+            // final TextFormResult ff = execute(ScalarWebMethod.GETTEXTFORM, new TextFormRequest_1_1(encKey, null))
+            // .as(TextFormResult.class);
+            // }
             // Alwasy assume non encrypted version
             // final String localEncKey = pubKey;
             // if (localEncKey != null && StringUtils.isNotEmpty(localEncKey)) {
@@ -443,6 +455,8 @@ class ScalarWebAppControlProtocol<T extends ThingCallback<String>> extends Abstr
             }).as(TextFormResult.class);
             callback.stateChanged(channelId, SonyUtil.newStringType(form.getText()));
             // }
+            // } catch (final IOException | NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException
+            // | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
         } catch (final IOException e) {
             logger.debug("Exception getting text form: {}", e.getMessage());
         }

@@ -108,7 +108,8 @@ public class ScalarWebProtocolFactory<T extends ThingCallback<String>> implement
                 case ScalarWebService.ENCRYPTION:
                 case ScalarWebService.NOTIFICATION:
                 case ScalarWebService.RECORDING:
-                    logger.trace("Ignoring protocol for {} service (no protocol written)", serviceName);
+                    protocols.put(serviceName, new ScalarWebGenericProtocol<T>(this, context, service, callback));
+                    logger.trace("Generic protocol for {} service (no specific protocol written)", serviceName);
                     break;
 
                 default:
