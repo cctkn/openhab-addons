@@ -186,7 +186,7 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
             return getStateDescription(channel.getUID().getThingUID(), channel.getUID().getId(),
                     originalStateDescription);
         }
-        return originalStateDescription;
+        return null;
     }
 
     @Override
@@ -287,7 +287,7 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
                 }
             }
         }
-        return originalStateDescription;
+        return null;
     }
 
     @Override
