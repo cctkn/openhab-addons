@@ -101,6 +101,9 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
     /** The definition listener */
     private final DefinitionListener definitionListener = new DefinitionListener();
 
+    /** The OSGI properties for things */
+    private final Map<String, String> osgiProperties;
+
     /**
      * Constructs the web handler
      *
@@ -109,21 +112,24 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
      * @param webSocketClient a non-null websocket client
      * @param sonyDefinitionProvider a non-null definition provider
      * @param sonyDynamicStateProvider a non-null dynamic state provider
+     * @param osgiProperties a non-null, possibly empty list of OSGI properties
      */
     public ScalarWebHandler(final Thing thing, final @Nullable TransformationService transformationService,
             final WebSocketClient webSocketClient, final SonyDefinitionProvider sonyDefinitionProvider,
-            final SonyDynamicStateProvider sonyDynamicStateProvider) {
+            final SonyDynamicStateProvider sonyDynamicStateProvider, final Map<String, String> osgiProperties) {
         super(thing, ScalarWebConfig.class);
 
         Objects.requireNonNull(thing, "thing cannot be null");
         Objects.requireNonNull(webSocketClient, "webSocketClient cannot be null");
         Objects.requireNonNull(sonyDefinitionProvider, "sonyDefinitionProvider cannot be null");
         Objects.requireNonNull(sonyDynamicStateProvider, "sonyDynamicStateProvider cannot be null");
+        Objects.requireNonNull(osgiProperties, "osgiProperties cannot be null");
 
         this.transformationService = transformationService;
         this.webSocketClient = webSocketClient;
         this.sonyDefinitionProvider = sonyDefinitionProvider;
         this.sonyDynamicStateProvider = sonyDynamicStateProvider;
+        this.osgiProperties = osgiProperties;
 
         callback = new ThingCallback<String>() {
             @Override
@@ -164,7 +170,6 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
                 }
             }
         };
-
     }
 
     @Override
@@ -215,7 +220,7 @@ public class ScalarWebHandler extends AbstractThingHandler<ScalarWebConfig> {
             SonyUtil.checkInterrupt();
 
             final ScalarWebContext context = new ScalarWebContext(() -> getThing(), config, tracker, scheduler,
-                    sonyDynamicStateProvider, webSocketClient, transformationService);
+                    sonyDynamicStateProvider, webSocketClient, transformationService, osgiProperties);
 
             final ScalarWebClient client = ScalarWebClientFactory.get(scalarWebUrl, context);
             scalarClient.set(client);

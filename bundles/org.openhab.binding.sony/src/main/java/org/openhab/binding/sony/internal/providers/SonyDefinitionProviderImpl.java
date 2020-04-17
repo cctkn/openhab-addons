@@ -15,6 +15,7 @@ package org.openhab.binding.sony.internal.providers;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -78,7 +79,7 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The list of sources (created in activate, cleared in deactivate) */
-    private final List<SonySource> sources = new ArrayList<>();
+    private final List<SonySource> sources;
 
     /** The list of dynamic state overrides by channel uid */
     private final Map<ChannelUID, StateDescription> stateOverride = new HashMap<>();
@@ -97,15 +98,27 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
      * 
      * @param thingRegistry a non-null thing registry
      * @param thingTypeRegistry a non-null thing type registry
+     * @param properties the OSGI properties
      */
     @Activate
     public SonyDefinitionProviderImpl(final @Reference ThingRegistry thingRegistry,
-            final @Reference ThingTypeRegistry thingTypeRegistry) {
+            final @Reference ThingTypeRegistry thingTypeRegistry, final Map<String, String> properties) {
         Objects.requireNonNull(thingRegistry, "thingRegistry cannot be null");
         Objects.requireNonNull(thingTypeRegistry, "thingTypeRegistry cannot be null");
+        Objects.requireNonNull(properties, "properties cannot be null");
 
         this.thingRegistry = thingRegistry;
         this.thingTypeRegistry = thingTypeRegistry;
+
+        // local takes preference over github
+        final List<SonySource> srcs = new ArrayList<>();
+        if (BooleanUtils.isNotFalse(BooleanUtils.toBooleanObject(properties.get("local")))) {
+            srcs.add(new SonyFolderSource(scheduler, properties));
+        }
+        if (BooleanUtils.isNotFalse(BooleanUtils.toBooleanObject(properties.get("github")))) {
+            srcs.add(new SonyGithubSource(scheduler, properties));
+        }
+        this.sources = Collections.unmodifiableList(srcs);
     }
 
     @Override
@@ -352,23 +365,11 @@ public class SonyDefinitionProviderImpl implements SonyDefinitionProvider, SonyD
         }
     }
 
-    @Activate
-    public void activate(final Map<String, String> properties) {
-        // local takes preference over github
-        if (BooleanUtils.isNotFalse(BooleanUtils.toBooleanObject(properties.get("local")))) {
-            sources.add(new SonyFolderSource(scheduler, properties));
-        }
-        if (BooleanUtils.isNotFalse(BooleanUtils.toBooleanObject(properties.get("github")))) {
-            sources.add(new SonyGithubSource(scheduler, properties));
-        }
-    }
-
     @Deactivate
     public void deactivate() {
         for (final SonySource src : sources) {
             src.close();
         }
-        sources.clear();
     }
 
     @Override

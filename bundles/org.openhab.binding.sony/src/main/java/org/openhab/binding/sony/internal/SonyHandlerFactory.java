@@ -12,6 +12,7 @@
  */
 package org.openhab.binding.sony.internal;
 
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,7 +46,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Tim Roberts - Initial contribution
  */
 @NonNullByDefault
-@Component(immediate = true, service = ThingHandlerFactory.class)
+@Component(immediate = true, service = ThingHandlerFactory.class, configurationPid = "sony.things")
 public class SonyHandlerFactory extends BaseThingHandlerFactory {
     /** websocket client used for scalar operations */
     private final WebSocketClient webSocketClient;
@@ -56,24 +57,31 @@ public class SonyHandlerFactory extends BaseThingHandlerFactory {
     /** The sony thing type provider */
     private final SonyDynamicStateProvider sonyDynamicStateProvider;
 
+    /** The OSGI properties for the things */
+    private final Map<String, String> osgiProperties;
+
     /**
      * Constructs the handler factory
      * 
      * @param webSocketFactory a non-null websocket factory
      * @param sonyDefinitionProvider a non-null sony definition provider
      * @param sonyDynamicStateProvider a non-null sony dynamic state provider
+     * @param osgiProperties a non-null, possibly empty list of OSGI properties
      */
     @Activate
     public SonyHandlerFactory(final @Reference WebSocketFactory webSocketFactory,
             final @Reference SonyDefinitionProvider sonyDefinitionProvider,
-            final @Reference SonyDynamicStateProvider sonyDynamicStateProvider) {
+            final @Reference SonyDynamicStateProvider sonyDynamicStateProvider,
+            final Map<String, String> osgiProperties) {
         Objects.requireNonNull(webSocketFactory, "webSocketFactory cannot be null");
         Objects.requireNonNull(sonyDefinitionProvider, "sonyDefinitionProvider cannot be null");
         Objects.requireNonNull(sonyDynamicStateProvider, "sonyDynamicStateProvider cannot be null");
+        Objects.requireNonNull(osgiProperties, "osgiProperties cannot be null");
 
         this.webSocketClient = webSocketFactory.getCommonWebSocketClient();
         this.sonyDefinitionProvider = sonyDefinitionProvider;
         this.sonyDynamicStateProvider = sonyDynamicStateProvider;
+        this.osgiProperties = osgiProperties;
     }
 
     @Override
@@ -103,7 +111,7 @@ public class SonyHandlerFactory extends BaseThingHandlerFactory {
                     .getTransformationService(getBundleContext(), "MAP");
 
             return new ScalarWebHandler(thing, transformationService, webSocketClient, sonyDefinitionProvider,
-                    sonyDynamicStateProvider);
+                    sonyDynamicStateProvider, osgiProperties);
         }
 
         return null;

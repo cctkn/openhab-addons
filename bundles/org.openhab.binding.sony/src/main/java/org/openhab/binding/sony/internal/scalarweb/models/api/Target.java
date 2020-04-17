@@ -21,6 +21,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public class Target {
+    /** Well known targets */
+    public static final String OUTPUTTERMINAL = "outputTerminal";
+
     /** The target */
     private final String target;
 

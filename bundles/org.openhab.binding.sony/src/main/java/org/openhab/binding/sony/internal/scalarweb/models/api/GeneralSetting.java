@@ -55,6 +55,12 @@ public class GeneralSetting {
     /** A picker deviceUI type for a setting */
     public static final String PICKER = "picker";
 
+    /** The various constants for sound settings */
+    public static final String SOUNDSETTING_SPEAKER = "speaker";
+    public static final String SOUNDSETTING_SPEAKERHDMI = "speaker_hdmi";
+    public static final String SOUNDSETTING_HDMI = "hdmi";
+    public static final String SOUNDSETTING_AUDIOSYSTEM = "audioSystem";
+
     /** Whether the setting is currently available */
     private @Nullable Boolean isAvailable;
 

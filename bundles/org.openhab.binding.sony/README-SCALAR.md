@@ -65,6 +65,67 @@ Yellow=AAAAAwAAHFoAAABpAw%3D%3D
 
 Please note that you can recreate the .map file by simply deleting it from `conf/transformation` and restarting openHAB.
 
+## HDMI/CEC/ARC (AVRs, SoundBars)
+
+One of the issues with HDMI/CEC/ARC is that you can only increment or decrement the sound level by 1 if you are using HDMI/CEC/ARC to connect a soundbar or AVR.
+If you set a volume to a specific level, the sound will only ever go up or down by a single value due to HDMI/CEC protocols.
+To overcome this, the addon will (if configured - see below) issue a series of increment/decrement commands to reach a target level.
+Example: if the processing is configured (see below), your current sound level is 10 and you set the sound level to 15 - the system will issue 5 increment commands to bring the soundbar/AVR up to 15.
+
+### Configuration options
+
+Edit the `conf/services/runtime.cfg` and add any (or all) of the following values:
+1. `sony.things:audio-enablecec`
+2. `sony.things:audio-forcecec`
+3. `sony.things:audio-cecdelay`
+
+#### audio-enablecec
+
+This enables the HDMI/CEC processing.
+
+Set this value to `true` to allow the system to convert a set volume into a series of increments if HDMI/CEC is detected (see `audio-forcecec`).  
+
+The default value is `false`
+
+#### audio-forcecec
+
+This set's whether to force HDMI/CEC processing (`true`) or attempt to detect whether HDMI/CEC processing should be used (`false`).
+
+You will want to set this value to `true` in the following cases:
+
+1.  A soundbar/AVR is always used (in other words, you will NEVER use the TV speakers).
+This will turn of auto-detection and issue less commands since it assumes HDMI/CEC processing.
+
+2.  The soundbar/AVR is not correctly detected on the HDMI/CEC.
+If you set the volume and the volume only goes up or down a single increment, then HDMI/CEC detection didn't work and this overrides that detection.
+
+The default value is `false`
+
+#### audio-cecdelay
+
+This is the delay (in ms) between increment/decrement requests.
+Depending on your device, you may need to modify the delay to either improve responsiveness (by setting a lower delay if your device handles it properly) or fix missed messages (by setting a higher delay if your device is slower to respond).
+
+The default value is `250` (250ms);
+
+#### WARNING - Sony devices (soundbars, AVRs)
+
+Do ***NOT*** enable this if your soundbar/AVR is a sony device.  
+Sony has special processing when the HDMI/CEC device is a Sony device and this logic will simply not work.
+You will need to connect to the device (using this binding) directly to change the volume **or** use the IRCC channel to increment/decrement the volume.
+
+Any setting of the volume or incrementing/decrementing the volume will set the TV speaker volume (which is not active) and will ***NOT*** be passed to the soundbar/AVR.
+
+#### Example
+
+```
+sony.things:audio-enablecec=true
+sony.things:audio-forcecec=true
+sony.things:audio-cecdelay=100
+```
+
+This will enable special HDMI/CEC processing, force the ARC processing (ie disabling detection) and provide a 100ms delay between commands.
+
 ## Channels
 
 The scalar service will dynamically generate the channels supported by your device.

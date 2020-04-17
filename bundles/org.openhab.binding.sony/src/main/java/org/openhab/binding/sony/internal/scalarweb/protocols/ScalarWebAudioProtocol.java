@@ -22,10 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.library.types.IncreaseDecreaseType;
@@ -50,7 +55,10 @@ import org.openhab.binding.sony.internal.scalarweb.models.api.AudioVolume_1_0;
 import org.openhab.binding.sony.internal.scalarweb.models.api.AudioVolume_1_1;
 import org.openhab.binding.sony.internal.scalarweb.models.api.AudioVolume_1_2;
 import org.openhab.binding.sony.internal.scalarweb.models.api.CurrentExternalTerminalsStatus_1_0;
+import org.openhab.binding.sony.internal.scalarweb.models.api.GeneralSetting;
+import org.openhab.binding.sony.internal.scalarweb.models.api.GeneralSettings_1_0;
 import org.openhab.binding.sony.internal.scalarweb.models.api.Output;
+import org.openhab.binding.sony.internal.scalarweb.models.api.Target;
 import org.openhab.binding.sony.internal.scalarweb.models.api.VolumeInformation_1_0;
 import org.openhab.binding.sony.internal.scalarweb.models.api.VolumeInformation_1_1;
 import org.slf4j.Logger;
@@ -79,6 +87,11 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
     /** The notifications that are enabled */
     private final NotificationHelper notificationHelper;
 
+    /** The HDMI/CEC settings */
+    private final boolean enableHdmiCec;
+    private final boolean forceHdmiCec;
+    private final int cecDelay;
+
     /**
      * Instantiates a new scalar web audio protocol.
      *
@@ -91,11 +104,18 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
             final ScalarWebService audioService, final T callback) {
         super(factory, context, audioService, callback);
         notificationHelper = new NotificationHelper(enableNotifications(ScalarWebEvent.NOTIFYVOLUMEINFORMATION));
+
+        final Map<String, String> osgiProperties = getContext().getOsgiProperties();
+        this.enableHdmiCec = BooleanUtils.isTrue(BooleanUtils.toBooleanObject(osgiProperties.get("audio-enablecec")));
+        this.forceHdmiCec = BooleanUtils.isTrue(BooleanUtils.toBooleanObject(osgiProperties.get("audio-forcecec")));
+
+        final Integer cecDelay = NumberUtils.createInteger(osgiProperties.get("audio-cecDelay"));
+        this.cecDelay = cecDelay == null ? 250 : cecDelay;
     }
 
     @Override
     public Collection<ScalarWebChannelDescriptor> getChannelDescriptors(final boolean dynamicOnly) {
-        final List<ScalarWebChannelDescriptor> descriptors = new ArrayList<ScalarWebChannelDescriptor>();
+        final List<ScalarWebChannelDescriptor> descriptors = new ArrayList<>();
 
         // no dynamic channels
         if (dynamicOnly) {
@@ -358,6 +378,55 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
 
         final int unscaled = SonyUtil.unscale(cmd.toBigDecimal(), min, max).setScale(0, RoundingMode.FLOOR).intValue();
 
+        /**
+         * The following tries to overcome an HDMI/CEC issue. HDMI/CEC will ONLY allow increment/decrement of the
+         * volume. So if we set to a specific level, we need to determine if we need to increment/decrement up to that
+         * level if connected
+         */
+        if (enableHdmiCec) {
+            try {
+                final Integer currVol = getVolume();
+                if (currVol == null) {
+                    logger.debug("Unknown current volume level - can't increment hdmi audio");
+                } else {
+                    boolean doIncrement = forceHdmiCec; // are we forcing cec processing?
+                    if (!doIncrement) {
+                        // If not forced, see if we can detect...
+                        final GeneralSettings_1_0 ss = handleExecute(ScalarWebMethod.GETSOUNDSETTINGS,
+                                new Target(Target.OUTPUTTERMINAL)).as(GeneralSettings_1_0.class);
+
+                        // OrElse(null) doesn't seem to go well with nullable attributes here for some reason
+                        final Optional<GeneralSetting> ogs = ss.getSettings(Target.OUTPUTTERMINAL).findFirst();
+                        if (ogs.isPresent()) {
+                            final String val = ogs.get().getCurrentValue();
+                            if (StringUtils.equalsIgnoreCase(val, GeneralSetting.SOUNDSETTING_SPEAKERHDMI)
+                                    || StringUtils.equalsIgnoreCase(val, GeneralSetting.SOUNDSETTING_HDMI)
+                                    || StringUtils.equalsIgnoreCase(val, GeneralSetting.SOUNDSETTING_AUDIOSYSTEM)) {
+                                doIncrement = true;
+                            } else {
+                                logger.debug("No HDMI/CEC connected - ignoring ({})", val);
+                            }
+                        } else {
+                            logger.debug("No general sound setting for {} - ignoring incrementing",
+                                    Target.OUTPUTTERMINAL);
+                        }
+                    }
+
+                    if (doIncrement) {
+                        final int maxIncr = Math.abs(currVol - unscaled);
+                        final boolean up = unscaled > currVol;
+                        logger.debug("HDMI/CEC incremental processing - sending {} ({}, {}) UP({})", maxIncr, currVol,
+                                unscaled, up);
+                        scheduleVolumeChange(key, up, 0, maxIncr);
+                        return;
+                    }
+                }
+
+            } catch (final IOException e) {
+                logger.debug("IOException occurred during autoscaling HDMI audio (ignoring): {}", e.getMessage());
+            }
+        }
+
         final String version = getService().getVersion(ScalarWebMethod.SETAUDIOVOLUME);
         if (VersionUtilities.equals(version, ScalarWebMethod.V1_0)) {
             handleExecute(ScalarWebMethod.SETAUDIOVOLUME, new AudioVolume_1_0(key, unscaled));
@@ -368,6 +437,67 @@ class ScalarWebAudioProtocol<T extends ThingCallback<String>> extends AbstractSc
         } else {
             logger.debug("Unknown {} method version: {}", ScalarWebMethod.SETAUDIOVOLUME, version);
         }
+    }
+
+    /**
+     * Get's the current volume level or null if none found
+     * 
+     * @return the current volume level or none if not found
+     * @throws IOException if an IOException occurs
+     */
+    @Nullable
+    private Integer getVolume() throws IOException {
+        final String version = getService().getVersion(ScalarWebMethod.GETVOLUMEINFORMATION);
+        if (VersionUtilities.equals(version, ScalarWebMethod.V1_0)) {
+            for (final VolumeInformation_1_0 vi : handleExecute(ScalarWebMethod.GETVOLUMEINFORMATION)
+                    .asArray(VolumeInformation_1_0.class)) {
+                final Integer vol = vi.getVolume();
+                if (vi != null) {
+                    return vol;
+                }
+            }
+        } else if (VersionUtilities.equals(version, ScalarWebMethod.V1_1)) {
+            for (final VolumeInformation_1_1 vi : handleExecute(ScalarWebMethod.GETVOLUMEINFORMATION, new Output())
+                    .asArray(VolumeInformation_1_1.class)) {
+                final Integer vol = vi.getVolume();
+                if (vi != null) {
+                    return vol;
+                }
+            }
+        } else {
+            logger.debug("Unknown {} method version: {}", ScalarWebMethod.GETVOLUMEINFORMATION, version);
+        }
+        return null;
+    }
+
+    /**
+     * Will schedule a volume change after each delay
+     * 
+     * @param key a non-null, non-empty key to use
+     * @param up true to increment up, false to increment down
+     * @param ct the current increment count
+     * @param max the maximum increment count
+     */
+    private void scheduleVolumeChange(final String key, final boolean up, final int ct, final int max) {
+        Validate.notEmpty(key, "key cannot be empty");
+        if (ct < 0) {
+            throw new IllegalArgumentException("ct cannot be less than 0: " + ct);
+        }
+
+        if (max < 0) {
+            throw new IllegalArgumentException("max cannot be less than 0: " + max);
+        }
+
+        if (ct >= max) {
+            logger.debug("HDMI/CEC increment is done: {} for {}", max, key);
+            return;
+        }
+
+        getContext().getScheduler().schedule(() -> {
+            logger.debug("HDMI/CEC increment: {}/{} for {}", ct, max, key);
+            setVolume(key, up);
+            scheduleVolumeChange(key, up, ct + 1, max);
+        }, cecDelay, TimeUnit.MILLISECONDS);
     }
 
     /**

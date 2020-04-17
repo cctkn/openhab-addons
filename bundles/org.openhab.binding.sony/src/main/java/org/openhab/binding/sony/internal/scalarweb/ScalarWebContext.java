@@ -12,6 +12,7 @@
  */
 package org.openhab.binding.sony.internal.scalarweb;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
@@ -53,6 +54,9 @@ public class ScalarWebContext {
     /** The configuration for the thing */
     private final ScalarWebConfig config;
 
+    /** The osgi properties */
+    private final Map<String, String> osgiProperties;
+
     /**
      * Constructs the context from the parameters
      *
@@ -63,16 +67,18 @@ public class ScalarWebContext {
      * @param stateProvider the non-null dynamic state provider
      * @param webSocketClient the possibly null websocket client
      * @param transformService the possibly null transformation service
+     * @param properties the non-null OSGI properties
      */
     public ScalarWebContext(final Supplier<Thing> thingSupplier, final ScalarWebConfig config,
             final ScalarWebChannelTracker tracker, final ScheduledExecutorService scheduler,
             final SonyDynamicStateProvider stateProvider, final @Nullable WebSocketClient webSocketClient,
-            final @Nullable TransformationService transformService) {
+            final @Nullable TransformationService transformService, final Map<String, String> osgiProperties) {
         Objects.requireNonNull(thingSupplier, "thingSupplier cannot be null");
         Objects.requireNonNull(thingSupplier, "config cannot be null");
         Objects.requireNonNull(tracker, "tracker cannot be null");
         Objects.requireNonNull(scheduler, "scheduler cannot be null");
         Objects.requireNonNull(stateProvider, "stateProvider cannot be null");
+        Objects.requireNonNull(osgiProperties, "osgiProperties cannot be null");
 
         this.thingSupplier = thingSupplier;
         this.config = config;
@@ -81,6 +87,7 @@ public class ScalarWebContext {
         this.stateProvider = stateProvider;
         this.webSocketClient = webSocketClient;
         this.transformService = transformService;
+        this.osgiProperties = osgiProperties;
     }
 
     /**
@@ -153,5 +160,14 @@ public class ScalarWebContext {
      */
     public @Nullable TransformationService getTransformService() {
         return transformService;
+    }
+
+    /**
+     * Returns the OSGI properties
+     * 
+     * @return the non-null, possibly empty OSGI properties
+     */
+    public Map<String, String> getOsgiProperties() {
+        return osgiProperties;
     }
 }
